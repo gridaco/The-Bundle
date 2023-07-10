@@ -1,0 +1,8 @@
+{
+  "name": "motions",
+  "private": true,
+  "workspaces": [
+    "web",
+    "templates"
+  ]
+}
