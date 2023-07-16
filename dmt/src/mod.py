@@ -114,4 +114,5 @@ if __name__ == "__main__":
     processor = TemplateProcessor(file, meta, out)
     processor.optimize()
     processor.data(**data)
-    processor.render()
+    # processor.render()
+    processor.render_still()
