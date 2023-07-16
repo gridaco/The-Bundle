@@ -1,0 +1,11 @@
+{
+  "objects": {
+    "text": {
+      "data": {
+        "body": {
+          "allow": true
+        }
+      }
+    }
+  }
+}
