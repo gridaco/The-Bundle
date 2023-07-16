@@ -1,0 +1,31 @@
+{
+  "name": "@lsd/dmt",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": false,
+  "description": "DMT Client",
+  "repository": "https://github.com/gridaco/LSD",
+  "scripts": {
+    "build": "tsup",
+    "test": "jest"
+  },
+  "keywords": [
+    "3D",
+    "motion",
+    "blender"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.2",
+    "ts-jest": "^29.1.1",
+    "tsup": "^7.1.0",
+    "typescript": "^5.1.6"
+  }
+}
