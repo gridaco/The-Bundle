@@ -1,0 +1,8 @@
+{
+    "name": "@motions/glass-dispersion-text",
+    "version": "0.0.0",
+    "dependencies": {
+        "@babylonjs/core": "^6.12.0",
+        "earcut": "^2.2.4"
+    }
+}

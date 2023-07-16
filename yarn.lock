@@ -14,6 +14,11 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
+"@babylonjs/core@^6.12.0":
+  version "6.12.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/core/-/core-6.12.0.tgz#9ef983cc64d6e1a662b3daebd7ea9c3a833d3a4b"
+  integrity sha512-HuuLqBsWNhS6RHd2Q/Xd2ps1t4LLHw0fGyasRynbXIFYIV5LeFN2t/5et/JHtFAeXG3GW+z9mAtcnpAvsv1loA==
+
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@eslint-community/eslint-utils/-/eslint-utils-4.4.0.tgz#a23514e8fb9af1269d5f7788aa556798d61c6b59"
@@ -566,6 +571,11 @@ doctrine@^3.0.0:
   integrity sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==
   dependencies:
     esutils "^2.0.2"
+
+earcut@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/earcut/-/earcut-2.2.4.tgz#6d02fd4d68160c114825d06890a92ecaae60343a"
+  integrity sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==
 
 emoji-regex@^9.2.2:
   version "9.2.2"
