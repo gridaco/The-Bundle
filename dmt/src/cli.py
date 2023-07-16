@@ -76,23 +76,7 @@ def pngs_to_apng(input_dir, output_filepath):
     apng.save(output_filepath)
 
 
-def load_template(blender_file):
-       # # if file is gzip, unzip it
-    # if file.endswith('.gz'):
-    #     with gzip.open(file, 'rb') as f_in:
-    #         # make
-    #         with open(file[:-3], 'wb') as f_out:
-    #             shutil.copyfileobj(f_in, f_out)
-    #     file = file[:-3]
-    ...
-
-@click.command()
-@click.option('-t', '--template', type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True, help="Path to the template dir")
-@click.option('-d', '--data', type=click.Path(exists=True, file_okay=True, dir_okay=False), required=True, help="New text content")
-@click.option('-o', '--out', type=click.Path(), required=True, help="Path to the output file")
-@click.option('-b', '--blender', default=blenderpath(), help="Path to the Blender executable")
-def main(template, data, out, blender):
-
+def load_template(template):
     # Load the file from the template dir
     gzfile = os.path.join(template, 'template.blend.gz')
 
@@ -102,7 +86,17 @@ def main(template, data, out, blender):
     with gzip.open(gzfile, 'rb') as f_in:
         with open(file, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
+    
+    return file
 
+@click.command()
+@click.option('-t', '--template', type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True, help="Path to the template dir")
+@click.option('-d', '--data', type=click.Path(exists=True, file_okay=True, dir_okay=False), required=True, help="New text content")
+@click.option('-o', '--out', type=click.Path(), required=True, help="Path to the output file")
+@click.option('-b', '--blender', default=blenderpath(), help="Path to the Blender executable")
+def main(template, data, out, blender):
+
+    file = load_template(template)
     print('tmp file available at', file)
 
     # Set the environment variables
@@ -123,7 +117,12 @@ def main(template, data, out, blender):
     pngs_to_apng(outdir, outdir / 'dist/anim.png')
 
     # remove tmp dir
-    shutil.rmtree(tmp)
+    # get parent dir of tmp file
+    try:
+        tmpdir = Path(file).parent
+        shutil.rmtree(tmpdir)
+    except:
+        ...
 
 
 if __name__ == '__main__':

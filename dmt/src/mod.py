@@ -1,6 +1,7 @@
 import bpy
 import os
 import json
+import logging
 
 def _d_render_mesh_property(obj, **_):
     ...
@@ -10,10 +11,13 @@ def _d_render_global_property(obj, **_):
 
 def _d_render_font_property(obj: bpy.types.Object, **_):
     data = _.get('data')
-    data_body = data.get('body')
-    # text
-    obj.data.body = data_body
-    ...
+
+    try:
+        # text
+        data_body = data.get('body', obj.data.body)
+        obj.data.body = data_body
+    except AttributeError:
+        logging.warning("Object {} is not a text object".format(obj.name))
 
 def _d_render_material_property(obj, **_):
     ...
@@ -23,7 +27,7 @@ class TemplateProcessor:
         self.file = file
         self.output_dir = output_dir
 
-
+        # always call open first in order to interact with bpy
         self.__open()
 
         self.animated_objects = [obj for obj in bpy.context.scene.objects if obj.animation_data is not None]
@@ -88,15 +92,17 @@ class TemplateProcessor:
             self.render_still(format=format)
 
 
-
 if __name__ == "__main__":
     file = os.getenv('BLENDER_FILE')
-    # meta_file = os.getenv('META_FILE')
+    meta_file = os.getenv('META_FILE')
     data_file = os.getenv('DATA_FILE')
     out = os.getenv('OUTPUT_PATH')
 
-    # with open(meta_file, 'r') as json_file:
-    #     meta = json.load(json_file)
+    try:
+        with open(meta_file, 'r') as json_file:
+            meta = json.load(json_file)
+    except:
+        meta = {}
 
     with open(data_file, 'r') as json_file:
         data = json.load(json_file)
@@ -105,7 +111,7 @@ if __name__ == "__main__":
     if not all([file, data, out]):
         raise Exception("Required environment variables not set")
     
-    processor = TemplateProcessor(file, {}, out)
+    processor = TemplateProcessor(file, meta, out)
     processor.optimize()
     processor.data(**data)
     processor.render()
