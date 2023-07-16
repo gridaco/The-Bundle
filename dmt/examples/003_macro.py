@@ -19,7 +19,7 @@ DATES = DATES[::-1]
 def render(date):
     subprocess.run(
         [
-            'python3', 'cli.py',
+            'python3', '../src/cli.py',
             '-f', './scene.blend',
             '-t', date,
             '-o', "./out/" + date + '/'
