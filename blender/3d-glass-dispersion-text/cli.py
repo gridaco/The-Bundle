@@ -4,6 +4,7 @@ import subprocess
 import platform
 import gzip
 import tempfile
+import numpy as np
 import imageio
 from apng import APNG
 from pathlib import Path
@@ -24,15 +25,38 @@ def blenderpath():
     else:
         return "blender"
 
+n_white = 255
+n_black = 0
 
 
+def pngs_to_gif(png_dir, gif_path):
+    # Get all PNG images in the directory
+    png_files = sorted([os.path.join(png_dir, f) for f in os.listdir(png_dir) if f.endswith('.png')])
 
-def pngs_to_fig(input_dir, output_filepath):
-    images = []
-    for filename in sorted(os.listdir(input_dir)):
-        if filename.endswith(".png"):
-            images.append(imageio.imread(os.path.join(input_dir, filename)))
-    imageio.mimsave(output_filepath, images, 'GIF', duration = 0.04) # Change duration as needed
+    # Create a white background
+    first_image = imageio.imread(png_files[0])
+    height, width, _ = first_image.shape
+    background = np.full((height, width, 3), n_black, dtype=np.uint8)  # white background, adjust as needed
+
+    # Read all images
+    images = [composite_image_with_background(png_file, background) for png_file in png_files]
+
+    # Save as GIF
+    imageio.mimsave(gif_path, images, loop=0)
+
+def composite_image_with_background(png_path, background):
+    # Read the image
+    img = imageio.imread(png_path)
+
+    # If the image has an alpha channel, composite it over the background
+    if img.shape[2] == 4:
+        alpha = img[..., 3:4] / 255
+        img_rgb = img[..., :3]
+        bg_rgb = background[..., :3]
+        composite = img_rgb * alpha + bg_rgb * (1 - alpha)
+        return composite.astype(np.uint8)
+    else:
+        return img
 
 
 def pngs_to_apng(input_dir, output_filepath):
@@ -82,7 +106,7 @@ def main(file, text, out, blender):
     # create dist dir
     (outdir / 'dist').mkdir(parents=True, exist_ok=True)
     # Post processing: create a GIF from the rendered images
-    pngs_to_fig(outdir, outdir / 'dist/anim.gif')
+    pngs_to_gif(outdir, outdir / 'dist/anim.gif')
     pngs_to_apng(outdir, outdir / 'dist/anim.png')
 
 
