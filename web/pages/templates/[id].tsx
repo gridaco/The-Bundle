@@ -2,8 +2,29 @@ import Head from "next/head";
 import React from "react";
 import styled from "@emotion/styled";
 import Image from "next/image";
+import Axios from "axios";
 
 export default function T1() {
+  const [preview, setPreview] = React.useState<string>(
+    "/preview/baked-001/TEXT-b.gif"
+  );
+
+  const renderStill = async (text: string) => {
+    const { data } = await Axios.post(
+      "http://localhost:3001/dev/render/sample",
+      {
+        data: {
+          text: {
+            data: {
+              body: text,
+            },
+          },
+        },
+      }
+    );
+    return data;
+  };
+
   return (
     <>
       <Head>
@@ -16,6 +37,9 @@ export default function T1() {
               e.preventDefault();
               const text = e.target["elements"]["text"];
               console.log(text.value);
+              renderStill(text.value).then((data) => {
+                setPreview(data.still);
+              });
             }}
           >
             <input id="text" type="text" placeholder="Enter your text" />
@@ -32,7 +56,7 @@ export default function T1() {
             width={500}
             height={500}
             className="preview"
-            src="/preview/baked-001/TEXT-b.gif"
+            src={preview}
             alt="preview"
           />
         </div>
