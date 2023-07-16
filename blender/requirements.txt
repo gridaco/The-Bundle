@@ -1,0 +1,6 @@
+click
+bpy
+imageio
+pillow
+apng
+tqdm
