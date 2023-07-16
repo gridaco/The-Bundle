@@ -1,12 +1,16 @@
-# blender templates
+# Templates
 
-## Structure
+## Scripted Templates
+
+## Blender Templates
+
+### Structure
 
 - `/template-name`
   - `template.blend.gz` gzipped blender file
   - `meta.json` meta data to the blender file containing customizable options
 
-## Adding new template
+### Adding new template
 
 After finishing up your work with blender, tidy up your file by organizing layers and removing unused resources.
 
