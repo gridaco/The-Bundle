@@ -1,3 +1,4 @@
+import shutil
 import click
 import os
 import subprocess
@@ -86,15 +87,27 @@ def load_template(blender_file):
     ...
 
 @click.command()
-@click.option('-f', '--file', type=click.Path(exists=True), required=True, help="Path to the Blender file")
-@click.option('-t', '--text', required=True, help="New text content")
+@click.option('-t', '--template', type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True, help="Path to the template dir")
+@click.option('-d', '--data', type=click.Path(exists=True, file_okay=True, dir_okay=False), required=True, help="New text content")
 @click.option('-o', '--out', type=click.Path(), required=True, help="Path to the output file")
 @click.option('-b', '--blender', default=blenderpath(), help="Path to the Blender executable")
-def main(file, text, out, blender):
+def main(template, data, out, blender):
+
+    # Load the file from the template dir
+    gzfile = os.path.join(template, 'template.blend.gz')
+
+    # Unzip the file to the temp dir
+    tmp = tempfile.mkdtemp()
+    file = os.path.join(tmp, 'template.blend')
+    with gzip.open(gzfile, 'rb') as f_in:
+        with open(file, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+
+    print('tmp file available at', file)
 
     # Set the environment variables
     os.environ['BLENDER_FILE'] = file
-    os.environ['TEXT_CONTENT'] = text
+    os.environ['DATA_FILE'] = data
     os.environ['OUTPUT_PATH'] = out
 
     # Call Blender with subprocess
@@ -108,6 +121,9 @@ def main(file, text, out, blender):
     # Post processing: create a GIF from the rendered images
     pngs_to_gif(outdir, outdir / 'dist/anim.gif')
     pngs_to_apng(outdir, outdir / 'dist/anim.png')
+
+    # remove tmp dir
+    shutil.rmtree(tmp)
 
 
 if __name__ == '__main__':
