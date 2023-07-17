@@ -6,12 +6,14 @@ import Axios from "axios";
 
 interface DMTRequest<T = any> {
   data: T;
-  config?: {
-    resolution_x: number;
-    resolution_y: number;
-    samples: number;
-    engine: "CYCLES" | "BLENDER_EEVEE";
-  };
+  config?: DMTConfig;
+}
+
+interface DMTConfig {
+  resolution_x: number;
+  resolution_y: number;
+  samples: number;
+  engine: "CYCLES" | "BLENDER_EEVEE";
 }
 
 export default function T1({ id }: { id: string }) {

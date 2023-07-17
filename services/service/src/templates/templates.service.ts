@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import { nanoid } from 'nanoid';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { render } from '../dmt';
+import { DMTRequest, render } from '../dmt';
 
 const S3 = new S3Client({});
 const DEV = process.env.NODE_ENV !== 'production';
@@ -10,9 +10,13 @@ const BUCKET = DEV ? 'dev-dmt-out' : 'dmt-out';
 
 @Injectable()
 export class TemplatesService {
-  async renderStill(templateId: string, request: { data: any }) {
-    const { data } = request;
-    const res = await render(templateId, data);
+  async renderStill(templateId: string, request: DMTRequest) {
+    const { data, config } = request;
+    const res = await render(templateId, {
+      data,
+      config,
+    });
+
     // upload to s3
     const key = `${nanoid()}.png`;
     await S3.send(

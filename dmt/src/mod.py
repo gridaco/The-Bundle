@@ -3,6 +3,8 @@ import os
 import json
 from pathlib import Path
 
+HOME_DIR = Path.home()
+
 
 def _d_render_mesh_property(obj, **_):
     ...
@@ -20,13 +22,14 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     obj.data.body = data_body
 
     # font
-    data_font = data.get('font', obj.data.font)
+    data_font = data.get('font', None)
     # Local fonts directory -
     # TODO: - resolve font path by name or id
     # TODO: Add google font support
-    font_file = Path('~/Library/Fonts') / data_font / '.ttf'
-    font = bpy.data.fonts.load(font_file)
-    obj.data.font = font
+    if data_font:
+        font_file = HOME_DIR / '~/Library/Fonts' / data_font / '.ttf'
+        font = bpy.data.fonts.load(font_file)
+        obj.data.font = font
 
     # == Paragraph ==
     # alignment
@@ -36,17 +39,17 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     obj.data.align_y = data_align_y
 
     # character spacing
-    data_character_spacing = data.get(
-        'character_spacing', obj.data.character_spacing)
-    obj.data.character_spacing = data_character_spacing
+    data_space_character = data.get(
+        'space_character', obj.data.space_character)
+    obj.data.space_character = data_space_character
 
     # word spacing
-    data_word_spacing = data.get('word_spacing', obj.data.word_spacing)
-    obj.data.word_spacing = data_word_spacing
+    data_space_word = data.get('space_word', obj.data.space_word)
+    obj.data.space_word = data_space_word
 
     # line spacing
-    data_line_spacing = data.get('line_spacing', obj.data.line_spacing)
-    obj.data.line_spacing = data_line_spacing
+    data_space_line = data.get('space_line', obj.data.space_line)
+    obj.data.space_line = data_space_line
 
     # == Geometry ==
     # extrude
@@ -112,8 +115,15 @@ class TemplateProcessor:
     def config(self, **preferences):
         bpy.context.scene.frame_end = preferences.get(
             'frame_end', bpy.context.scene.frame_end)
+
+        # samples
+        # - cycles
         bpy.context.scene.cycles.samples = preferences.get(
             'samples', bpy.context.scene.cycles.samples)
+        # - eevee
+        bpy.context.scene.eevee.taa_render_samples = preferences.get(
+            'samples', bpy.context.scene.eevee.taa_render_samples)
+
         bpy.context.scene.render.resolution_x = preferences.get(
             'resolution_x', bpy.context.scene.render.resolution_x)
         bpy.context.scene.render.resolution_y = preferences.get(
@@ -121,12 +131,12 @@ class TemplateProcessor:
 
     def render_animation(self, format='PNG', engine='CYCLES'):
         bpy.context.scene.render.engine = engine
-        bpy.context.scene.render.image_settings.file_format = 'PNG'
+        bpy.context.scene.render.image_settings.file_format = format
         bpy.ops.render.render(animation=True)
 
     def render_still(self, format='PNG', engine='CYCLES'):
         bpy.context.scene.render.engine = engine
-        bpy.context.scene.render.image_settings.file_format = 'PNG'
+        bpy.context.scene.render.image_settings.file_format = format
 
         # def write_image(rend_result):
         #     # Here you can do whatever you want with the rend_result
@@ -148,8 +158,16 @@ class TemplateProcessor:
 if __name__ == "__main__":
     file = os.getenv('BLENDER_FILE')
     meta_file = os.getenv('META_FILE')
+    config = os.getenv('CONFIG')
     data_file = os.getenv('DATA_FILE')
     out = os.getenv('OUTPUT_PATH')
+
+    # try to parse config json string
+    if config is not None:
+        try:
+            config = json.loads(config)
+        except:
+            config = None
 
     try:
         with open(meta_file, 'r') as json_file:
@@ -164,7 +182,13 @@ if __name__ == "__main__":
         raise Exception("Required environment variables not set")
 
     processor = TemplateProcessor(file, meta, out)
+
     processor.optimize()
+    if config is not None:
+        processor.config(**config)
+
     processor.data(**data)
     # processor.render()
-    processor.render_still()
+    processor.render_still(
+        # engine='BLENDER_EEVEE'
+    )

@@ -9,11 +9,28 @@ const dmt_path = path.resolve(repo_root_path, 'dmt');
 const templates_path = path.resolve(repo_root_path, 'templates');
 const exe = path.resolve(dmt_path, 'src', 'cli.py');
 
+export interface DMTRequest<T = any> {
+  data: T;
+  config?: DMTConfig;
+}
+
+export interface DMTConfig {
+  resolution_x: number;
+  resolution_y: number;
+  samples: number;
+  engine: 'CYCLES' | 'BLENDER_EEVEE';
+}
+
 interface DMTResult {
   still: string;
 }
 
-export function render(templateId: string, data: any): Promise<DMTResult> {
+export function render(
+  templateId: string,
+  params: DMTRequest,
+): Promise<DMTResult> {
+  const { data, config } = params;
+
   return new Promise(async (resolve, reject) => {
     // create json requests as file
     const data_file = tmp.fileSync();
@@ -37,6 +54,9 @@ export function render(templateId: string, data: any): Promise<DMTResult> {
       // data
       '--data',
       data_file.name,
+      // config
+      '--config',
+      JSON.stringify(config),
       // output
       '--out',
       out_dir_name,

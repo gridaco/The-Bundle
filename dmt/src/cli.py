@@ -10,6 +10,7 @@ import imageio
 from apng import APNG
 from pathlib import Path
 
+
 def blenderpath():
     # check if blender is callable with "blender"
     try:
@@ -26,24 +27,29 @@ def blenderpath():
     else:
         return "blender"
 
+
 n_white = 255
 n_black = 0
 
 
 def pngs_to_gif(png_dir, gif_path):
     # Get all PNG images in the directory
-    png_files = sorted([os.path.join(png_dir, f) for f in os.listdir(png_dir) if f.endswith('.png')])
+    png_files = sorted([os.path.join(png_dir, f)
+                       for f in os.listdir(png_dir) if f.endswith('.png')])
 
     # Create a white background
     first_image = imageio.imread(png_files[0])
     height, width, _ = first_image.shape
-    background = np.full((height, width, 3), n_black, dtype=np.uint8)  # white background, adjust as needed
+    # white background, adjust as needed
+    background = np.full((height, width, 3), n_black, dtype=np.uint8)
 
     # Read all images
-    images = [composite_image_with_background(png_file, background) for png_file in png_files]
+    images = [composite_image_with_background(
+        png_file, background) for png_file in png_files]
 
     # Save as GIF
     imageio.mimsave(gif_path, images, loop=0)
+
 
 def composite_image_with_background(png_path, background):
     # Read the image
@@ -62,10 +68,12 @@ def composite_image_with_background(png_path, background):
 
 def pngs_to_apng(input_dir, output_filepath):
     # Sort the images by name to ensure they're in the correct order
-    image_filenames = sorted(filename for filename in os.listdir(input_dir) if filename.endswith('.png'))
-    
+    image_filenames = sorted(filename for filename in os.listdir(
+        input_dir) if filename.endswith('.png'))
+
     # Create file paths
-    filepaths = [os.path.join(input_dir, filename) for filename in image_filenames]
+    filepaths = [os.path.join(input_dir, filename)
+                 for filename in image_filenames]
 
     # Create the APNG
     apng = APNG()
@@ -86,15 +94,17 @@ def load_template(template):
     with gzip.open(gzfile, 'rb') as f_in:
         with open(file, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
-    
+
     return file
+
 
 @click.command()
 @click.option('-t', '--template', type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True, help="Path to the template dir")
 @click.option('-d', '--data', type=click.Path(exists=True, file_okay=True, dir_okay=False), required=True, help="New text content")
+@click.option('-c', '--config', required=False, help="config as json string")
 @click.option('-o', '--out', type=click.Path(), required=True, help="Path to the output file")
 @click.option('-b', '--blender', default=blenderpath(), help="Path to the Blender executable")
-def main(template, data, out, blender):
+def main(template, data, config, out, blender):
 
     file = load_template(template)
     print('tmp file available at', file)
@@ -103,11 +113,12 @@ def main(template, data, out, blender):
     os.environ['BLENDER_FILE'] = file
     os.environ['DATA_FILE'] = data
     os.environ['OUTPUT_PATH'] = out
+    os.environ['CONFIG'] = config
 
     # Call Blender with subprocess
-    blender_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'mod.py')
+    blender_script = os.path.join(os.path.dirname(
+        os.path.realpath(__file__)), 'mod.py')
     subprocess.run([blender, "-b", "-P", blender_script], check=True)
-
 
     outdir = Path(os.path.dirname(out))
     # create dist dir
