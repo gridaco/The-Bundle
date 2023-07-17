@@ -13,7 +13,7 @@ interface DMTResult {
   still: string;
 }
 
-export function render(data): Promise<DMTResult> {
+export function render(templateId: string, data: any): Promise<DMTResult> {
   return new Promise(async (resolve, reject) => {
     // create json requests as file
     const data_file = tmp.fileSync();
@@ -28,10 +28,7 @@ export function render(data): Promise<DMTResult> {
 
     // e.g.
     // sudo python3 src/cli.py -t '//templates/003-3d-glass-dispersion-text' -d '//templates/003-3d-glass-dispersion-text/presets/default.json' -o '//out/'
-    const template = path.resolve(
-      templates_path,
-      '003-3d-glass-dispersion-text',
-    );
+    const template = path.resolve(templates_path, templateId);
 
     const args = [
       // template
@@ -62,18 +59,34 @@ export function render(data): Promise<DMTResult> {
     // });
 
     pythonProcess.on('exit', async (code) => {
-      console.log(`Python script finished with code: ${code}`);
-      // const result_raw = await fs.readFile(
-      //   path.resolve(out_dir_name, 'output.json'),
-      // );
-      // const result = JSON.parse(result_raw.toString());
+      switch (code) {
+        case 0: {
+          // const result_raw = await fs.readFile(
+          //   path.resolve(out_dir_name, 'output.json'),
+          // );
+          // const result = JSON.parse(result_raw.toString());
 
-      const still = path.resolve(out_dir_name, '.png');
+          const still = path.resolve(out_dir_name, '.png');
 
-      resolve({
-        // ...result,
-        still,
-      });
+          resolve({
+            // ...result,
+            still,
+          });
+          return;
+        }
+        case 1: {
+          reject(new Error('DMT failed with code 1'));
+          return;
+        }
+        case 2: {
+          reject(new Error('DMT failed with code 2'));
+          return;
+        }
+        default: {
+          reject(new Error(`DMT failed with code ${code}`));
+          return;
+        }
+      }
     });
   });
 }

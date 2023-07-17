@@ -4,10 +4,9 @@ import { AppService } from './app.service';
 import { FilesModule } from './files/files.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { TemplatesModule } from './templates/templates.module';
-import { DevModule } from './dev/dev.module';
 
 @Module({
-  imports: [TemplatesModule, SessionsModule, FilesModule, DevModule],
+  imports: [TemplatesModule, SessionsModule, FilesModule],
   controllers: [AppController],
   providers: [AppService],
 })
