@@ -38,10 +38,13 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
 
     # == Paragraph ==
     # alignment
-    data_align_x = data.get('align_x', obj.data.align_x)
-    data_align_y = data.get('align_y', obj.data.align_y)
-    obj.data.align_x = data_align_x
-    obj.data.align_y = data_align_y
+    data_align_x = data.get('align_x')
+    if data_align_x:
+        obj.data.align_x = data_align_x
+
+    data_align_y = data.get('align_y')
+    if data_align_y:
+        obj.data.align_y = data_align_y
 
     # character spacing (nullable)
     data_space_character = data.get('space_character')
@@ -60,8 +63,9 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
 
     # == Geometry ==
     # extrude
-    data_extrude = data.get('extrude', obj.data.extrude)
-    obj.data.extrude = data_extrude
+    data_extrude = data.get('extrude')
+    if data_extrude:
+        obj.data.extrude = data_extrude
 
     # bevel
     data_bevel_depth = data.get('bevel_depth')
