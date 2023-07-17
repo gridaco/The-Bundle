@@ -42,11 +42,25 @@ export default function T1() {
               });
             }}
           >
-            <input id="text" type="text" placeholder="Enter your text" />
+            <textarea
+              id="text"
+              placeholder="Enter your text"
+              onKeyDown={(e) => {
+                // keyCode 13 is Enter
+                if (e.keyCode === 13 && !e.shiftKey) {
+                  e.preventDefault();
+                }
+              }}
+            />
             <select name="font" id="font">
               <option value="Arial">Arial</option>
               <option value="Times New Roman">Times New Roman</option>
               <option value="Courier New">Courier New</option>
+            </select>
+            <select name="align_x" id="align_x" defaultValue="CENTER">
+              <option value="LEFT">Left</option>
+              <option value="CENTER">Center</option>
+              <option value="RIGHT">Right</option>
             </select>
             <button type="submit">Submit</button>
           </form>
