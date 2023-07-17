@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import Image from "next/image";
 import Axios from "axios";
 
-export default function T1() {
+export default function T1({ id }: { id: string }) {
   const [preview, setPreview] = React.useState<string>(
     "/preview/baked-001/TEXT-b.gif"
   );
@@ -42,6 +42,50 @@ export default function T1() {
               });
             }}
           >
+            <section>
+              <label htmlFor="font">Font</label>
+              <select name="font" id="font">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+              </select>
+            </section>
+            {/* Paragraph */}
+            <section>
+              <label htmlFor="character_spacing">Character Spacing</label>
+              <input
+                id="character_spacing"
+                name="character_spacing"
+                type="number"
+                placeholder="Character Spacing"
+              />
+            </section>
+
+            <section>
+              <label htmlFor="word_spacing">Word Spacing</label>
+              <input
+                id="word_spacing"
+                name="word_spacing"
+                type="number"
+                placeholder="Word Spacing"
+              />
+            </section>
+
+            <section>
+              <label htmlFor="line_spacing">Line Spacing</label>
+              <input
+                id="line_spacing"
+                name="line_spacing"
+                type="number"
+                placeholder="Line Spacing"
+              />
+            </section>
+
+            <select name="align_x" id="align_x" defaultValue="CENTER">
+              <option value="LEFT">Left</option>
+              <option value="CENTER">Center</option>
+              <option value="RIGHT">Right</option>
+            </select>
             <textarea
               id="text"
               placeholder="Enter your text"
@@ -52,16 +96,6 @@ export default function T1() {
                 }
               }}
             />
-            <select name="font" id="font">
-              <option value="Arial">Arial</option>
-              <option value="Times New Roman">Times New Roman</option>
-              <option value="Courier New">Courier New</option>
-            </select>
-            <select name="align_x" id="align_x" defaultValue="CENTER">
-              <option value="LEFT">Left</option>
-              <option value="CENTER">Center</option>
-              <option value="RIGHT">Right</option>
-            </select>
             <button type="submit">Submit</button>
           </form>
         </div>
@@ -98,8 +132,24 @@ const Main = styled.main`
   }
 
   form {
+    font-family: monospace;
+    max-width: 240px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 21px;
+
+    section {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
   }
 `;
+
+export async function getStaticProps(context) {
+  return {
+    props: {
+      id: context.params.id,
+    },
+  };
+}
