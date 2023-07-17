@@ -4,24 +4,30 @@ import styled from "@emotion/styled";
 import Image from "next/image";
 import Axios from "axios";
 
+interface DMTRequest<T = any> {
+  data: T;
+  config?: {
+    resolution_x: number;
+    resolution_y: number;
+    samples: number;
+    engine: "CYCLES" | "BLENDER_EEVEE";
+  };
+}
+
 export default function T1({ id }: { id: string }) {
+  const [busy, setBusy] = React.useState<boolean>(false);
   const [preview, setPreview] = React.useState<string>(
     "/preview/baked-001/TEXT-b.gif"
   );
 
-  const renderStill = async (text: string) => {
+  const renderStill = async (request: DMTRequest) => {
+    setBusy(true);
     const { data } = await Axios.post(
       `http://localhost:3001/templates/${id}/render-still`,
-      {
-        data: {
-          text: {
-            data: {
-              body: text,
-            },
-          },
-        },
-      }
+      request
     );
+
+    setBusy(false);
     return data;
   };
 
@@ -35,9 +41,27 @@ export default function T1({ id }: { id: string }) {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              const text = e.target["elements"]["text"];
-              console.log(text.value);
-              renderStill(text.value).then((data) => {
+              const elements = e.target["elements"];
+              const text = elements["text"].value;
+              const resolution = parseInt(elements["resolution"].value);
+              const engine = elements["engine"].value;
+              const samples = parseInt(elements["samples"].value);
+
+              renderStill({
+                data: {
+                  text: {
+                    data: {
+                      body: text,
+                    },
+                  },
+                },
+                config: {
+                  engine,
+                  resolution_x: resolution,
+                  resolution_y: resolution,
+                  samples,
+                },
+              }).then((data) => {
                 setPreview(data.still);
               });
             }}
@@ -81,11 +105,45 @@ export default function T1({ id }: { id: string }) {
               />
             </section>
 
-            <select name="align_x" id="align_x" defaultValue="CENTER">
-              <option value="LEFT">Left</option>
-              <option value="CENTER">Center</option>
-              <option value="RIGHT">Right</option>
-            </select>
+            <section>
+              <label htmlFor="align_x">Text Align</label>
+              <select name="align_x" id="align_x" defaultValue="CENTER">
+                <option value="LEFT">Left</option>
+                <option value="CENTER">Center</option>
+                <option value="RIGHT">Right</option>
+              </select>
+            </section>
+
+            {/* Quality */}
+
+            <section>
+              <label htmlFor="resolution">Resolution</label>
+              <select name="resolution" id="resolution" defaultValue="500">
+                <option value="500">500 x 500</option>
+                <option value="1000">1000 x 1000</option>
+                <option value="4000">4K</option>
+              </select>
+            </section>
+
+            <section>
+              <label htmlFor="samples">Samples</label>
+              <select name="samples" id="samples" defaultValue="64">
+                <option value="64">64</option>
+                <option value="128">128</option>
+                <option value="256">256</option>
+                <option value="512">512</option>
+                <option value="1024">1024</option>
+              </select>
+            </section>
+
+            <section>
+              <label htmlFor="engine">Engine</label>
+              <select name="engine" id="engine" defaultValue="CYCLES">
+                <option value="CYCLES">Cycles</option>
+                <option value="BLENDER_EEVEE">Eevee</option>
+              </select>
+            </section>
+
             <textarea
               id="text"
               placeholder="Enter your text"
@@ -100,6 +158,8 @@ export default function T1({ id }: { id: string }) {
           </form>
         </div>
         <div className="side">
+          {busy && <span>IDLE...</span>}
+
           <Image
             width={500}
             height={500}
