@@ -119,21 +119,30 @@ class TemplateProcessor:
         bpy.context.scene.render.resolution_y = preferences.get(
             'resolution_y', bpy.context.scene.render.resolution_y)
 
-    def render_animation(self, format='PNG'):
+    def render_animation(self, format='PNG', engine='CYCLES'):
+        bpy.context.scene.render.engine = engine
         bpy.context.scene.render.image_settings.file_format = 'PNG'
         bpy.ops.render.render(animation=True)
 
-    def render_still(self, format='PNG'):
+    def render_still(self, format='PNG', engine='CYCLES'):
+        bpy.context.scene.render.engine = engine
         bpy.context.scene.render.image_settings.file_format = 'PNG'
+
+        # def write_image(rend_result):
+        #     # Here you can do whatever you want with the rend_result
+        #     # For instance, you can save it to a file
+        #     rend_result.save_render(filepath="/path/to/output.png")
+        # # callback per each sample
+        # bpy.app.handlers.render_write.append(write_image)
         bpy.ops.render.render(write_still=True)
 
-    def render(self, format='PNG'):
+    def render(self, format='PNG', engine='CYCLES'):
         if self.has_anim:
             # Renter the animation
-            self.render_animation(format=format)
+            self.render_animation(format=format, engine=engine)
         else:
             # Render the scene
-            self.render_still(format=format)
+            self.render_still(format=format, engine=engine)
 
 
 if __name__ == "__main__":
