@@ -11,7 +11,7 @@ export default function T1({ id }: { id: string }) {
 
   const renderStill = async (text: string) => {
     const { data } = await Axios.post(
-      "http://localhost:3001/dev/render/sample",
+      `http://localhost:3001/templates/${id}/render-still`,
       {
         data: {
           text: {
@@ -146,7 +146,7 @@ const Main = styled.main`
   }
 `;
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   return {
     props: {
       id: context.params.id,
