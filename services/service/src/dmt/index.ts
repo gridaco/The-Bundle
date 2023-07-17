@@ -54,12 +54,12 @@ export function render(
       // data
       '--data',
       data_file.name,
-      // config
-      '--config',
-      JSON.stringify(config),
       // output
       '--out',
       out_dir_name,
+      // config
+      '--config',
+      JSON.stringify(config),
     ];
 
     const txt = ['python3', exe, ...args].join(' ');

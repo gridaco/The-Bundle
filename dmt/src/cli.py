@@ -3,7 +3,7 @@ import click
 import os
 import subprocess
 import platform
-import gzip
+import tarfile
 import tempfile
 import numpy as np
 import imageio
@@ -86,16 +86,17 @@ def pngs_to_apng(input_dir, output_filepath):
 
 def load_template(template):
     # Load the file from the template dir
-    gzfile = os.path.join(template, 'template.blend.gz')
+    archive = os.path.join(template, 'template.tar.gz')
 
-    # Unzip the file to the temp dir
+    # Unpack the tar.gz file to the temp dir
     tmp = tempfile.mkdtemp()
-    file = os.path.join(tmp, 'template.blend')
-    with gzip.open(gzfile, 'rb') as f_in:
-        with open(file, 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
+    with tarfile.open(archive, 'r:gz') as tar:
+        tar.extractall(tmp)
 
-    return file
+    # find the main .blend file (scene.blend)
+    blendfile = os.path.join(tmp, 'template', 'scene.blend')
+
+    return blendfile
 
 
 @click.command()
