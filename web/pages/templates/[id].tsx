@@ -48,12 +48,28 @@ export default function T1({ id }: { id: string }) {
               const resolution = parseInt(elements["resolution"].value);
               const engine = elements["engine"].value;
               const samples = parseInt(elements["samples"].value);
+              const font = elements["font"].value;
+              const align_x = elements["align_x"].value;
+              const space_character = parseInt(
+                elements["space_character"].value
+              );
+              const space_word = parseInt(elements["space_word"].value);
+              const space_line = parseInt(elements["space_line"].value);
+              const extrude = parseInt(elements["extrude"].value);
+              const bevel_depth = parseInt(elements["bevel_depth"].value);
 
               renderStill({
                 data: {
                   text: {
                     data: {
                       body: text,
+                      font,
+                      align_x,
+                      space_character,
+                      space_word,
+                      space_line,
+                      extrude,
+                      bevel_depth,
                     },
                   },
                 },
@@ -71,37 +87,38 @@ export default function T1({ id }: { id: string }) {
             <section>
               <label htmlFor="font">Font</label>
               <select name="font" id="font">
-                <option value="Arial">Arial</option>
+                <option value="Helvetica Black">Helvetica Black</option>
                 <option value="Times New Roman">Times New Roman</option>
                 <option value="Courier New">Courier New</option>
+                <option value="RobotoMono-Bold">RobotoMono-Bold</option>
               </select>
             </section>
             {/* Paragraph */}
             <section>
-              <label htmlFor="character_spacing">Character Spacing</label>
+              <label htmlFor="space_character">Character Spacing</label>
               <input
-                id="character_spacing"
-                name="character_spacing"
+                id="space_character"
+                name="space_character"
                 type="number"
                 placeholder="Character Spacing"
               />
             </section>
 
             <section>
-              <label htmlFor="word_spacing">Word Spacing</label>
+              <label htmlFor="space_word">Word Spacing</label>
               <input
-                id="word_spacing"
-                name="word_spacing"
+                id="space_word"
+                name="space_word"
                 type="number"
                 placeholder="Word Spacing"
               />
             </section>
 
             <section>
-              <label htmlFor="line_spacing">Line Spacing</label>
+              <label htmlFor="space_line">Line Spacing</label>
               <input
-                id="line_spacing"
-                name="line_spacing"
+                id="space_line"
+                name="space_line"
                 type="number"
                 placeholder="Line Spacing"
               />
@@ -114,6 +131,28 @@ export default function T1({ id }: { id: string }) {
                 <option value="CENTER">Center</option>
                 <option value="RIGHT">Right</option>
               </select>
+            </section>
+
+            {/* Geometry */}
+
+            <section>
+              <label htmlFor="extrude">Extrude</label>
+              <input
+                id="extrude"
+                name="extrude"
+                type="number"
+                placeholder="Extrude"
+              />
+            </section>
+
+            <section>
+              <label htmlFor="bevel_depth">Bevel</label>
+              <input
+                id="bevel_depth"
+                name="bevel_depth"
+                type="number"
+                placeholder="Bevel"
+              />
             </section>
 
             {/* Quality */}
@@ -162,7 +201,8 @@ export default function T1({ id }: { id: string }) {
         <div className="side">
           {busy && <span>IDLE...</span>}
 
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             width={500}
             height={500}
             className="preview"
@@ -189,8 +229,8 @@ const Main = styled.main`
   }
 
   img.preview {
-    width: 100%;
-    height: 100%;
+    aspect-ratio: 1;
+    margin: auto;
   }
 
   form {

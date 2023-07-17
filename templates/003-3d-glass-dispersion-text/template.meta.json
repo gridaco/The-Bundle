@@ -1,4 +1,11 @@
 {
+  "id": "003",
+  "name": "3D Glass Dispersion Text",
+  "description": "3D Glass Dispersion Text",
+  "keywords": [],
+  "author": "Grida Inc",
+  "license": "Apache-2.0",
+  "thumbnail": "thumbnail.png",
   "objects": {
     "text": {
       "data": {

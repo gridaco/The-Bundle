@@ -1,3 +1,4 @@
+import logging
 import bpy
 import os
 import json
@@ -27,9 +28,13 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     # TODO: - resolve font path by name or id
     # TODO: Add google font support
     if data_font:
-        font_file = HOME_DIR / '~/Library/Fonts' / data_font / '.ttf'
-        font = bpy.data.fonts.load(font_file)
-        obj.data.font = font
+        try:
+            font_file = HOME_DIR / './Library/Fonts' / (data_font + '.ttf')
+            font = bpy.data.fonts.load(font_file)
+            obj.data.font = font
+        except:
+            logging.log(logging.ERROR, 'Font not found: ' + data_font)
+            ...
 
     # == Paragraph ==
     # alignment
@@ -38,18 +43,20 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     obj.data.align_x = data_align_x
     obj.data.align_y = data_align_y
 
-    # character spacing
-    data_space_character = data.get(
-        'space_character', obj.data.space_character)
-    obj.data.space_character = data_space_character
+    # character spacing (nullable)
+    data_space_character = data.get('space_character')
+    if data_space_character:
+        obj.data.space_character = data_space_character
 
-    # word spacing
-    data_space_word = data.get('space_word', obj.data.space_word)
-    obj.data.space_word = data_space_word
+    # word spacing (nullable)
+    data_space_word = data.get('space_word')
+    if data_space_word:
+        obj.data.space_word = data_space_word
 
-    # line spacing
-    data_space_line = data.get('space_line', obj.data.space_line)
-    obj.data.space_line = data_space_line
+    # line spacing (nullable)
+    data_space_line = data.get('space_line')
+    if data_space_line:
+        obj.data.space_line = data_space_line
 
     # == Geometry ==
     # extrude
@@ -57,8 +64,9 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     obj.data.extrude = data_extrude
 
     # bevel
-    data_bevel_depth = data.get('bevel_depth', obj.data.bevel_depth)
-    obj.data.bevel_depth = data_bevel_depth
+    data_bevel_depth = data.get('bevel_depth')
+    if data_bevel_depth:
+        obj.data.bevel_depth = data_bevel_depth
 
 
 def _d_render_material_property(obj, **_):

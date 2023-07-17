@@ -113,7 +113,8 @@ def main(template, data, config, out, blender):
     os.environ['BLENDER_FILE'] = file
     os.environ['DATA_FILE'] = data
     os.environ['OUTPUT_PATH'] = out
-    os.environ['CONFIG'] = config
+    if config:
+        os.environ['CONFIG'] = config
 
     # Call Blender with subprocess
     blender_script = os.path.join(os.path.dirname(
