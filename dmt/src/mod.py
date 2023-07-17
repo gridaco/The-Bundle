@@ -1,26 +1,66 @@
 import bpy
 import os
 import json
-import logging
+from pathlib import Path
+
 
 def _d_render_mesh_property(obj, **_):
     ...
 
+
 def _d_render_global_property(obj, **_):
     ...
+
 
 def _d_render_font_property(obj: bpy.types.Object, **_):
     data = _.get('data')
 
-    try:
-        # text
-        data_body = data.get('body', obj.data.body)
-        obj.data.body = data_body
-    except AttributeError:
-        logging.warning("Object {} is not a text object".format(obj.name))
+    # text
+    data_body = data.get('body', obj.data.body)
+    obj.data.body = data_body
+
+    # font
+    data_font = data.get('font', obj.data.font)
+    # Local fonts directory -
+    # TODO: - resolve font path by name or id
+    # TODO: Add google font support
+    font_file = Path('~/Library/Fonts') / data_font / '.ttf'
+    font = bpy.data.fonts.load(font_file)
+    obj.data.font = font
+
+    # == Paragraph ==
+    # alignment
+    data_align_x = data.get('align_x', obj.data.align_x)
+    data_align_y = data.get('align_y', obj.data.align_y)
+    obj.data.align_x = data_align_x
+    obj.data.align_y = data_align_y
+
+    # character spacing
+    data_character_spacing = data.get(
+        'character_spacing', obj.data.character_spacing)
+    obj.data.character_spacing = data_character_spacing
+
+    # word spacing
+    data_word_spacing = data.get('word_spacing', obj.data.word_spacing)
+    obj.data.word_spacing = data_word_spacing
+
+    # line spacing
+    data_line_spacing = data.get('line_spacing', obj.data.line_spacing)
+    obj.data.line_spacing = data_line_spacing
+
+    # == Geometry ==
+    # extrude
+    data_extrude = data.get('extrude', obj.data.extrude)
+    obj.data.extrude = data_extrude
+
+    # bevel
+    data_bevel_depth = data.get('bevel_depth', obj.data.bevel_depth)
+    obj.data.bevel_depth = data_bevel_depth
+
 
 def _d_render_material_property(obj, **_):
     ...
+
 
 class TemplateProcessor:
     def __init__(self, file, meta, output_dir):
@@ -30,13 +70,13 @@ class TemplateProcessor:
         # always call open first in order to interact with bpy
         self.__open()
 
-        self.animated_objects = [obj for obj in bpy.context.scene.objects if obj.animation_data is not None]
+        self.animated_objects = [
+            obj for obj in bpy.context.scene.objects if obj.animation_data is not None]
         self.has_anim = len(self.animated_objects) > 0
 
         # Set the render output path
         bpy.context.scene.render.filepath = output_dir
 
-    
     def __open(self):
         bpy.ops.wm.open_mainfile(filepath=self.file)
 
@@ -69,16 +109,20 @@ class TemplateProcessor:
             resolution_y=500
         )
 
-    def config(self,**preferences):
-        bpy.context.scene.frame_end = preferences.get('frame_end', bpy.context.scene.frame_end)
-        bpy.context.scene.cycles.samples = preferences.get('samples', bpy.context.scene.cycles.samples)
-        bpy.context.scene.render.resolution_x = preferences.get('resolution_x', bpy.context.scene.render.resolution_x)
-        bpy.context.scene.render.resolution_y = preferences.get('resolution_y', bpy.context.scene.render.resolution_y)
+    def config(self, **preferences):
+        bpy.context.scene.frame_end = preferences.get(
+            'frame_end', bpy.context.scene.frame_end)
+        bpy.context.scene.cycles.samples = preferences.get(
+            'samples', bpy.context.scene.cycles.samples)
+        bpy.context.scene.render.resolution_x = preferences.get(
+            'resolution_x', bpy.context.scene.render.resolution_x)
+        bpy.context.scene.render.resolution_y = preferences.get(
+            'resolution_y', bpy.context.scene.render.resolution_y)
 
     def render_animation(self, format='PNG'):
         bpy.context.scene.render.image_settings.file_format = 'PNG'
         bpy.ops.render.render(animation=True)
-    
+
     def render_still(self, format='PNG'):
         bpy.context.scene.render.image_settings.file_format = 'PNG'
         bpy.ops.render.render(write_still=True)
@@ -107,10 +151,9 @@ if __name__ == "__main__":
     with open(data_file, 'r') as json_file:
         data = json.load(json_file)
 
-
     if not all([file, data, out]):
         raise Exception("Required environment variables not set")
-    
+
     processor = TemplateProcessor(file, meta, out)
     processor.optimize()
     processor.data(**data)
