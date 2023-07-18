@@ -119,7 +119,7 @@ def main(template, data, config, out, blender):
 
     # Call Blender with subprocess
     blender_script = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), 'mod.py')
+        os.path.realpath(__file__)), 'main.py')
     subprocess.run([blender, "-b", "-P", blender_script], check=True)
 
     outdir = Path(os.path.dirname(out))
