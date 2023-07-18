@@ -4,6 +4,10 @@ import styled from "@emotion/styled";
 import Image from "next/image";
 import Axios from "axios";
 
+const axios = Axios.create({
+  baseURL: "https://lsd.ngrok.dev/",
+});
+
 interface DMTRequest<T = any> {
   data: T;
   config?: DMTConfig;
@@ -24,10 +28,7 @@ export default function T1({ id }: { id: string }) {
 
   const renderStill = async (request: DMTRequest) => {
     setBusy(true);
-    const { data } = await Axios.post(
-      `http://localhost:3001/templates/${id}/render-still`,
-      request
-    );
+    const { data } = await axios.post(`/templates/${id}/render-still`, request);
 
     setBusy(false);
     return data;
@@ -168,13 +169,13 @@ export default function T1({ id }: { id: string }) {
 
             <section>
               <label htmlFor="samples">Samples</label>
-              <select name="samples" id="samples" defaultValue="64">
-                <option value="64">64</option>
-                <option value="128">128</option>
-                <option value="256">256</option>
-                <option value="512">512</option>
-                <option value="1024">1024</option>
-              </select>
+              <input
+                id="samples"
+                name="samples"
+                type="number"
+                placeholder="Samples"
+                defaultValue={128}
+              />
             </section>
 
             <section>
