@@ -45,6 +45,15 @@ export default function Home() {
               });
           }}
         />
+        <details>
+          <summary>
+            <b>Help & Feedback</b>
+          </summary>
+          <br />
+          <a href="mailto:han@grida.co">han@grida.co</a>
+          <br />
+          <a href="mailto:universe@grida.co">universe@grida.co</a>
+        </details>
       </main>
     </>
   );
@@ -111,7 +120,13 @@ function Controller({
           onSubmit?.(e);
         }}
       >
-        <input id="body" type="text" placeholder="TEXT" />
+        <input
+          id="body"
+          type="text"
+          placeholder="TEXT"
+          autoFocus
+          autoComplete="off"
+        />
         <button type="submit">
           <LightningBoltIcon />
         </button>
