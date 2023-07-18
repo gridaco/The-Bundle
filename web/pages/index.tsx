@@ -1,15 +1,25 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import styled from "@emotion/styled";
 import { Client } from "api";
 import { LinearProgress } from "@mui/material";
 import { LightningBoltIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  const router = useRouter();
+  const [pro, setPro] = useState<boolean>(false);
   const [busy, setBusy] = useState<boolean>(false);
   const [src, setSrc] = useState<string>("/preview/baked-001/TEXT-b.gif");
   const client = useMemo(() => new Client(), []);
+
+  useEffect(() => {
+    const tmp_pro = router.query.pro;
+    if (tmp_pro) {
+      setPro(true);
+    }
+  }, [router.query]);
 
   return (
     <>
@@ -20,6 +30,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
+        {pro && <span>PRO</span>}
         <Canvas busy={busy} src={src} />
         <Controller
           onSubmit={(e) => {

@@ -18,7 +18,7 @@ export default function Pricing() {
   return (
     <>
       <Head>
-        <title>Pricing - H2I</title>
+        <title>Pricing - LSD</title>
       </Head>
       <Header />
       <Main>
@@ -57,10 +57,10 @@ export default function Pricing() {
               unit: "/Mo",
             }}
             unit={{
-              value: 1000,
+              value: 250,
               unit: "Images",
             }}
-            desc={"$0.005 per Image"}
+            desc={"$0.020 per Image"}
             action={
               <button
                 onClick={() => {
@@ -80,10 +80,10 @@ export default function Pricing() {
               unit: "/Mo",
             }}
             unit={{
-              value: 10000,
+              value: 1250,
               unit: "Images",
             }}
-            desc={"$0.0025 per Images"}
+            desc={"$0.020 per Image"}
             action={
               <button
                 onClick={() => {
@@ -102,11 +102,7 @@ export default function Pricing() {
               currency: "$",
               unit: "/Mo",
             }}
-            unit={{
-              value: 150000,
-              unit: "Images",
-            }}
-            desc={"+ $1 per 1,000 Images"}
+            desc={"Custom Templates & API Access"}
             action={
               <button
                 onClick={() => {

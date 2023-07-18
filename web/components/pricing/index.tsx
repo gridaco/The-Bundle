@@ -16,7 +16,7 @@ export function PricingCard({
     currency?: string;
     unit?: string;
   };
-  unit: {
+  unit?: {
     value: number;
     unit: string;
   };
@@ -36,10 +36,12 @@ export function PricingCard({
           </span>
           <span className="b">{price.unit}</span>
         </span>
-        <span className="unit">
-          <span className="a">{unit.value.toLocaleString()}</span>
-          <span className="b">{unit.unit}</span>
-        </span>
+        {unit && (
+          <span className="unit">
+            <span className="a">{unit.value.toLocaleString()}</span>
+            <span className="b">{unit.unit}</span>
+          </span>
+        )}
       </section>
       <section>
         <span className="desc">{desc}</span>
