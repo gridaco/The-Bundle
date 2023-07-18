@@ -1,35 +1,18 @@
 import Head from "next/head";
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "@emotion/styled";
-import Image from "next/image";
-import Axios from "axios";
-
-const axios = Axios.create({
-  baseURL: "https://lsd.ngrok.dev/",
-});
-
-interface DMTRequest<T = any> {
-  data: T;
-  config?: DMTConfig;
-}
-
-interface DMTConfig {
-  resolution_x: number;
-  resolution_y: number;
-  samples: number;
-  engine: "CYCLES" | "BLENDER_EEVEE";
-}
+import { Client, type DMTRequest } from "api";
 
 export default function T1({ id }: { id: string }) {
   const [busy, setBusy] = React.useState<boolean>(false);
   const [preview, setPreview] = React.useState<string>(
     "/preview/baked-001/TEXT-b.gif"
   );
+  const client = useMemo(() => new Client(), []);
 
   const renderStill = async (request: DMTRequest) => {
     setBusy(true);
-    const { data } = await axios.post(`/templates/${id}/render-still`, request);
-
+    const data = await client.renderStill(id, request);
     setBusy(false);
     return data;
   };
