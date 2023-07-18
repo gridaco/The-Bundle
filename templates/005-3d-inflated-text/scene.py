@@ -1,0 +1,6 @@
+def load():
+    ...
+
+
+def draw():
+    ...
