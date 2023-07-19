@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
-import { LightningBoltIcon, DownloadIcon } from "@radix-ui/react-icons";
+import {
+  LightningBoltIcon,
+  DownloadIcon,
+  ShadowIcon,
+  TransparencyGridIcon,
+} from "@radix-ui/react-icons";
 
 const SnapWrapper = styled.div`
   cursor: pointer;
@@ -63,9 +68,7 @@ export function Controller({
               setExpanded(!expanded);
             }}
           >
-            {/* 
-        .
-         */}
+            <TransparencyGridIcon width="100%" height="100%" />
           </div>
           <form
             onSubmit={(e) => {
@@ -110,11 +113,10 @@ const ItemContainer = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 8px;
-  background: white;
+  background: grey;
 
   &[data-selected="true"] {
-    border: 1px solid red;
-    background: blue;
+    border: 2px solid white;
   }
 `;
 
@@ -147,7 +149,7 @@ const ControllerWrapper = styled.div`
     cursor: pointer;
     height: 100%;
     aspect-ratio: 1 /1;
-    background-color: white;
+    color: white;
   }
 
   form {

@@ -77,7 +77,7 @@ export default function Home() {
                 setBusy(true);
                 setShowSnap(false);
                 const elements = e.target["elements"];
-                const body = elements["body"].value;
+                const body = elements["body"].value.toUpperCase();
 
                 if (isNotAscii(body)) {
                   alert("Only ASCII characters are allowed.");
