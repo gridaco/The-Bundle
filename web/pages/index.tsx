@@ -5,6 +5,7 @@ import { Client } from "api";
 import { useRouter } from "next/router";
 import { HomeHeader } from "components/header-home";
 import { Canvas, Controller, Snap } from "scaffold/home";
+import { isAscii, isNotAscii } from "utils/ascii";
 
 const DEFAULT_CREDIT_COUNT = 10;
 const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
@@ -65,6 +66,13 @@ export default function Home() {
                 setShowSnap(false);
                 const elements = e.target["elements"];
                 const body = elements["body"].value;
+
+                if (isNotAscii(body)) {
+                  alert("Only ASCII characters are allowed.");
+                  setBusy(false);
+                  return;
+                }
+
                 client
                   .renderStill("003-3d-glass-dispersion-text", {
                     data: {
