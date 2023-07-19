@@ -3,5 +3,5 @@ bpy
 imageio
 pillow
 apng
-webp
 tqdm
+mathutils
