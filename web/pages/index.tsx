@@ -4,8 +4,9 @@ import styled from "@emotion/styled";
 import { Client } from "api";
 import { useRouter } from "next/router";
 import { HomeHeader } from "components/header-home";
-import { Canvas, Controller, Snap } from "scaffold/home";
+import { Canvas, Controller } from "scaffold/home";
 import { isAscii, isNotAscii } from "utils/ascii";
+import { downloadImage } from "utils/download-image";
 
 const DEFAULT_CREDIT_COUNT = 10;
 const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
@@ -60,6 +61,10 @@ export default function Home() {
           </div>
           <div className="controller-position">
             <Controller
+              showDownload={showSnap}
+              onDownload={() => {
+                downloadImage(src, "lsd.png");
+              }}
               onSubmit={(e) => {
                 e.preventDefault();
                 setBusy(true);
@@ -93,7 +98,6 @@ export default function Home() {
                   });
               }}
             />
-            {showSnap && <Snap />}
           </div>
         </div>
         <p className="message">{message}</p>
