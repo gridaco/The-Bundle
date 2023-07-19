@@ -19,6 +19,7 @@ export default function Home() {
   const [busy, setBusy] = useState<boolean>(false);
   const [src, setSrc] = useState<string>(DEFAULT_SRC);
   const [showSnap, setShowSnap] = useState<boolean>(false);
+  const [text, setText] = useState<string>("");
   const client = useMemo(() => new Client(), []);
 
   useEffect(() => {
@@ -63,10 +64,16 @@ export default function Home() {
             <Controller
               showDownload={showSnap}
               onDownload={() => {
-                downloadImage(src, "lsd.png");
+                downloadImage(src, `${text}.png`);
               }}
               onSubmit={(e) => {
                 e.preventDefault();
+
+                if (credit <= 0) {
+                  alert("You have no credits left. Please upgrade to PRO.");
+                  return;
+                }
+
                 setBusy(true);
                 setShowSnap(false);
                 const elements = e.target["elements"];
@@ -95,6 +102,7 @@ export default function Home() {
                     setBusy(false);
                     // mock credit use
                     setCredit((credit) => credit - 1);
+                    setText(body);
                   });
               }}
             />
