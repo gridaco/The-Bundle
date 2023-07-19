@@ -7,6 +7,30 @@ import {
   TransparencyGridIcon,
 } from "@radix-ui/react-icons";
 
+interface Preset {
+  template: string;
+  thumbnail: string;
+  name: string;
+}
+
+const __presets: ReadonlyArray<Preset> = [
+  {
+    template: "003-3d-glass-dispersion-text",
+    name: "Glass 1",
+    thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
+  },
+  {
+    template: "004.1-bg-black",
+    name: "Glass 2",
+    thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
+  },
+  {
+    template: "004.2-bg-transparent",
+    name: "Glass 3",
+    thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
+  },
+];
+
 const SnapWrapper = styled.div`
   cursor: pointer;
   display: flex;
@@ -28,7 +52,6 @@ export function Controller({
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const presets = ["1", "2", "3", "4"];
   const [preset, setPreset] = useState("1");
 
   return (
@@ -46,15 +69,15 @@ export function Controller({
             height: "100%",
           }}
         >
-          {presets.map((it, i) => (
+          {__presets.map((it, i) => (
             <ItemContainer
               key={i}
-              data-selected={preset === it}
+              data-selected={preset === it.template}
               onClick={() => {
-                setPreset(it);
+                setPreset(it.template);
               }}
             >
-              {it}
+              <img src={it.thumbnail} width="100%" height="100%" />
             </ItemContainer>
           ))}
         </Bar>
@@ -113,6 +136,7 @@ const ItemContainer = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 8px;
+  overflow: hidden;
   background: grey;
 
   &[data-selected="true"] {
