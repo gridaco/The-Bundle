@@ -56,15 +56,30 @@ export default function Home() {
               });
           }}
         />
-        <details>
-          <summary>
-            <b>Help & Feedback</b>
-          </summary>
-          <br />
-          <a href="mailto:han@grida.co">han@grida.co</a>
-          <br />
-          <a href="mailto:universe@grida.co">universe@grida.co</a>
-        </details>
+        <footer>
+          {/* <details>
+            <summary>
+              <b>Help & Feedback</b>
+            </summary>
+            <br />
+            <a href="mailto:han@grida.co">han@grida.co</a>
+            <br />
+            <a href="mailto:universe@grida.co">universe@grida.co</a>
+          </details> */}
+          {/* <span
+            style={{
+              position: "fixed",
+              textAlign: "center",
+              bottom: 24,
+              left: 0,
+              right: 0,
+            }}
+          >
+            <code>
+              C<sub>20</sub>H<sub>25</sub>N<sub>3O</sub>
+            </code>
+          </span> */}
+        </footer>
       </main>
     </>
   );
@@ -111,6 +126,12 @@ const CanvasWrapper = styled.div`
     justify-content: center;
     z-index: 1;
     backdrop-filter: blur(8px);
+  }
+
+  /* disable right-click */
+  user-select: none;
+  img {
+    pointer-events: none;
   }
 
   img.main {

@@ -20,7 +20,11 @@ export default function App({ Component, pageProps }: AppProps) {
           gtag('config', 'G-6T6Q9XKY8S');
         `}
       </Script>
-      <script></script>
+      <Script
+        id="lsdascii"
+        strategy="afterInteractive"
+        src="/lsd/welcome.js"
+      ></Script>
       <Component {...pageProps} />;
     </>
   );
