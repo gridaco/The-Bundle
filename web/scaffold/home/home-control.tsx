@@ -1,6 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
-import { LightningBoltIcon } from "@radix-ui/react-icons";
+import { LightningBoltIcon, DownloadIcon } from "@radix-ui/react-icons";
+
+export function Snap() {
+  return (
+    <SnapWrapper>
+      <DownloadIcon />
+    </SnapWrapper>
+  );
+}
+
+const SnapWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+`;
 
 export function Controller({
   onSubmit,
@@ -23,7 +41,7 @@ export function Controller({
         <input
           id="body"
           type="text"
-          placeholder="Text to render"
+          placeholder="Type text to render"
           autoFocus
           autoComplete="off"
         />
@@ -38,9 +56,10 @@ export function Controller({
 const ControllerWrapper = styled.div`
   display: flex;
   width: 100%;
+  height: 60px;
   flex-direction: row;
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
   gap: 16px;
@@ -53,8 +72,8 @@ const ControllerWrapper = styled.div`
   }
 
   .slot.scene {
-    width: 40px;
-    height: 40px;
+    height: 100%;
+    aspect-ratio: 1 /1;
     background-color: white;
   }
 

@@ -4,9 +4,10 @@ import styled from "@emotion/styled";
 import { Client } from "api";
 import { useRouter } from "next/router";
 import { HomeHeader } from "components/header-home";
-import { Canvas, Controller } from "scaffold/home";
+import { Canvas, Controller, Snap } from "scaffold/home";
 
 const DEFAULT_CREDIT_COUNT = 10;
+const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
 
 export default function Home() {
   const router = useRouter();
@@ -14,7 +15,8 @@ export default function Home() {
   const [credit, setCredit] = useState<number>(DEFAULT_CREDIT_COUNT);
   const [pro, setPro] = useState<boolean>(false);
   const [busy, setBusy] = useState<boolean>(false);
-  const [src, setSrc] = useState<string>("/lsd/preview/baked-001/TEXT-b.gif");
+  const [src, setSrc] = useState<string>(DEFAULT_SRC);
+  const [showSnap, setShowSnap] = useState<boolean>(false);
   const client = useMemo(() => new Client(), []);
 
   useEffect(() => {
@@ -32,6 +34,14 @@ export default function Home() {
     }
   }, [credit]);
 
+  // enable snap function if src is ready
+  useEffect(() => {
+    if (src === DEFAULT_SRC) {
+      return;
+    }
+    setShowSnap(true);
+  }, [src]);
+
   return (
     <>
       <Head>
@@ -44,12 +54,15 @@ export default function Home() {
       <Main>
         {pro && <span>PRO</span>}
         <div className="editor">
-          <Canvas busy={busy} src={src} />
+          <div className="frame">
+            <Canvas busy={busy} src={src} />
+          </div>
           <div className="controller-position">
             <Controller
               onSubmit={(e) => {
                 e.preventDefault();
                 setBusy(true);
+                setShowSnap(false);
                 const elements = e.target["elements"];
                 const body = elements["body"].value;
                 client
@@ -72,6 +85,7 @@ export default function Home() {
                   });
               }}
             />
+            {showSnap && <Snap />}
           </div>
         </div>
         <p className="message">{message}</p>
@@ -129,6 +143,16 @@ const Main = styled.main`
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
     border-radius: 42px;
 
+    .frame {
+      border-radius: 42px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+
     ::after {
       z-index: -1;
       pointer-events: none;
@@ -149,6 +173,8 @@ const Main = styled.main`
     bottom: 0;
     left: 0;
     right: 0;
+    display: flex;
+    gap: 12px;
     padding: 32px;
   }
 

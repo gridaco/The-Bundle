@@ -16,7 +16,7 @@ export function HomeHeader() {
           priority
         />
       </Link>
-      <div className="menu">
+      {/* <div className="menu">
         <Link href="/crystal">
           <span className="item">CRYSTAL</span>
         </Link>
@@ -29,7 +29,7 @@ export function HomeHeader() {
       </div>
       <Link href="/rehab">
         <span>REHAB</span>
-      </Link>
+      </Link> */}
     </HeaderWrapper>
   );
 }
