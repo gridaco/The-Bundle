@@ -58,8 +58,7 @@ export function render(
       '--out',
       out_dir_name,
       // config
-      '--config',
-      JSON.stringify(config),
+      ...(config ? ['--config', JSON.stringify(config)] : []),
     ];
 
     const txt = ['python3', exe, ...args].join(' ');

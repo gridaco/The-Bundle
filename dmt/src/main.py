@@ -22,19 +22,19 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     data_body = data.get('body', obj.data.body)
     obj.data.body = data_body
 
-    # font
-    data_font = data.get('font', None)
-    # Local fonts directory -
-    # TODO: - resolve font path by name or id
-    # TODO: Add google font support
-    if data_font:
-        try:
-            font_file = HOME_DIR / './Library/Fonts' / (data_font + '.ttf')
-            font = bpy.data.fonts.load(font_file)
-            obj.data.font = font
-        except:
-            logging.log(logging.ERROR, 'Font not found: ' + data_font)
-            ...
+    # # font
+    # data_font = data.get('font', None)
+    # # Local fonts directory -
+    # # TODO: - resolve font path by name or id
+    # # TODO: Add google font support
+    # if data_font:
+    #     try:
+    #         font_file = HOME_DIR / './Library/Fonts' / (data_font + '.ttf')
+    #         font = bpy.data.fonts.load(font_file)
+    #         obj.data.font = font
+    #     except:
+    #         logging.log(logging.ERROR, 'Font not found: ' + data_font)
+    #         ...
 
     # == Paragraph ==
     # alignment
@@ -214,8 +214,9 @@ if __name__ == "__main__":
 
     processor.data(**data)
 
-    if request:
-        try:
-            processor.render(**request)
-        except:
-            ...
+    # if request:
+    #     try:
+    #         processor.render(**request)
+    #     except:
+    #         ...
+    processor.render()
