@@ -50,8 +50,6 @@ const HeaderWrapper = styled.header`
   background: rgba(0, 0, 0, 0.01);
   backdrop-filter: blur(24px);
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
   .home {
     cursor: pointer;
   }

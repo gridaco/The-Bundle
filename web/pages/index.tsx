@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
 import styled from "@emotion/styled";
 import { Client } from "api";
 import { useRouter } from "next/router";
@@ -31,35 +30,39 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HomeHeader />
-      <main className={styles.main}>
+      <Main>
         {pro && <span>PRO</span>}
-        <Canvas busy={busy} src={src} />
-        <Controller
-          onSubmit={(e) => {
-            e.preventDefault();
-            setBusy(true);
-            const elements = e.target["elements"];
-            const body = elements["body"].value;
-            client
-              .renderStill("003-3d-glass-dispersion-text", {
-                data: {
-                  text: {
+        <div className="editor">
+          <Canvas busy={busy} src={src} />
+          <div className="controller-position">
+            <Controller
+              onSubmit={(e) => {
+                e.preventDefault();
+                setBusy(true);
+                const elements = e.target["elements"];
+                const body = elements["body"].value;
+                client
+                  .renderStill("003-3d-glass-dispersion-text", {
                     data: {
-                      body,
+                      text: {
+                        data: {
+                          body,
+                        },
+                      },
                     },
-                  },
-                },
-              })
-              .then(({ still }) => {
-                setSrc(still);
-              })
-              .finally(() => {
-                setBusy(false);
-              });
-          }}
-        />
+                  })
+                  .then(({ still }) => {
+                    setSrc(still);
+                  })
+                  .finally(() => {
+                    setBusy(false);
+                  });
+              }}
+            />
+          </div>
+        </div>
         <p className="message">{message}</p>
-      </main>
+      </Main>
       <footer>
         {/* <details>
             <summary>
@@ -87,3 +90,52 @@ export default function Home() {
     </>
   );
 }
+
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+
+  .editor {
+    max-width: 800px;
+    max-height: 800px;
+    aspect-ratio: 1 / 1;
+
+    width: 640px;
+    height: 640px;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    border-radius: 42px;
+
+    ::after {
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      display: block;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      position: absolute;
+      border-radius: 52px;
+      border: 1px solid white;
+    }
+  }
+
+  .controller-position {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 32px;
+  }
+`;

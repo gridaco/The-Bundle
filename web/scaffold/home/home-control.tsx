@@ -37,6 +37,7 @@ export function Controller({
 
 const ControllerWrapper = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
   border-radius: 8px;
   padding: 16px;
@@ -59,11 +60,14 @@ const ControllerWrapper = styled.div`
 
   form {
     display: flex;
+    width: 100%;
     flex-direction: row;
     gap: 16px;
   }
 
   input {
+    flex: 1;
+    width: 100%;
     padding: 8px;
     background: none;
     border: none;
