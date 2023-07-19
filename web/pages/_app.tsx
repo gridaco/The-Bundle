@@ -25,7 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
         strategy="afterInteractive"
         src="/lsd/welcome.js"
       ></Script>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </>
   );
 }
