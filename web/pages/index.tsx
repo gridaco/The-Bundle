@@ -9,7 +9,8 @@ import { isAscii, isNotAscii } from "utils/ascii";
 import { downloadImage } from "utils/download-image";
 
 const DEFAULT_CREDIT_COUNT = 10;
-const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
+// const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
+const DEFAULT_SRC = "/lsd/preview/baked-001/0001.png";
 
 export default function Home() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function Home() {
               onDownload={() => {
                 downloadImage(src, `${text}.png`);
               }}
-              onSubmit={(e) => {
+              onSubmit={(e, options) => {
                 e.preventDefault();
 
                 if (credit <= 0) {
@@ -84,9 +85,9 @@ export default function Home() {
                   setBusy(false);
                   return;
                 }
-
+                const template = options.preset;
                 client
-                  .renderStill("003-3d-glass-dispersion-text", {
+                  .renderStill(template, {
                     data: {
                       text: {
                         data: {

@@ -1,7 +1,12 @@
 import Axios from "axios";
 
+const USE_LOCAL_SERVER = process.env.USE_LOCAL_SERVER === "true";
+
 const axios = Axios.create({
-  baseURL: "https://lsd.ngrok.dev/",
+  // baseURL: "http://localhost:3001/",
+  baseURL: USE_LOCAL_SERVER
+    ? "http://localhost:3001/"
+    : "https://lsd.ngrok.dev/",
 });
 
 export interface DMTRequest<T = any> {

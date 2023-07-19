@@ -17,18 +17,18 @@ const __presets: ReadonlyArray<Preset> = [
   {
     template: "003-3d-glass-dispersion-text",
     name: "Glass 1",
-    thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
+    thumbnail: "/lsd/preview/baked-001/0001.png",
   },
   {
     template: "004.1-bg-black",
     name: "Glass 2",
-    thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
+    thumbnail: "/lsd/preview/baked-004.1/thumbnail.png",
   },
-  {
-    template: "004.2-bg-transparent",
-    name: "Glass 3",
-    thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
-  },
+  // {
+  //   template: "004.2-bg-transparent",
+  //   name: "Glass 3",
+  //   thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
+  // },
 ];
 
 const SnapWrapper = styled.div`
@@ -49,10 +49,15 @@ export function Controller({
 }: {
   showDownload?: boolean;
   onDownload?: () => void;
-  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit?: (
+    e: React.FormEvent<HTMLFormElement>,
+    options: {
+      preset: string;
+    }
+  ) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [preset, setPreset] = useState("1");
+  const [preset, setPreset] = useState("003-3d-glass-dispersion-text");
 
   return (
     <div
@@ -97,7 +102,9 @@ export function Controller({
             onSubmit={(e) => {
               setExpanded(false);
               e.preventDefault();
-              onSubmit?.(e);
+              onSubmit?.(e, {
+                preset,
+              });
             }}
           >
             <input
@@ -137,7 +144,7 @@ const ItemContainer = styled.div`
   height: 100px;
   border-radius: 8px;
   overflow: hidden;
-  background: grey;
+  background: black;
 
   &[data-selected="true"] {
     border: 2px solid white;
