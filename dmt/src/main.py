@@ -158,21 +158,22 @@ class TemplateProcessor:
         # bpy.app.handlers.render_write.append(write_image)
         bpy.ops.render.render(write_still=True)
 
-    def render(self, format='PNG', engine='CYCLES'):
-        if self.has_anim:
-            # Renter the animation
-            self.render_animation(format=format, engine=engine)
-        else:
+    def render(self, format='PNG', engine='CYCLES', still=True):
+        if still or not self.has_anim:
             # Render the scene
             self.render_still(format=format, engine=engine)
+        else:
+            # Renter the animation
+            self.render_animation(format=format, engine=engine)
 
 
 if __name__ == "__main__":
-    file = os.getenv('BLENDER_FILE')
-    meta_file = os.getenv('META_FILE')
-    config = os.getenv('CONFIG')
-    data_file = os.getenv('DATA_FILE')
-    out = os.getenv('OUTPUT_PATH')
+    file = os.getenv('DMT_BLENDER_FILE')
+    meta_file = os.getenv('DMT_META_FILE')
+    config = os.getenv('DMT_CONFIG')
+    request = os.getenv('DMT_REQUEST')
+    data_file = os.getenv('DMT_DATA_FILE')
+    out = os.getenv('DMT_OUTPUT_PATH')
 
     # try to parse config json string
     if config is not None:
@@ -180,6 +181,18 @@ if __name__ == "__main__":
             config = json.loads(config)
         except:
             config = None
+
+    # try to parse request json string
+    if request is not None:
+        try:
+            request = json.loads(request)
+        except:
+            # default request
+            request = {
+                'format': 'PNG',
+                'engine': 'CYCLES',
+                'still': True
+            }
 
     try:
         with open(meta_file, 'r') as json_file:
@@ -200,7 +213,9 @@ if __name__ == "__main__":
         processor.config(**config)
 
     processor.data(**data)
-    # processor.render()
-    processor.render_still(
-        # engine='BLENDER_EEVEE'
-    )
+
+    if request:
+        try:
+            processor.render(**request)
+        except:
+            ...

@@ -103,19 +103,22 @@ def load_template(template):
 @click.option('-t', '--template', type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True, help="Path to the template dir")
 @click.option('-d', '--data', type=click.Path(exists=True, file_okay=True, dir_okay=False), required=True, help="New text content")
 @click.option('-c', '--config', required=False, help="config as json string")
+@click.option('-r', '--request', required=False, help="render request as json string")
 @click.option('-o', '--out', type=click.Path(), required=True, help="Path to the output file")
 @click.option('-b', '--blender', default=blenderpath(), help="Path to the Blender executable")
-def main(template, data, config, out, blender):
+def main(template, data, config, request, out, blender):
 
     file = load_template(template)
     print('tmp file available at', file)
 
-    # Set the environment variables
-    os.environ['BLENDER_FILE'] = file
-    os.environ['DATA_FILE'] = data
-    os.environ['OUTPUT_PATH'] = out
+    # use env vars to pass arguments to the blender script
+    os.environ['DMT_BLENDER_FILE'] = file
+    os.environ['DMT_DATA_FILE'] = data
+    os.environ['DMT_OUTPUT_PATH'] = out
     if config:
-        os.environ['CONFIG'] = config
+        os.environ['DMT_CONFIG'] = config
+    if request:
+        os.environ['DMT_REQUEST'] = request
 
     # Call Blender with subprocess
     blender_script = os.path.join(os.path.dirname(
