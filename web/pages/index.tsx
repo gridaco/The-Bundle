@@ -6,9 +6,12 @@ import { useRouter } from "next/router";
 import { HomeHeader } from "components/header-home";
 import { Canvas, Controller } from "scaffold/home";
 
+const DEFAULT_CREDIT_COUNT = 10;
+
 export default function Home() {
   const router = useRouter();
   const [message, setMessage] = useState<string>("");
+  const [credit, setCredit] = useState<number>(DEFAULT_CREDIT_COUNT);
   const [pro, setPro] = useState<boolean>(false);
   const [busy, setBusy] = useState<boolean>(false);
   const [src, setSrc] = useState<string>("/lsd/preview/baked-001/TEXT-b.gif");
@@ -20,6 +23,14 @@ export default function Home() {
       setPro(true);
     }
   }, [router.query]);
+
+  // mock credit message
+  useEffect(() => {
+    // e.g.  9 of 10 credits remaining
+    if (credit < DEFAULT_CREDIT_COUNT) {
+      setMessage(`${credit} of 10 credits remaining`);
+    }
+  }, [credit]);
 
   return (
     <>
@@ -56,6 +67,8 @@ export default function Home() {
                   })
                   .finally(() => {
                     setBusy(false);
+                    // mock credit use
+                    setCredit((credit) => credit - 1);
                   });
               }}
             />
@@ -137,5 +150,12 @@ const Main = styled.main`
     left: 0;
     right: 0;
     padding: 32px;
+  }
+
+  .message {
+    margin-top: 44px;
+    font-size: 14px;
+    opacity: 0.5;
+    font-family: "Inter", sans-serif;
   }
 `;
