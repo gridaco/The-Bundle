@@ -11,7 +11,7 @@ export default function Home() {
   const router = useRouter();
   const [pro, setPro] = useState<boolean>(false);
   const [busy, setBusy] = useState<boolean>(false);
-  const [src, setSrc] = useState<string>("/preview/baked-001/TEXT-b.gif");
+  const [src, setSrc] = useState<string>("/lsd/preview/baked-001/TEXT-b.gif");
   const client = useMemo(() => new Client(), []);
 
   useEffect(() => {

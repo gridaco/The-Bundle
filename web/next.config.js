@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@motions/char"],
   experimental: {},
+  basePath: "/lsd",
 
   // img
   images: {

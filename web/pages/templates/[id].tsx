@@ -6,7 +6,7 @@ import { Client, type DMTRequest } from "api";
 export default function T1({ id }: { id: string }) {
   const [busy, setBusy] = React.useState<boolean>(false);
   const [preview, setPreview] = React.useState<string>(
-    "/preview/baked-001/TEXT-b.gif"
+    "/lsd/preview/baked-001/TEXT-b.gif"
   );
   const client = useMemo(() => new Client(), []);
 

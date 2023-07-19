@@ -123,7 +123,7 @@ function TemplateCard({ id }: { id: string }) {
     >
       <TemplateCardWrapper>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/preview/baked-001/TEXT-b.gif" alt="Template Image" />
+        <img src="/lsd/preview/baked-001/TEXT-b.gif" alt="Template Image" />
         <div>Template Name</div>
       </TemplateCardWrapper>
     </Link>
