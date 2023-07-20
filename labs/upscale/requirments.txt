@@ -1,0 +1,6 @@
+pillow
+diffusers
+transformers
+accelerate
+scipy
+safetensors
