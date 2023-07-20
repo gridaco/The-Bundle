@@ -128,9 +128,13 @@ def main(template, data, config, request, out, blender):
     outdir = Path(os.path.dirname(out))
     # create dist dir
     (outdir / 'dist').mkdir(parents=True, exist_ok=True)
-    # Post processing: create a GIF from the rendered images
-    pngs_to_gif(outdir, outdir / 'dist/anim.gif')
-    pngs_to_apng(outdir, outdir / 'dist/anim.png')
+
+    try:
+        # Post processing: create a GIF from the rendered images
+        pngs_to_gif(outdir, outdir / 'dist/anim.gif')
+        pngs_to_apng(outdir, outdir / 'dist/anim.png')
+    except:
+        ...
 
     # remove tmp dir
     # get parent dir of tmp file

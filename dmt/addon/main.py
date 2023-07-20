@@ -9,6 +9,7 @@ bl_info = {
 }
 
 import bpy
+import json
 
 class MainPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -30,6 +31,26 @@ class MainPanel(bpy.types.Panel):
         row.label(text="Active object is: " + obj.name)
         row = layout.row()
         row.prop(obj, "name")
+
+        # export button
+        row = layout.row()
+        row.operator("object.export_json", text="Export")
+
+
+    def export_json():
+        data = {}
+
+        for obj in bpy.context.scene.objects:
+            data[obj.name] = {
+                'location': tuple(obj.location),
+                'rotation': tuple(obj.rotation_euler),
+                'scale': tuple(obj.scale),
+            }
+
+        json_data = json.dumps(data, indent=4)
+
+        with open('scene_data.json', 'w') as f:
+            f.write(json_data)
 
 def register():
     bpy.utils.register_class(MainPanel)
