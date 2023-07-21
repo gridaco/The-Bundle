@@ -1,3 +1,7 @@
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import axios from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
@@ -69,13 +73,23 @@ export async function upscale2x(
 
   const result = response.data.artifacts[0];
 
-  if (save) {
-    fs.writeFileSync(save, Buffer.from(result.base64, 'base64'));
-    return {
-      ...result,
-      save: save,
-    };
-  }
+  switch (result.finishReason) {
+    case 'CONTENT_FILTERED': {
+      throw new BadRequestException('Image was filtered out');
+    }
+    case 'ERROR': {
+      throw new InternalServerErrorException('Upscaler failed');
+    }
+    case 'SUCCESS': {
+      if (save) {
+        fs.writeFileSync(save, Buffer.from(result.base64, 'base64'));
+        return {
+          ...result,
+          save: save,
+        };
+      }
 
-  return result;
+      return result;
+    }
+  }
 }
