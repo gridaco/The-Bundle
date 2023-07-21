@@ -15,14 +15,14 @@ interface Preset {
 
 const __presets: ReadonlyArray<Preset> = [
   {
+    template: "004.1-bg-black",
+    name: "Glass 2",
+    thumbnail: "/lsd/preview/baked-004.1/lsd.jpeg",
+  },
+  {
     template: "003-3d-glass-dispersion-text",
     name: "Glass 1",
     thumbnail: "/lsd/preview/baked-001/0001.png",
-  },
-  {
-    template: "004.1-bg-black",
-    name: "Glass 2",
-    thumbnail: "/lsd/preview/baked-004.1/thumbnail.png",
   },
   // {
   //   template: "004.2-bg-transparent",
@@ -57,7 +57,7 @@ export function Controller({
   ) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [preset, setPreset] = useState("003-3d-glass-dispersion-text");
+  const [preset, setPreset] = useState("004.1-bg-black");
 
   return (
     <div
