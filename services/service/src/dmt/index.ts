@@ -23,6 +23,9 @@ export interface DMTConfig {
 
 interface DMTResult {
   still: string;
+  transparent?: boolean;
+  resolution_x: number;
+  resolution_y: number;
 }
 
 export function render(
@@ -90,6 +93,9 @@ export function render(
           resolve({
             // ...result,
             still,
+            // TODO: update with response from dmt
+            resolution_x: 500,
+            resolution_y: 500,
           });
           return;
         }
