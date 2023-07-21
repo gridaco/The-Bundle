@@ -96,8 +96,8 @@ export default function Home() {
                       },
                     },
                   })
-                  .then(({ still }) => {
-                    setSrc(still);
+                  .then(({ still, still_2x }) => {
+                    setSrc(still_2x ?? still);
                   })
                   .finally(() => {
                     setBusy(false);

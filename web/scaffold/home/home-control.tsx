@@ -111,6 +111,7 @@ export function Controller({
               id="body"
               type="text"
               placeholder="Type text to render"
+              maxLength={7}
               autoFocus
               autoComplete="off"
             />

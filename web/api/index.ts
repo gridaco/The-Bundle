@@ -21,11 +21,19 @@ export interface DMTConfig {
   engine: "CYCLES" | "BLENDER_EEVEE";
 }
 
+export interface DMTResponse {
+  still: string;
+  still_2x: string;
+}
+
 export class Client {
   constructor() {}
 
   async renderStill(id: string, request: DMTRequest) {
-    const { data } = await axios.post(`/templates/${id}/render-still`, request);
+    const { data } = await axios.post<DMTResponse>(
+      `/templates/${id}/render-still`,
+      request
+    );
     return data;
   }
 }
