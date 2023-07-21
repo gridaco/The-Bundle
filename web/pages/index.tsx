@@ -50,8 +50,12 @@ export default function Home() {
     <>
       <Head>
         <title>LSD</title>
-        <meta name="description" content="3D Text Generator" />
+        <meta name="description" content="Acid Text Generator" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* og image */}
+        <meta property="og:title" content="LSD" />
+        <meta property="og:description" content="Acid Text Generator" />
+        <meta property="og:image" content="lsd/og-image.gif" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HomeHeader />
