@@ -6,8 +6,6 @@ import axios from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 
-const STABILITYAI_API_KEY = process.env.STABILITYAI_API_KEY;
-
 /**
  * Response when requested with application/json
  */
@@ -46,6 +44,8 @@ export async function upscale2x(
     save?: string;
   }
 > {
+  const STABILITYAI_API_KEY = process.env.STABILITYAI_API_KEY;
+
   // NOTE: This example is using a NodeJS FormData library.
   // Browsers should use their native FormData class.
   // React Native apps should also use their native FormData class.
