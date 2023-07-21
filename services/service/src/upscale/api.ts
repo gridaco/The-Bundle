@@ -2,14 +2,16 @@ import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
 
+const STABILITYAI_API_KEY = process.env.STABILITYAI_API_KEY;
+
 /**
  * Response when requested with application/json
  */
-interface UpscaleApiJsonResponse {
+export interface UpscaleApiJsonResponse {
   artifacts: ReadonlyArray<UpscaleApiArtifact>;
 }
 
-interface UpscaleApiArtifact {
+export interface UpscaleApiArtifact {
   /**
    * Image encoded in base64
    */
@@ -50,7 +52,7 @@ export async function upscale2x(
     headers: {
       ...formData.getHeaders(),
       Accept: 'application/json',
-      Authorization: 'Bearer YOUR_API_KEY',
+      Authorization: `Bearer ${STABILITYAI_API_KEY}`,
     },
   };
 
