@@ -55,7 +55,7 @@ export default function Home() {
         {/* og image */}
         <meta property="og:title" content="LSD" />
         <meta property="og:description" content="Acid Text Generator" />
-        <meta property="og:image" content="lsd/og-image.gif" />
+        <meta property="og:image" content="https://grida.co/lsd/og-image.gif" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HomeHeader />
