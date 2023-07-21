@@ -3,6 +3,7 @@ import * as fs from 'fs/promises';
 import { nanoid } from 'nanoid';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { DMTRequest, render } from '../dmt';
+import * as sharp from 'sharp';
 import { upscale2x } from '../upscale/api';
 
 const S3 = new S3Client({});
@@ -40,7 +41,8 @@ export class TemplatesService {
       // if not transparent, apply upscaler
       // TODO: if resolition px exceeds, skip.
       try {
-        const upscaled = await upscale2x(res.still);
+        const bg_added = await addBackgroundColor(res.still, black);
+        const upscaled = await upscale2x(bg_added);
         const up2 = S3.send(
           new PutObjectCommand({
             Bucket: BUCKET,
@@ -52,15 +54,17 @@ export class TemplatesService {
         );
         uploads.push(up2);
       } catch (e) {
-        //
+        console.error(e);
       }
     }
 
     // wait for uploads to finish
-    await Promise.all(uploads);
+    const results = await Promise.all(uploads);
 
-    const url_1x = `https://dev-dmt-out.s3.us-west-1.amazonaws.com/${key_1x}`;
-    const url_2x = `https://dev-dmt-out.s3.us-west-1.amazonaws.com/${key_2x}`;
+    const url_1x =
+      results[0] && `https://dev-dmt-out.s3.us-west-1.amazonaws.com/${key_1x}`;
+    const url_2x =
+      results[1] && `https://dev-dmt-out.s3.us-west-1.amazonaws.com/${key_2x}`;
 
     return {
       still: url_1x,
@@ -75,4 +79,24 @@ export class TemplatesService {
   findOne(id: string) {
     return `This action returns a #${id} template`;
   }
+}
+
+const black = {
+  r: 0,
+  g: 0,
+  b: 0,
+};
+
+async function addBackgroundColor(
+  file: string | Buffer,
+  background: {
+    r: number;
+    g: number;
+    b: number;
+  } = black,
+): Promise<Buffer> {
+  return await sharp(file)
+    .flatten({ background: background })
+    .jpeg()
+    .toBuffer();
 }
