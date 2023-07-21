@@ -9,6 +9,7 @@ import numpy as np
 import imageio
 from apng import APNG
 from pathlib import Path
+from PIL import Image
 
 
 def blenderpath():
@@ -129,12 +130,17 @@ def main(template, data, config, request, out, blender):
     # create dist dir
     (outdir / 'dist').mkdir(parents=True, exist_ok=True)
 
-    try:
-        # Post processing: create a GIF from the rendered images
-        pngs_to_gif(outdir, outdir / 'dist/anim.gif')
-        pngs_to_apng(outdir, outdir / 'dist/anim.png')
-    except:
-        ...
+    # optimzie pngs
+    for png in outdir.glob('*.png'):
+        img = Image.open(png)
+        img.save(png, optimize=True)
+
+    # try:
+    #     # Post processing: create a GIF from the rendered images
+    #     pngs_to_gif(outdir, outdir / 'dist/anim.gif')
+    #     pngs_to_apng(outdir, outdir / 'dist/anim.png')
+    # except:
+    #     ...
 
     # remove tmp dir
     # get parent dir of tmp file
