@@ -1,14 +1,33 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  UseInterceptors,
+  UploadedFile,
+  Res,
+} from '@nestjs/common';
 import { UtilityService } from './utility.service';
 import { DMTRequest } from '../dmt';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('utility')
 export class UtilityController {
-  constructor(private readonly templatesService: UtilityService) {}
+  constructor(private readonly service: UtilityService) {}
 
   @Post('upscale/2x')
-  // TODO: multiple body params
-  upscale2x() {
-    // return this.templatesService.renderStill(id, body);
+  @UseInterceptors(FileInterceptor('image'))
+  async upscale2x(@UploadedFile() file: Express.Multer.File, @Res() res) {
+    const result = await this.service.upscale2x(file);
+
+    const buffer = Buffer.from(result.base64, 'base64');
+
+    res.set({
+      'Content-Type': 'image/png',
+      'Content-Length': buffer.length,
+    });
+
+    res.send(buffer);
   }
 }

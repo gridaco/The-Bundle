@@ -1,6 +1,6 @@
 import axios from 'axios';
-import FormData from 'form-data';
-import fs from 'fs';
+import * as FormData from 'form-data';
+import * as fs from 'fs';
 
 const STABILITYAI_API_KEY = process.env.STABILITYAI_API_KEY;
 
@@ -35,7 +35,7 @@ export interface UpscaleApiArtifact {
  * @param save path to save image - if not provided, will not write to disk
  */
 export async function upscale2x(
-  input: string,
+  input: string | Buffer,
   save?: string,
 ): Promise<
   UpscaleApiArtifact & {
@@ -46,7 +46,12 @@ export async function upscale2x(
   // Browsers should use their native FormData class.
   // React Native apps should also use their native FormData class.
   const formData = new FormData();
-  formData.append('image', fs.createReadStream(input));
+
+  if (typeof input === 'string') {
+    formData.append('image', fs.createReadStream(input));
+  } else if (input instanceof Buffer) {
+    formData.append('image', input);
+  }
 
   const config = {
     headers: {
