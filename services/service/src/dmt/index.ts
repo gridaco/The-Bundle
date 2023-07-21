@@ -88,14 +88,14 @@ export function render(
           // );
           // const result = JSON.parse(result_raw.toString());
 
-          const still = path.resolve(out_dir_name, '.png');
+          const still = path.resolve(out_dir_name, 'still.png');
 
           resolve({
             // ...result,
             still,
             // TODO: update with response from dmt
-            resolution_x: 500,
-            resolution_y: 500,
+            resolution_x: 512,
+            resolution_y: 512,
           });
           return;
         }

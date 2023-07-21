@@ -120,8 +120,8 @@ class TemplateProcessor:
         self.config(
             frame_end=min(60, bpy.context.scene.frame_end),
             samples=128,
-            resolution_x=500,
-            resolution_y=500
+            resolution_x=512,
+            resolution_y=512
         )
 
     def config(self, **preferences):
@@ -149,6 +149,9 @@ class TemplateProcessor:
     def render_still(self, format='PNG', engine='CYCLES'):
         bpy.context.scene.render.engine = engine
         bpy.context.scene.render.image_settings.file_format = format
+
+        # this will result ~/still.png
+        bpy.context.scene.render.filepath = self.output_dir + '/still'
 
         # def write_image(rend_result):
         #     # Here you can do whatever you want with the rend_result
