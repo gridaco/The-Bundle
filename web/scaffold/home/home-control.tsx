@@ -4,8 +4,11 @@ import {
   LightningBoltIcon,
   DownloadIcon,
   ShadowIcon,
+  CameraIcon,
   TransparencyGridIcon,
 } from "@radix-ui/react-icons";
+import * as Tabs from "@radix-ui/react-tabs";
+import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
 
 interface Preset {
   template: string;
@@ -42,6 +45,39 @@ const SnapWrapper = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
+function CameraComposition({}) {
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  return (
+    <CameraCompsitionContainer>
+      <BakedImageSequence3DView
+        disableZoom
+        onChange={(e) => {
+          setRotation(e.rotation);
+        }}
+        resolver={({ rotation }) => {
+          return `http://localhost:3000/render_x${rotation.y}_y${rotation.x}_z0.png`;
+        }}
+      />
+      <input id="x" type="number" min={-45} max={45} value={rotation.x} />
+      <input id="y" type="number" min={-30} max={30} value={rotation.y} />
+      <input id="z" type="number" min={-30} max={30} value={0} />
+    </CameraCompsitionContainer>
+  );
+}
+
+const CameraCompsitionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+
+  canvas {
+    width: 100%;
+  }
+`;
+
 export function Controller({
   showDownload,
   onDownload,
@@ -74,17 +110,39 @@ export function Controller({
             height: "100%",
           }}
         >
-          {__presets.map((it, i) => (
-            <ItemContainer
-              key={i}
-              data-selected={preset === it.template}
-              onClick={() => {
-                setPreset(it.template);
-              }}
-            >
-              <img src={it.thumbnail} width="100%" height="100%" />
-            </ItemContainer>
-          ))}
+          <Tabs.Root className="TabsRoot" defaultValue="preset">
+            <Tabs.List className="TabsList" aria-label="Manage your account">
+              <Tabs.Trigger className="TabsTrigger" value="preset">
+                Preset <TransparencyGridIcon />
+              </Tabs.Trigger>
+              <Tabs.Trigger className="TabsTrigger" value="camera">
+                Camera <CameraIcon />
+              </Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content className="TabsContent" value="preset">
+              <div
+                style={{
+                  display: "flex",
+                  gap: 12,
+                }}
+              >
+                {__presets.map((it, i) => (
+                  <ItemContainer
+                    key={i}
+                    data-selected={preset === it.template}
+                    onClick={() => {
+                      setPreset(it.template);
+                    }}
+                  >
+                    <img src={it.thumbnail} width="100%" height="100%" />
+                  </ItemContainer>
+                ))}
+              </div>
+            </Tabs.Content>
+            <Tabs.Content className="TabsContent" value="camera">
+              <CameraComposition />
+            </Tabs.Content>
+          </Tabs.Root>
         </Bar>
       )}
 
@@ -154,9 +212,9 @@ const ItemContainer = styled.div`
 
 const Bar = styled.div`
   display: flex;
+  flex-direction: row;
   width: 100%;
   height: 60px;
-  flex-direction: row;
   border-radius: 12px;
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
