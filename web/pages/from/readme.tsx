@@ -4,60 +4,118 @@ import { unified } from "unified";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkParse from "remark-parse";
-import styles from "styles/github-markdown-dark.module.css";
+import readmeContentStyles from "styles/github-markdown-dark.module.css";
+import { LinearProgress } from "@mui/material";
 import { Client } from "api";
 
 export default function StartFromReadme() {
+  const [url, setUrl] = React.useState<string>("");
   const client = useMemo(() => new Client(), []);
   const [readmeContent, setReadmeContent] = React.useState<string>("");
   const [logo, setLogo] = React.useState<string>("");
+  const [busy, setBusy] = React.useState<boolean>(false);
 
   const onSubmit = async () => {
-    const content = await getReadmeContent("gridaco", "lsd");
+    const { owner, repo } = parseRepo(url);
 
-    setReadmeContent(content);
+    setBusy(true);
+
+    const content = await getReadmeContent(owner, repo);
 
     const brand = analyzeBrandName({
-      repo: "gridaco/lsd",
+      repo: `${owner}/${repo}`,
       readme: content,
     });
 
-    client
-      .renderStill("004.1-bg-black", {
-        data: {
-          text: {
-            data: {
-              body: brand,
-            },
+    const imgres = await client.renderStill("004.1-bg-black", {
+      data: {
+        text: {
+          data: {
+            body: brand,
           },
         },
-      })
-      .then((res) => {
-        setLogo(res.still_2x || res.still);
-      });
+      },
+    });
+
+    setReadmeContent(content);
+    setLogo(imgres.still_2x || imgres.still);
+
+    setBusy(false);
   };
 
   return (
     <Main>
-      <input placeholder="Enter your public Github Repo URL" />
-      <button onClick={onSubmit}>Submit</button>
-      <div></div>
-      <img src="logo" />
-      <ReactMarkdown
-        className={styles["markdown-body"]}
-        rehypePlugins={[rehypeRaw]}
-      >
-        {readmeContent}
-      </ReactMarkdown>
+      <style jsx global>{`
+        body {
+          background: #0d1117;
+        }
+      `}</style>
+      <div className="content">
+        <Input url={url} onChange={setUrl} onSubmit={onSubmit} />
+
+        {busy && <LinearProgress />}
+        <div className="readme">
+          <img className="logo" src={logo} />
+          <ReactMarkdown
+            className={readmeContentStyles["markdown-body"]}
+            rehypePlugins={[rehypeRaw]}
+          >
+            {readmeContent}
+          </ReactMarkdown>
+        </div>
+      </div>
     </Main>
   );
 }
 
+function Input({
+  url,
+  onChange,
+  onSubmit,
+}: {
+  url: string;
+  onChange: (url: string) => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <div>
+      <input
+        placeholder="Enter your public Github Repo URL"
+        value={url}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onSubmit();
+          }
+        }}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
+      />
+      <button onClick={onSubmit}>Submit</button>
+    </div>
+  );
+}
+
 const Main = styled.main`
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  max-width: 800px;
+  width: 100vw;
+  height: 100vh;
+
+  .content {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    overflow: scroll;
+  }
+
+  .logo {
+    width: 100%;
+    height: 100%;
+  }
+
+  .readme {
+    padding: 24px;
+  }
 `;
 
 async function getReadmeContent(owner: string, repo: string): Promise<string> {
@@ -78,6 +136,16 @@ async function getReadmeContent(owner: string, repo: string): Promise<string> {
   const readmeContent = atob(jsonData.content);
 
   return readmeContent;
+}
+
+function parseRepo(url: string) {
+  const u = new URL(url);
+  const path = u.pathname;
+  const parts = path.split("/");
+  const owner = parts[1];
+  const repo = parts[2];
+
+  return { owner, repo };
 }
 
 /**
