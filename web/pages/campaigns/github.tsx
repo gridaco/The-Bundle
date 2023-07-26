@@ -105,7 +105,6 @@ const Main = styled.main`
     display: flex;
     flex-direction: column;
     max-width: 800px;
-    overflow: scroll;
   }
 
   .logo {
@@ -115,6 +114,8 @@ const Main = styled.main`
 
   .readme {
     padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
   }
 `;
 
