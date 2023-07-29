@@ -14,15 +14,25 @@ export function BakedImageSequence3DView({
   onChange,
   resolver,
   disableZoom,
+  style,
+  width = 1000,
+  height = 1000,
 }: {
   onChange?: (e: Object3DViewChangeEvent) => void;
   resolver: Resolver;
   disableZoom?: boolean;
+  style?: React.CSSProperties;
+  width?: number;
+  height?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>();
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
+  const isBrowser = typeof window !== "undefined";
+
+  const img = useRef(isBrowser ? new Image() : {});
+
   const step = 3;
 
   const x_min = -45;
@@ -69,22 +79,25 @@ export function BakedImageSequence3DView({
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    const img = new Image();
 
-    img.onload = function () {
-      const x = canvas.width / 2 - (img.width / 2) * zoom;
-      const y = canvas.height / 2 - (img.height / 2) * zoom;
+    (img.current as HTMLImageElement).onload = function () {
+      const iw = canvas.width;
+      const ih = canvas.height;
 
+      const x = canvas.width / 2 - (iw / 2) * zoom;
+      const y = canvas.height / 2 - (ih / 2) * zoom;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       ctx.save();
       ctx.translate(x, y);
       ctx.scale(zoom, zoom);
-      ctx.drawImage(img, 0, 0, img.width, img.height);
+      ctx.drawImage(img.current as HTMLImageElement, 0, 0, iw, ih);
       ctx.restore();
     };
+  }, [zoom]);
 
-    img.src = resolver({
+  useEffect(() => {
+    (img.current as HTMLImageElement).src = resolver({
       rotation: {
         x: rotation.x,
         y: rotation.y,
@@ -101,10 +114,16 @@ export function BakedImageSequence3DView({
       },
       zoom,
     });
-  }, [rotation, zoom]);
+  }, [onChange, resolver, rotation, zoom]);
 
   return (
     <canvas
+      width={width}
+      height={height}
+      style={{
+        ...style,
+        cursor: isDragging ? "grabbing" : "default",
+      }}
       id="canvas"
       ref={canvasRef}
       data-interaction={isDragging ? "dragging" : ""}

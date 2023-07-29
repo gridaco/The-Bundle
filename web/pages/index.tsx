@@ -10,7 +10,7 @@ import { downloadImage } from "utils/download-image";
 
 const DEFAULT_CREDIT_COUNT = 10;
 // const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
-const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
+// const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
 
 export default function Home() {
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function Home() {
   const [credit, setCredit] = useState<number>(DEFAULT_CREDIT_COUNT);
   const [pro, setPro] = useState<boolean>(false);
   const [busy, setBusy] = useState<boolean>(false);
-  const [src, setSrc] = useState<string>(DEFAULT_SRC);
+  const [src, setSrc] = useState<string>("");
   const [showSnap, setShowSnap] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const client = useMemo(() => new Client(), []);
@@ -40,7 +40,7 @@ export default function Home() {
 
   // enable snap function if src is ready
   useEffect(() => {
-    if (src === DEFAULT_SRC) {
+    if (src === "") {
       return;
     }
     setShowSnap(true);

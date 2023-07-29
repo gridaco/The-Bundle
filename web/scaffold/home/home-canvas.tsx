@@ -1,34 +1,45 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { LinearProgress } from "@mui/material";
 import styled from "@emotion/styled";
+import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
 
 export function Canvas({ src, busy }: { src?: string; busy?: boolean }) {
   return (
-    <div className="canvas">
-      <CanvasWrapper>
-        {busy && (
-          <div className="loading">
-            <LinearProgress
-              sx={{
-                backgroundColor: "white",
-                "& .MuiLinearProgress-bar": {
-                  backgroundColor: "black",
-                },
-              }}
-              style={{
-                width: "50%",
-              }}
-            />
-          </div>
-        )}
-        <img className="main" src={src} />
-      </CanvasWrapper>
-    </div>
+    <CanvasWrapper>
+      {busy && (
+        <div className="loading">
+          <LinearProgress
+            sx={{
+              backgroundColor: "white",
+              "& .MuiLinearProgress-bar": {
+                backgroundColor: "black",
+              },
+            }}
+            style={{
+              width: "50%",
+            }}
+          />
+        </div>
+      )}
+      <BakedImageSequence3DView
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+        onChange={() => {}}
+        resolver={({ rotation }) => {
+          return `http://localhost:3000/render_x${rotation.y}_y${rotation.x}_z0.png`;
+        }}
+      />
+      {src && <img className="main" src={src} />}
+    </CanvasWrapper>
   );
 }
 
 const CanvasWrapper = styled.div`
   overflow: hidden;
+  width: 100%;
+  height: 100%;
 
   .loading {
     position: absolute;
