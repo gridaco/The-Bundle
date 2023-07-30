@@ -1,13 +1,53 @@
 import Stripe from "stripe";
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
 });
 
 export default async function handler(req, res) {
+  // get supabase user
+
+  const supabase = createPagesServerClient({ req, res });
+  const { data } = await supabase.auth.getUser(req.cookies["sb-access-token"]);
+
+  const { user } = data;
+
+  const { email, id, user_metadata } = user!;
+
+  const { stripe_customer_id } = user_metadata;
+
+  let customer_id = stripe_customer_id;
+
+  if (!stripe_customer_id) {
+    // create stripe customer
+    const customer = await stripe.customers.create({
+      email,
+    });
+
+    console.log("new stripe customer created", customer);
+
+    // update user identity with stripe customer id
+    await supabase.auth.updateUser({
+      data: {
+        stripe_customer_id: customer.id,
+      },
+    });
+
+    customer_id = customer.id;
+  } else {
+    console.log("customer already exists", stripe_customer_id);
+  }
+
+  if (!user) {
+    res.status(401).json("Unauthorized");
+  }
+
   if (req.method === "POST") {
     try {
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create({
+        customer: customer_id,
         line_items: [
           {
             // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
@@ -19,7 +59,6 @@ export default async function handler(req, res) {
         mode: "subscription",
         success_url: `${req.headers.origin}/lsd/?success=true`,
         cancel_url: `${req.headers.origin}/lsd/?canceled=true`,
-        automatic_tax: { enabled: true },
       });
       res.redirect(303, session.url);
     } catch (err) {
