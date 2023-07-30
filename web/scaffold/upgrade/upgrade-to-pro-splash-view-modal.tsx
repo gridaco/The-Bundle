@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-export function UpgradeModalLayout({
+export function UpgradeToProSplashView({
   hero,
   children,
 }: {
