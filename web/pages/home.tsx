@@ -3,6 +3,7 @@ import {
   UpgradeToProSplashView,
   ColumnImages,
   UpgradeToProPlansView,
+  UpgradeToProBadge,
 } from "@/scaffold/upgrade";
 import { TemplateDropdown } from "@/scaffold/home";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -12,7 +13,7 @@ export default function Home() {
   return (
     <main>
       <TemplateDropdown />
-
+      <UpgradeToProBadge />
       <UpgradeToProDialog />
     </main>
   );
