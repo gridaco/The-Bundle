@@ -3,7 +3,13 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 import Link from "next/link";
 
-export function HomeHeader() {
+export function HomeHeader({
+  left,
+  right,
+}: {
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+}) {
   return (
     <HeaderWrapper>
       <Link href="/">
@@ -16,6 +22,8 @@ export function HomeHeader() {
           priority
         />
       </Link>
+      <div className="left">{left}</div>
+      <div className="right">{right}</div>
       {/* <div className="menu">
         <Link href="/crystal">
           <span className="item">CRYSTAL</span>
@@ -52,6 +60,18 @@ const HeaderWrapper = styled.header`
 
   .home {
     cursor: pointer;
+  }
+
+  .left {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .right {
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 
   .menu {

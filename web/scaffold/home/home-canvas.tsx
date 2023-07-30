@@ -21,7 +21,7 @@ export function Canvas({ src, busy }: { src?: string; busy?: boolean }) {
           />
         </div>
       )}
-      <BakedImageSequence3DView
+      {/* <BakedImageSequence3DView
         style={{
           width: "100%",
           height: "100%",
@@ -30,7 +30,7 @@ export function Canvas({ src, busy }: { src?: string; busy?: boolean }) {
         resolver={({ rotation }) => {
           return `http://localhost:3000/render_x${rotation.y}_y${rotation.x}_z0.png`;
         }}
-      />
+      /> */}
       {src && <img className="main" src={src} />}
     </CanvasWrapper>
   );

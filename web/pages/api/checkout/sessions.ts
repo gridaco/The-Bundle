@@ -61,8 +61,8 @@ export default async function handler(req, res) {
         },
       ],
       mode: "subscription",
-      success_url: `${baseurl}/home/?return-reason=pro-activated`,
-      cancel_url: `${baseurl}/home/`,
+      success_url: `${baseurl}/?return-reason=pro-activated`,
+      cancel_url: `${baseurl}/`,
     });
     res.redirect(303, session.url);
   } catch (err) {

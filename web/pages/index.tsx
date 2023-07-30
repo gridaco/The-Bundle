@@ -1,16 +1,25 @@
 import React, { useEffect, useMemo, useState } from "react";
+
+import { TemplateDropdown } from "@/scaffold/home";
+import { Dialog } from "@/components/dialog";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import styled from "@emotion/styled";
 import { Client } from "api";
-import { useRouter } from "next/router";
 import { HomeHeader } from "components/header-home";
 import { Canvas, Controller } from "scaffold/home";
 import { isAscii, isNotAscii } from "utils/ascii";
 import { downloadImage } from "utils/download-image";
+import {
+  UpgradeToProSplashView,
+  ColumnImages,
+  UpgradeToProPlansView,
+  UpgradeToProBadge,
+} from "@/scaffold/upgrade";
 
 const DEFAULT_CREDIT_COUNT = 10;
 // const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
-// const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
+const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
 
 export default function Home() {
   const router = useRouter();
@@ -18,7 +27,7 @@ export default function Home() {
   const [credit, setCredit] = useState<number>(DEFAULT_CREDIT_COUNT);
   const [pro, setPro] = useState<boolean>(false);
   const [busy, setBusy] = useState<boolean>(false);
-  const [src, setSrc] = useState<string>("");
+  const [src, setSrc] = useState<string>(DEFAULT_SRC);
   const [showSnap, setShowSnap] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const client = useMemo(() => new Client(), []);
@@ -40,7 +49,7 @@ export default function Home() {
 
   // enable snap function if src is ready
   useEffect(() => {
-    if (src === "") {
+    if (src === DEFAULT_SRC) {
       return;
     }
     setShowSnap(true);
@@ -58,9 +67,10 @@ export default function Home() {
         <meta property="og:image" content="https://grida.co/lsd/og-image.gif" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <HomeHeader />
+      <HomeHeader left={<TemplateDropdown />} right={<UpgradeToProDialog />} />
       <Main>
-        {pro && <span>PRO</span>}
+        <ProActivatedPortal />
+
         <div className="editor">
           <div className="frame">
             <Canvas busy={busy} src={src} />
@@ -210,3 +220,86 @@ const Main = styled.main`
     font-family: "Inter", sans-serif;
   }
 `;
+
+/**
+ * Modal that shows when with a successful pro activation with stripe checkout callback.
+ * To mock this view, add `?return-reason=pro-activated` to the url.
+ */
+function ProActivatedPortal() {
+  const [activated, setActivated] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query["return-reason"] === "pro-activated") {
+      setActivated(true);
+    }
+  }, [router.query]);
+
+  useEffect(() => {
+    if (activated) {
+      setOpen(true);
+    }
+  }, [activated]);
+
+  return (
+    <Dialog open={open}>
+      <h1>Pro activated</h1>
+      <button
+        onClick={() => {
+          setOpen(false);
+        }}
+      >
+        Continue
+      </button>
+    </Dialog>
+  );
+}
+
+function UpgradeToProDialog() {
+  const router = useRouter();
+  const [view, setView] = React.useState<"splash" | "plans">("splash");
+
+  return (
+    <Dialog trigger={<UpgradeToProBadge />}>
+      {view === "plans" ? (
+        <UpgradeToProPlansView
+          onUpgradeClick={(price) => {
+            // POST
+            router.push(`/api/checkout/sessions?price=${price}`);
+          }}
+        />
+      ) : (
+        <UpgradeToProSplashView
+          hero={
+            <ColumnImages
+              src={[
+                "/lsd/pro/hero-columns/01.png",
+                "/lsd/pro/hero-columns/02.png",
+                "/lsd/pro/hero-columns/03.png",
+                "/lsd/pro/hero-columns/04.png",
+                "/lsd/pro/hero-columns/05.png",
+                "/lsd/pro/hero-columns/06.png",
+              ]}
+            />
+          }
+        >
+          <>
+            <h1>Upgrade to Pro</h1>
+            <p>
+              Upgrade to Pro and get access to exclusive templates and xxx.
+              {/* TODO: update text */}
+            </p>
+            <button
+              onClick={() => {
+                setView("plans");
+              }}
+            >
+              View Plans
+            </button>
+          </>
+        </UpgradeToProSplashView>
+      )}
+    </Dialog>
+  );
+}

@@ -23,16 +23,24 @@ export function Dialog({
 }
 
 const DialogContent = styled(_Dialog.Content)`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
   border: solid 2px rgba(255, 255, 255, 0.16);
   border-radius: 8px;
-  position: relative;
   box-shadow: 0px 4px 16px 4px rgba(255, 255, 255, 0.04);
-  width: 860px;
+  max-width: 860px;
 
   overflow: hidden;
+
+  z-index: 11;
 `;
 
 const DialogOverlay = styled(_Dialog.Overlay)`
+  z-index: 10;
+
   @keyframes overlayShow {
     from {
       opacity: 0;
