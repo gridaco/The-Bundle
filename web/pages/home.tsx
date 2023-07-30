@@ -3,11 +3,13 @@ import {
   UpgradeModalLayout,
   ColumnImages,
 } from "@/layouts/upgrade-modal-layout";
+import { TemplateDropdown } from "@/scaffold/home";
 import React from "react";
 
-export default function Playground() {
+export default function Home() {
   return (
     <main>
+      <TemplateDropdown />
       <UpgradeModalLayout
         hero={
           <ColumnImages
