@@ -9,6 +9,10 @@ import { TemplateDropdown } from "@/scaffold/home";
 import { Dialog } from "@/components/dialog";
 import { useRouter } from "next/router";
 
+/**
+ * Modal that shows when with a successful pro activation with stripe checkout callback.
+ * To mock this view, add `?return-reason=pro-activated` to the url.
+ */
 function ProActivatedPortal() {
   const [activated, setActivated] = React.useState(false);
   const [open, setOpen] = React.useState(false);
