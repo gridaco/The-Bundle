@@ -44,6 +44,7 @@ export function createScene(canvas) {
     //   shaderMaterial.setTexture("textureSampler", environmentTexture);
     shaderMaterial = createShaderMaterial(scene);
 
+    // @ts-ignore
     text.material = shaderMaterial;
   };
 
@@ -52,7 +53,11 @@ export function createScene(canvas) {
   engine.runRenderLoop(() => {
     if (scene) {
       scene.render();
-      shaderMaterial?.setVector3("cameraPosition", scene.activeCamera.position);
+      shaderMaterial?.setVector3(
+        "cameraPosition",
+        // @ts-ignore
+        scene.activeCamera.position
+      );
     }
   });
 

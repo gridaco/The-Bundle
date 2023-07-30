@@ -25,7 +25,7 @@ export function BakedImageSequence3DView({
   width?: number;
   height?: number;
 }) {
-  const canvasRef = useRef<HTMLCanvasElement>();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
@@ -86,13 +86,13 @@ export function BakedImageSequence3DView({
 
       const x = canvas.width / 2 - (iw / 2) * zoom;
       const y = canvas.height / 2 - (ih / 2) * zoom;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx?.clearRect(0, 0, canvas.width, canvas.height);
 
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.scale(zoom, zoom);
-      ctx.drawImage(img.current as HTMLImageElement, 0, 0, iw, ih);
-      ctx.restore();
+      ctx?.save();
+      ctx?.translate(x, y);
+      ctx?.scale(zoom, zoom);
+      ctx?.drawImage(img.current as HTMLImageElement, 0, 0, iw, ih);
+      ctx?.restore();
     };
   }, [zoom]);
 
