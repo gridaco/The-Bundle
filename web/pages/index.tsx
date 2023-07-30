@@ -227,7 +227,7 @@ const Main = styled.main`
  */
 function ProActivatedPortal() {
   const [activated, setActivated] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState<boolean | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -242,8 +242,15 @@ function ProActivatedPortal() {
     }
   }, [activated]);
 
+  useEffect(() => {
+    if (open === false) {
+      // clrear the query
+      router.push("/", undefined, { shallow: true });
+    }
+  }, [open, router]);
+
   return (
-    <Dialog open={open}>
+    <Dialog open={open ?? false}>
       <h1>Pro activated</h1>
       <button
         onClick={() => {
