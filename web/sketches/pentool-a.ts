@@ -10,7 +10,7 @@ export const sketch = (p) => {
   let colors = { background: p.color(0), text: p.color(255) };
   let font = null;
 
-  const chars = ["A", "C", "T", "G"]
+  const chars = ["A", "C", "T", "G"];
   p.preload = () => {
     // Use Google Font API to load the Inter font
     font = p.loadFont(inter.black);
@@ -22,6 +22,7 @@ export const sketch = (p) => {
     p.textSize(20);
 
     for (let i = 0; i < numRows; i++) {
+      // @ts-ignore
       plane[i] = { y: (i - numRows / 2) * 30, offset: p.random(1000) };
     }
   };
@@ -40,11 +41,15 @@ export const sketch = (p) => {
       let row = plane[i];
       for (let x = -p.width / 2; x < p.width / 2; x += 50) {
         let y =
+          // @ts-ignore
           row.y +
           waveVariables.amplitude *
             p.sin(
               waveVariables.frequency *
-                (x + p.frameCount * waveVariables.speed + row.offset)
+                (x +
+                  p.frameCount * waveVariables.speed +
+                  // @ts-ignore
+                  row.offset)
             );
         p.push();
         p.translate(x, y);
