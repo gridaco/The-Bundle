@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   UpgradeToProSplashView,
   ColumnImages,
@@ -7,10 +7,43 @@ import {
 } from "@/scaffold/upgrade";
 import { TemplateDropdown } from "@/scaffold/home";
 import { Dialog } from "@/components/dialog";
+import { useRouter } from "next/router";
+
+function ProActivatedPortal() {
+  const [activated, setActivated] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query["return-reason"] === "pro-activated") {
+      setActivated(true);
+    }
+  }, [router.query]);
+
+  useEffect(() => {
+    if (activated) {
+      setOpen(true);
+    }
+  }, [activated]);
+
+  return (
+    <Dialog open={open}>
+      Pro activated
+      <button
+        onClick={() => {
+          setOpen(false);
+        }}
+      >
+        close
+      </button>
+    </Dialog>
+  );
+}
 
 export default function Home() {
   return (
     <main>
+      <ProActivatedPortal />
       <TemplateDropdown />
       <UpgradeToProDialog />
     </main>
@@ -18,12 +51,18 @@ export default function Home() {
 }
 
 function UpgradeToProDialog() {
+  const router = useRouter();
   const [view, setView] = React.useState<"splash" | "plans">("splash");
 
   return (
     <Dialog trigger={<UpgradeToProBadge />}>
       {view === "plans" ? (
-        <UpgradeToProPlansView />
+        <UpgradeToProPlansView
+          onUpgradeClick={(price) => {
+            // POST
+            router.push(`/api/checkout/sessions?price=${price}`);
+          }}
+        />
       ) : (
         <UpgradeToProSplashView
           hero={

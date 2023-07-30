@@ -11,7 +11,11 @@ const price_size = {
   highlighted: { width: 234, height: 340 } as const,
 } as const;
 
-export function UpgradeToProPlansView() {
+export function UpgradeToProPlansView({
+  onUpgradeClick,
+}: {
+  onUpgradeClick?: (price: string) => void;
+}) {
   return (
     <PlansViewWrapper>
       <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -34,7 +38,7 @@ export function UpgradeToProPlansView() {
           action={
             <button
               onClick={() => {
-                open(plans.personal.link);
+                onUpgradeClick?.(plans.personal.id);
               }}
             >
               Get Started
@@ -57,7 +61,7 @@ export function UpgradeToProPlansView() {
           action={
             <button
               onClick={() => {
-                open(plans.team.link);
+                onUpgradeClick?.(plans.team.id);
               }}
             >
               Get Started

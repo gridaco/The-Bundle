@@ -43,30 +43,30 @@ export default async function handler(req, res) {
     res.status(401).json("Unauthorized");
   }
 
-  if (req.method === "POST") {
-    try {
-      // Create Checkout Sessions from body params.
-      const session = await stripe.checkout.sessions.create({
-        customer: customer_id,
-        line_items: [
-          {
-            // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-            // TODO: replace
-            price: "price_1NZWzVAvR3geCh5rQ5Rl2w2t",
-            quantity: 1,
-          },
-        ],
-        mode: "subscription",
-        success_url: `${req.headers.origin}/lsd/?success=true`,
-        cancel_url: `${req.headers.origin}/lsd/?canceled=true`,
-      });
-      res.redirect(303, session.url);
-    } catch (err) {
-      res.status(err.statusCode || 500).json(err.message);
-    }
-  } else {
-    res.setHeader("Allow", "POST");
-    res.status(405).end("Method Not Allowed");
+  const price = req.query.price;
+  const host = req.headers.host;
+  const protocol = req.headers["x-forwarded-proto"];
+
+  const baseurl = `${protocol}://${host}/lsd`;
+
+  try {
+    // Create Checkout Sessions from body params.
+    const session = await stripe.checkout.sessions.create({
+      customer: customer_id,
+      line_items: [
+        {
+          // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+          price: price,
+          quantity: 1,
+        },
+      ],
+      mode: "subscription",
+      success_url: `${baseurl}/home/?return-reason=pro-activated`,
+      cancel_url: `${baseurl}/home/`,
+    });
+    res.redirect(303, session.url);
+  } catch (err) {
+    res.status(err.statusCode || 500).json(err.message);
   }
 }
 

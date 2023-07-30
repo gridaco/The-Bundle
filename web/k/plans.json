@@ -1,19 +1,19 @@
 {
   "personal": {
-    "id": "price_1Mzk8ZAvR3geCh5rdPrSODkU",
-    "link": "https://buy.stripe.com/bIYdR7fxG4MUfyU14e",
+    "id": "price_1NZWzVAvR3geCh5rz7uRXUnF",
+    "link": "https://payments.grida.co/b/test_4gw4hVchU7OcdwY5kl",
     "price": {
-      "value": 5,
+      "value": 9,
       "currency": "usd",
       "symbol": "$",
       "interval": "month"
     }
   },
   "team": {
-    "id": "price_1Mzk8ZAvR3geCh5r1jTfl3oy",
-    "link": "https://buy.stripe.com/bIY14l3OYgvCdqM14f",
+    "id": "price_1NZWzVAvR3geCh5rQ5Rl2w2t",
+    "link": "https://payments.grida.co/b/test_14k29N1Dg6K81OgdQQ",
     "price": {
-      "value": 25,
+      "value": 45,
       "currency": "usd",
       "symbol": "$",
       "interval": "month"

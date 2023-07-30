@@ -22,7 +22,11 @@ export default function PreviewPage() {
   }, []);
 
   return (
-    <form action="/lsd/api/checkout/sessions" method="POST">
+    <form
+      // TODO: replace
+      action="/lsd/api/checkout/sessions?price=price_1NZWzVAvR3geCh5rQ5Rl2w2t"
+      method="POST"
+    >
       <section>
         <button type="submit" role="link">
           Checkout
