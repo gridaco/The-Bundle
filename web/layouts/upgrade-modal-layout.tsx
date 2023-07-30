@@ -39,6 +39,8 @@ const UpgradeModalLayoutWrapper = styled.div`
 
   font-family: "Inter", sans-serif;
 
+  color: white;
+
   .hero {
     display: flex;
     flex-direction: column;
