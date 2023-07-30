@@ -1,3 +1,4 @@
+import { ContinueWithGoogleButton } from "@/components/continue-with-google-button";
 import {
   UpgradeModalLayout,
   ColumnImages,
@@ -26,7 +27,7 @@ export default function Playground() {
           <p>
             Welcome to LSD Closed Beta. Please sign in with Google to continue.
           </p>
-          <button>Continue with Google</button>
+          <ContinueWithGoogleButton />
         </>
       </UpgradeModalLayout>
     </main>
