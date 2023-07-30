@@ -3,9 +3,12 @@ import { GoogleLogoIcon } from "@/icons/google-logo";
 import styled from "@emotion/styled";
 
 export const ContinueWithGoogleButton = React.forwardRef(
-  function ContinueWithGoogleButton(props, ref?: React.Ref<HTMLButtonElement>) {
+  function ContinueWithGoogleButton(
+    props: React.ComponentProps<"button">,
+    ref?: React.Ref<HTMLButtonElement>
+  ) {
     return (
-      <ButtonContainer ref={ref}>
+      <ButtonContainer ref={ref} {...props}>
         <GoogleLogoIcon color="white" />
         Continue with Google
       </ButtonContainer>

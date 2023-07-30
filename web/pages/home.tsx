@@ -1,5 +1,4 @@
 import React from "react";
-import { ContinueWithGoogleButton } from "@/components/continue-with-google-button";
 import {
   UpgradeToProSplashView,
   ColumnImages,
@@ -17,29 +16,6 @@ export default function Home() {
       <UpgradeToProDialog />
     </main>
   );
-}
-
-function SigninGate() {
-  <UpgradeToProSplashView
-    hero={
-      <ColumnImages
-        src={[
-          "/lsd/pro/hero-columns/01.png",
-          "/lsd/pro/hero-columns/02.png",
-          "/lsd/pro/hero-columns/03.png",
-          "/lsd/pro/hero-columns/04.png",
-          "/lsd/pro/hero-columns/05.png",
-          "/lsd/pro/hero-columns/06.png",
-        ]}
-      />
-    }
-  >
-    <>
-      <h1>LSD Closed Beta</h1>
-      <p>Welcome to LSD Closed Beta. Please sign in with Google to continue.</p>
-      <ContinueWithGoogleButton />
-    </>
-  </UpgradeToProSplashView>;
 }
 
 function UpgradeToProDialog() {
