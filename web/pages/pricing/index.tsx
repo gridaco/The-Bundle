@@ -6,7 +6,7 @@ import { FaqItem } from "components/faq";
 import { PricingCard } from "components/pricing";
 import { motion } from "framer-motion";
 import faqs from "k/faq.json";
-import plans from "./plans.json";
+import plans from "k/plans.json";
 import contacts from "k/contacts.json";
 
 const price_size = {
