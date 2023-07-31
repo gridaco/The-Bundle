@@ -64,14 +64,14 @@ const HeaderWrapper = styled.header`
 
   .left {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 24px;
+    left: 24px;
   }
 
   .right {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 24px;
+    right: 24px;
   }
 
   .menu {
