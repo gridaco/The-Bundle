@@ -15,13 +15,19 @@ export const UpgradeToProBadge = React.forwardRef(function UpgradeToProBadge(
 });
 
 const Badge = styled.button`
+  cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 20px;
 
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 `;
