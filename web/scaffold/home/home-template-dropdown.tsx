@@ -4,6 +4,7 @@ import { CaretDownIcon, Cross2Icon } from "@radix-ui/react-icons";
 import styled from "@emotion/styled";
 
 interface TemplateSelectorProps {
+  key: string;
   name: React.ReactNode | string;
   iconSrc: string;
 }
@@ -54,29 +55,31 @@ const TemplateTriggerButtonContainer = styled.button`
   transition: background-color 0.1s ease-in-out;
 `;
 
+const presetsMap = {
+  "004": ["/lsd/pro/hero-columns/01.png", "/lsd/pro/hero-columns/05.png"],
+  "005": ["/lsd/pro/hero-columns/05.png", "/lsd/pro/hero-columns/06.png"],
+  "006": ["/lsd/pro/hero-columns/03.png", "/lsd/pro/hero-columns/06.png"],
+} as const;
+
 function TemplatesView() {
+  const [focus, setFocus] = React.useState<string>("004");
+
   const templates: TemplateSelectorProps[] = [
     {
-      name: "template 1",
+      key: "004",
+      name: "Glass Dispersion",
       iconSrc: "/lsd/preview/baked-004.1/icon.png",
     },
     {
-      name: "template 2",
-      iconSrc: "/lsd/preview/baked-004.1/icon.png",
+      key: "005",
+      name: "Iron",
+      iconSrc: "/lsd/preview/baked-005/icon.png",
     },
     {
-      name: "template 3",
-      iconSrc: "/lsd/preview/baked-004.1/icon.png",
+      key: "006",
+      name: "PVC",
+      iconSrc: "/lsd/preview/baked-006/icon.png",
     },
-  ];
-
-  const presets = [
-    "/lsd/pro/hero-columns/01.png",
-    "/lsd/pro/hero-columns/02.png",
-    "/lsd/pro/hero-columns/03.png",
-    "/lsd/pro/hero-columns/04.png",
-    "/lsd/pro/hero-columns/05.png",
-    "/lsd/pro/hero-columns/06.png",
   ];
 
   return (
@@ -85,16 +88,20 @@ function TemplatesView() {
         {templates.map((template, i) => {
           return (
             <TemplateMenuItem
-              key={i}
+              key={template.key}
               name={template.name}
               iconSrc={template.iconSrc}
+              selected={focus === template.key}
+              onClick={() => {
+                setFocus(template.key);
+              }}
             />
           );
         })}
       </div>
       <div className="presets">
         <div className="images">
-          {presets.map((preset, i) => {
+          {presetsMap[focus].map((preset, i) => {
             return <PresetPreviewImage width="100%" key={i} src={preset} />;
           })}
         </div>
@@ -121,6 +128,7 @@ const TemplatesViewWrapper = styled.div`
   .templates {
     display: flex;
     flex-direction: column;
+    gap: 8px;
     width: 216px;
     overflow-y: scroll;
   }
@@ -139,22 +147,38 @@ const TemplatesViewWrapper = styled.div`
   }
 `;
 
-function TemplateMenuItem({ name, iconSrc }: TemplateSelectorProps) {
+const TemplateMenuItem = React.forwardRef(function TemplateMenuItem(
+  {
+    name,
+    iconSrc,
+    selected,
+    ...props
+  }: TemplateSelectorProps & {
+    selected?: boolean;
+  } & React.HTMLAttributes<HTMLButtonElement>,
+  forwaredRef?: React.Ref<HTMLButtonElement>
+) {
   return (
-    <TemplateMenuItemWrapper>
-      <img alt="template thumbnail" src={iconSrc} />
+    <TemplateMenuItemWrapper
+      ref={forwaredRef}
+      {...props}
+      data-selected={selected}
+    >
+      <img alt="template thumbnail" src={iconSrc} width={44} height={44} />
       <span>{name}</span>
     </TemplateMenuItemWrapper>
   );
-}
+});
 
-const TemplateMenuItemWrapper = styled.div`
+const TemplateMenuItemWrapper = styled.button`
   cursor: pointer;
 
   display: flex;
   flex-direction: row;
   align-items: center;
   text-align: left;
+  background: transparent;
+  border: none;
 
   border-radius: 8px;
 
@@ -165,6 +189,10 @@ const TemplateMenuItemWrapper = styled.div`
   &:hover {
     background: rgba(255, 255, 255, 0.1);
   }
+
+  &[data-selected="true"] {
+    background: rgba(255, 255, 255, 0.2);
+  }
 `;
 
 export function TemplateDropdown() {
@@ -173,6 +201,7 @@ export function TemplateDropdown() {
       <Popover.Trigger asChild>
         <TemplateTriggerButton
           data={{
+            key: "004",
             name: (
               <>
                 <b>Glass</b>
