@@ -7,10 +7,14 @@ export function CBTSignin() {
   const supabase = createPagesBrowserClient();
 
   const onsigninclick = () => {
+    // Note: thr url must be white-listed on supabase config, like, e.g.
+    // - http://localhost:1960/**/*
+    // - https://lsd-*.vercel.app/**/*
+    const redirect = `${location.origin}/lsd/auth/callback`;
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/lsd/auth/callback`,
+        redirectTo: redirect,
       },
     });
   };
