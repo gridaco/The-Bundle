@@ -3,36 +3,12 @@ import styled from "@emotion/styled";
 import {
   LightningBoltIcon,
   DownloadIcon,
-  ShadowIcon,
   CameraIcon,
   TransparencyGridIcon,
 } from "@radix-ui/react-icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
-
-interface Preset {
-  template: string;
-  thumbnail: string;
-  name: string;
-}
-
-const __presets: ReadonlyArray<Preset> = [
-  {
-    template: "004.1-bg-black",
-    name: "Glass 2",
-    thumbnail: "/lsd/preview/baked-004.1/lsd.jpeg",
-  },
-  {
-    template: "003-3d-glass-dispersion-text",
-    name: "Glass 1",
-    thumbnail: "/lsd/preview/baked-001/0001.png",
-  },
-  // {
-  //   template: "004.2-bg-transparent",
-  //   name: "Glass 3",
-  //   thumbnail: "/lsd/preview/baked-001/TEXT-b.gif",
-  // },
-];
+import { templates } from "@/k/templates";
 
 const SnapWrapper = styled.div`
   cursor: pointer;
@@ -88,12 +64,12 @@ export function Controller({
   onSubmit?: (
     e: React.FormEvent<HTMLFormElement>,
     options: {
-      preset: string;
+      preset?: string;
     }
   ) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [preset, setPreset] = useState("004.1-bg-black");
+  const [preset, setPreset] = useState<string>();
 
   return (
     <div
@@ -126,12 +102,12 @@ export function Controller({
                   gap: 12,
                 }}
               >
-                {__presets.map((it, i) => (
+                {templates.map((it, i) => (
                   <ItemContainer
                     key={i}
-                    data-selected={preset === it.template}
+                    data-selected={preset === it.key}
                     onClick={() => {
-                      setPreset(it.template);
+                      setPreset(it.key);
                     }}
                   >
                     <img src={it.thumbnail} width="100%" height="100%" />

@@ -2,6 +2,7 @@ import React from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { CaretDownIcon, Cross2Icon } from "@radix-ui/react-icons";
 import styled from "@emotion/styled";
+import { presetsMap, templates } from "@/k/templates";
 
 interface TemplateSelectorProps {
   key: string;
@@ -55,32 +56,26 @@ const TemplateTriggerButtonContainer = styled.button`
   transition: background-color 0.1s ease-in-out;
 `;
 
-const presetsMap = {
-  "004": ["/lsd/pro/hero-columns/01.png", "/lsd/pro/hero-columns/05.png"],
-  "005": ["/lsd/pro/hero-columns/05.png", "/lsd/pro/hero-columns/06.png"],
-  "006": ["/lsd/pro/hero-columns/03.png", "/lsd/pro/hero-columns/06.png"],
-} as const;
-
 function TemplatesView() {
   const [focus, setFocus] = React.useState<string>("004");
 
-  const templates: TemplateSelectorProps[] = [
-    {
-      key: "004",
-      name: "Glass Dispersion",
-      iconSrc: "/lsd/preview/baked-004.1/icon.png",
-    },
-    {
-      key: "005",
-      name: "Iron",
-      iconSrc: "/lsd/preview/baked-005/icon.png",
-    },
-    {
-      key: "006",
-      name: "PVC",
-      iconSrc: "/lsd/preview/baked-006/icon.png",
-    },
-  ];
+  // const templates: TemplateSelectorProps[] = [
+  //   {
+  //     key: "004",
+  //     name: "Glass Dispersion",
+  //     iconSrc: "/lsd/preview/baked-004.1/icon.png",
+  //   },
+  //   {
+  //     key: "005",
+  //     name: "Iron",
+  //     iconSrc: "/lsd/preview/baked-005/icon.png",
+  //   },
+  //   {
+  //     key: "006",
+  //     name: "PVC",
+  //     iconSrc: "/lsd/preview/baked-006/icon.png",
+  //   },
+  // ];
 
   return (
     <TemplatesViewWrapper>
@@ -90,7 +85,7 @@ function TemplatesView() {
             <TemplateMenuItem
               key={template.key}
               name={template.name}
-              iconSrc={template.iconSrc}
+              iconSrc={template.icon}
               selected={focus === template.key}
               onClick={() => {
                 setFocus(template.key);
