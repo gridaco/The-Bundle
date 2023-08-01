@@ -21,8 +21,10 @@ export function ColumnImages({ src }: { src?: string | string[] }) {
     <div
       style={{
         display: "flex",
+        justifyContent: "center",
         userSelect: "none",
         pointerEvents: "none",
+        width: "100%",
       }}
     >
       {src && typeof src === "string" && <img src={src} />}
@@ -44,6 +46,7 @@ const UpgradeModalLayoutWrapper = styled.div`
   .hero {
     display: flex;
     flex-direction: column;
+    width: 100%;
   }
 
   .content {
