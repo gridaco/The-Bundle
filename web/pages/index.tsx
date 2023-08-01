@@ -311,3 +311,30 @@ function UpgradeToProDialog() {
     </Dialog>
   );
 }
+
+// supabase
+import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
+import { GetServerSidePropsContext } from "next";
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  // check if authenticated
+  const supabase = createPagesServerClient(ctx);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/beta",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      // credit,
+    },
+  };
+}
