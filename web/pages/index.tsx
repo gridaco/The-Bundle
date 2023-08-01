@@ -99,7 +99,8 @@ export default function Home() {
                   setBusy(false);
                   return;
                 }
-                const template = options.preset;
+                // TODO: update preset as template
+                const template = options.preset ?? "baked-004.1";
                 client
                   .renderStill(template, {
                     data: {
