@@ -7,7 +7,7 @@ export function DiamondIcon(props: React.ComponentProps<"svg">) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_191_720)">
+      <g clipPath="url(#clip0_191_720)">
         <path
           d="M10.1334 2.5H9.86672L7.67505 6.875H12.325L10.1334 2.5Z"
           fill={props.fill || "white"}
