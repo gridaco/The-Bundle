@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { TemplateDropdown } from "@/scaffold/home";
+import { TemplateDropdown } from "@/scaffolds/home";
 import { Dialog } from "@/components/dialog";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import styled from "@emotion/styled";
 import { Client } from "api";
 import { HomeHeader } from "components/header-home";
-import { Canvas, Controller } from "scaffold/home";
+import { Canvas, Controller } from "@/scaffolds/home";
 import { isAscii, isNotAscii } from "utils/ascii";
 import { downloadImage } from "utils/download-image";
 import {
@@ -15,7 +15,7 @@ import {
   ColumnImages,
   UpgradeToProPlansView,
   UpgradeToProBadge,
-} from "@/scaffold/upgrade";
+} from "@/scaffolds/upgrade";
 
 const DEFAULT_CREDIT_COUNT = 10;
 // const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";

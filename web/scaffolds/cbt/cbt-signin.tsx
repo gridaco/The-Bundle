@@ -1,6 +1,6 @@
 import React from "react";
 import { ContinueWithGoogleButton } from "@/components/continue-with-google-button";
-import { UpgradeToProSplashView, ColumnImages } from "@/scaffold/upgrade";
+import { UpgradeToProSplashView, ColumnImages } from "@/scaffolds/upgrade";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 
 export function CBTSignin() {
