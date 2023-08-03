@@ -209,7 +209,7 @@ export function TemplateDropdown() {
         />
       </Popover.Trigger>
       <Popover.Portal>
-        <ContentContainer sideOffset={5}>
+        <ContentContainer sideOffset={20} side="top" align="start">
           <TemplatesView />
           {/* <Popover.Arrow className="PopoverArrow" /> */}
         </ContentContainer>
