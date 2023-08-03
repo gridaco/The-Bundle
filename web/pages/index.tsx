@@ -271,12 +271,18 @@ function UpgradeToProDialog() {
   return (
     <Dialog trigger={<UpgradeToProBadge />}>
       {view === "plans" ? (
-        <UpgradeToProPlansView
-          onUpgradeClick={(price) => {
-            // POST
-            router.push(`/api/checkout/sessions?price=${price}`);
+        <div
+          style={{
+            padding: 40,
           }}
-        />
+        >
+          <UpgradeToProPlansView
+            onUpgradeClick={(price) => {
+              // POST
+              router.push(`/api/checkout/sessions?price=${price}`);
+            }}
+          />
+        </div>
       ) : (
         <UpgradeToProSplashView
           hero={
