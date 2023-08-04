@@ -88,10 +88,10 @@ export function UpgradeToProPlansView({
           }
         />
       </motion.section>
-      <motion.hr
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+      <div
+        style={{
+          marginTop: 40,
+        }}
       />
       <motion.section
         className="faq section"
@@ -99,13 +99,6 @@ export function UpgradeToProPlansView({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
       >
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-        >
-          FAQ
-        </motion.h2>
         <motion.div
           className="list"
           initial={{ opacity: 0, y: 12 }}
@@ -136,5 +129,9 @@ const PlansViewWrapper = styled.div`
     align-items: center;
     gap: 16px;
     margin-top: 32px;
+  }
+
+  section {
+    width: 100%;
   }
 `;

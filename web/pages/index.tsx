@@ -304,19 +304,39 @@ function UpgradeToProDialog() {
               Upgrade to Pro and get access to exclusive templates and xxx.
               {/* TODO: update text */}
             </p>
-            <button
+            <Button
               onClick={() => {
                 setView("plans");
               }}
             >
               View Plans
-            </button>
+            </Button>
           </>
         </UpgradeToProSplashView>
       )}
     </Dialog>
   );
 }
+
+const Button = styled.button`
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  padding: 1rem 2rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+
+  &:hover {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  transition: all 0.1s ease-in-out;
+`;
 
 // supabase
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";

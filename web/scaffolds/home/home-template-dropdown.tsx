@@ -42,6 +42,7 @@ const TemplateTriggerButtonContainer = styled.button`
   border-radius: 8px;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
 
   &:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -58,24 +59,6 @@ const TemplateTriggerButtonContainer = styled.button`
 
 function TemplatesView() {
   const [focus, setFocus] = React.useState<string>("004");
-
-  // const templates: TemplateSelectorProps[] = [
-  //   {
-  //     key: "004",
-  //     name: "Glass Dispersion",
-  //     iconSrc: "/lsd/preview/baked-004.1/icon.png",
-  //   },
-  //   {
-  //     key: "005",
-  //     name: "Iron",
-  //     iconSrc: "/lsd/preview/baked-005/icon.png",
-  //   },
-  //   {
-  //     key: "006",
-  //     name: "PVC",
-  //     iconSrc: "/lsd/preview/baked-006/icon.png",
-  //   },
-  // ];
 
   return (
     <TemplatesViewWrapper>
@@ -94,7 +77,7 @@ function TemplatesView() {
           );
         })}
       </div>
-      <div className="presets">
+      <div className="presets" key={focus}>
         <div className="images">
           {presetsMap[focus].map((preset, i) => {
             return <PresetPreviewImage width="100%" key={i} src={preset} />;
@@ -173,6 +156,7 @@ const TemplateMenuItemWrapper = styled.button`
   align-items: center;
   text-align: left;
   background: transparent;
+  color: white;
   border: none;
 
   border-radius: 8px;
@@ -232,6 +216,7 @@ const ContentContainer = styled(Popover.Content)`
   border: 1px solid rgba(255, 255, 255, 0.1);
 
   background: rgba(255, 255, 255, 0.1);
+  color: white;
 
   backdrop-filter: blur(40px);
 

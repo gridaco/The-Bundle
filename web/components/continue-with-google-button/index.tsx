@@ -27,6 +27,7 @@ const ButtonContainer = styled.button`
   padding: 1rem 2rem;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
 
   &:hover {
     border: 1px solid rgba(255, 255, 255, 0.2);
