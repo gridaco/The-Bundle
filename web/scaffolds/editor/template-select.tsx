@@ -12,7 +12,7 @@ interface TemplateSelectorProps {
 }
 
 const TemplateTriggerButton = React.forwardRef(function TemplateTriggerButton(
-  props: {
+  props: React.ComponentProps<typeof TemplateTriggerButtonContainer> & {
     data: TemplateSelectorProps;
   },
   ref?: React.Ref<HTMLButtonElement>
@@ -58,9 +58,9 @@ const TemplateTriggerButtonContainer = styled.button`
   transition: background-color 0.1s ease-in-out;
 `;
 
-function TemplatesView() {
-  const { switchTemplate } = useEditor();
-  const [focus, setFocus] = React.useState<string>("004");
+function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
+  const { switchTemplate, template } = useEditor();
+  const [focus, setFocus] = React.useState<string>(template.key);
 
   return (
     <TemplatesViewWrapper>
@@ -89,7 +89,7 @@ function TemplatesView() {
                 src={preset}
                 onClick={() => {
                   switchTemplate(focus);
-                  // TODO: clear the popover
+                  onSubmit();
                 }}
               />
             );
@@ -187,10 +187,11 @@ const TemplateMenuItemWrapper = styled.button`
 `;
 
 export function TemplateDropdown() {
+  const [open, setOpen] = React.useState(false);
   const { template } = useEditor();
 
   return (
-    <Popover.Root>
+    <Popover.Root open={open}>
       <Popover.Trigger asChild>
         <TemplateTriggerButton
           data={{
@@ -198,11 +199,18 @@ export function TemplateDropdown() {
             name: template.name,
             iconSrc: template.icon,
           }}
+          onClick={() => {
+            setOpen(!open);
+          }}
         />
       </Popover.Trigger>
       <Popover.Portal>
         <ContentContainer sideOffset={20} side="top" align="start">
-          <TemplatesView />
+          <TemplatesView
+            onSubmit={() => {
+              setOpen(false);
+            }}
+          />
           {/* <Popover.Arrow className="PopoverArrow" /> */}
         </ContentContainer>
       </Popover.Portal>

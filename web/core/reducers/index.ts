@@ -12,6 +12,10 @@ export function editorReducer(
     case "switch-template": {
       const { key } = action as SwitchTemplateAction;
       return produce(state, (draft) => {
+        if (key === draft.template.key) {
+          return;
+        }
+
         const template = templates.templatesMap[key] as Template;
 
         if (!template) {
