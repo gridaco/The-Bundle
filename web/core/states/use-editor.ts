@@ -4,22 +4,18 @@ import { useEditorState } from "./use-editor-state";
 export function useEditor() {
   const [state, dispatch] = useEditorState();
 
-  const { templateId, templateData, templatePreset, templatePresets } = state;
+  const { template } = state;
 
   const switchTemplate = useCallback(
-    (template: string) =>
-      dispatch({ type: "switch-template", templateId: template }),
+    (template: string) => dispatch({ type: "switch-template", key: template }),
     [dispatch]
   );
 
   return useMemo(
     () => ({
-      templateId,
-      templateData,
-      templatePreset,
-      templatePresets,
+      template,
       switchTemplate,
     }),
-    [switchTemplate, templateId, templateData, templatePreset, templatePresets]
+    [switchTemplate, template]
   );
 }

@@ -29,13 +29,13 @@ import {
 
 const DEFAULT_CREDIT_COUNT = 10;
 // const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
-const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
+// const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
 
 export function Editor() {
   const [message, setMessage] = useState<string>("");
   const [credit, setCredit] = useState<number>(DEFAULT_CREDIT_COUNT);
   const [busy, setBusy] = useState<boolean>(false);
-  const [src, setSrc] = useState<string>(DEFAULT_SRC);
+  const [src, setSrc] = useState<string>();
   const [showSnap, setShowSnap] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const client = useMemo(() => new Client(), []);
@@ -50,7 +50,7 @@ export function Editor() {
 
   // enable snap function if src is ready
   useEffect(() => {
-    if (src === DEFAULT_SRC) {
+    if (src === "" || src === undefined || src === null) {
       return;
     }
     setShowSnap(true);
@@ -76,7 +76,11 @@ export function Editor() {
             <Controller
               showDownload={showSnap}
               onDownload={() => {
-                downloadImage(src, `${text}.png`);
+                if (src) {
+                  downloadImage(src, `${text}.png`);
+                } else {
+                  alert("Please render first.");
+                }
               }}
               onSubmit={(e, options) => {
                 e.preventDefault();

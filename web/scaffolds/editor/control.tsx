@@ -73,7 +73,7 @@ export function Controller({
     //
   } = useEditor();
 
-  const [expanded, setExpanded] = useState(false);
+  // const [expanded, setExpanded] = useState(false);
   const [preset, setPreset] = useState<string>();
 
   return (
@@ -85,7 +85,7 @@ export function Controller({
         flexDirection: "column",
       }}
     >
-      {expanded && (
+      {/* {expanded && (
         <Bar
           style={{
             height: "100%",
@@ -125,21 +125,21 @@ export function Controller({
             </Tabs.Content>
           </Tabs.Root>
         </Bar>
-      )}
+      )} */}
 
       <ControllerWrapper>
         <Bar>
-          <div
+          {/* <div
             className="slot scene"
             onClick={() => {
               setExpanded(!expanded);
             }}
           >
             <TransparencyGridIcon width="100%" height="100%" />
-          </div>
+          </div> */}
           <form
             onSubmit={(e) => {
-              setExpanded(false);
+              // setExpanded(false);
               e.preventDefault();
               onSubmit?.(e, {
                 preset,

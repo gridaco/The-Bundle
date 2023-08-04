@@ -3,5 +3,5 @@ export type EditorAction = SwitchTemplateAction;
 
 export type SwitchTemplateAction = {
   type: "switch-template";
-  templateId: string;
+  key: string;
 };

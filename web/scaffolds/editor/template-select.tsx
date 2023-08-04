@@ -25,7 +25,7 @@ const TemplateTriggerButton = React.forwardRef(function TemplateTriggerButton(
       aria-label="Update dimensions"
       {...props}
     >
-      <img alt="template thumbnail" src={data.iconSrc} />
+      <img alt="template thumbnail" src={data.iconSrc} width={44} height={44} />
       <span>{data.name}</span>
       <CaretDownIcon />
     </TemplateTriggerButtonContainer>
@@ -187,22 +187,16 @@ const TemplateMenuItemWrapper = styled.button`
 `;
 
 export function TemplateDropdown() {
-  const { templateId } = useEditor();
+  const { template } = useEditor();
 
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
         <TemplateTriggerButton
           data={{
-            key: templateId,
-            name: (
-              <>
-                <b>Glass</b>
-                <br />
-                Dispersion
-              </>
-            ),
-            iconSrc: "/lsd/preview/baked-004.1/icon.png",
+            key: template.key,
+            name: template.name,
+            iconSrc: template.icon,
           }}
         />
       </Popover.Trigger>

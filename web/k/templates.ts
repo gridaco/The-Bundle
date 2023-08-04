@@ -1,5 +1,5 @@
 export const presetsMap = {
-  "003": [],
+  // "003": [],
   "004": [
     "/lsd/preview/baked-004.1/motion-preview-0001.gif",
     "/lsd/preview/baked-004.1/thumbnail.png",
@@ -19,7 +19,7 @@ export const presetsMap = {
   ],
 } as const;
 
-interface Template {
+export interface Template {
   key: string;
   name: string;
   thumbnail: string;
@@ -28,21 +28,21 @@ interface Template {
   presets: string[];
 }
 
-const template_003: Template = {
-  key: "003",
-  name: "Glass 1",
-  thumbnail: "/lsd/preview/baked-004.1/lsd.jpeg",
-  icon: "",
-  preview: "/lsd/preview/baked-004.1/lsd.jpeg",
-  presets: ["scene.collections.001"],
-};
+// const template_003: Template = {
+//   key: "003",
+//   name: "Glass 1",
+//   thumbnail: "/lsd/preview/baked-004.1/lsd.jpeg",
+//   icon: "",
+//   preview: "/lsd/preview/baked-004.1/lsd.jpeg",
+//   presets: ["scene.collections.001"],
+// };
 
 const template_004: Template = {
   key: "004",
-  name: "Glass 2",
+  name: "Glass Dispersion",
   thumbnail: "/lsd/preview/baked-001/0001.png",
   icon: "/lsd/preview/baked-004.1/icon.png",
-  preview: "/lsd/preview/baked-001/0001.png",
+  preview: "/lsd/preview/baked-004.1/lsd.jpeg",
   presets: ["scene.collections.001"],
 };
 
@@ -51,7 +51,7 @@ const template_005: Template = {
   name: "Iron",
   thumbnail: "/lsd/preview/baked-005/showcase-0001.png",
   icon: "/lsd/preview/baked-005/icon.png",
-  preview: "/lsd/preview/baked-005/icon.png",
+  preview: "/lsd/preview/baked-005/showcase-0001.png",
   presets: ["scene.collections.001"],
 };
 
@@ -60,7 +60,7 @@ const template_006: Template = {
   name: "PVC",
   thumbnail: "/lsd/preview/baked-006/showcase-0001.png",
   icon: "/lsd/preview/baked-006/icon.png",
-  preview: "/lsd/preview/baked-006/icon.png",
+  preview: "/lsd/preview/baked-006/showcase-0001.png",
   presets: ["scene.collections.001"],
 };
 
@@ -76,7 +76,7 @@ const template_007: Template = {
 export const defaultTemplateKey = "004";
 
 export const templatesMap = {
-  "003": template_003,
+  // "003": template_003,
   "004": template_004,
   "005": template_005,
   "006": template_006,

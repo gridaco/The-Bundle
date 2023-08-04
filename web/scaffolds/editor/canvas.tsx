@@ -5,7 +5,7 @@ import { BakedImageSequence3DView } from "components/interactive-3d-object-baked
 import { useEditor } from "@/core/states/use-editor";
 
 export function Canvas({ src, busy }: { src?: string; busy?: boolean }) {
-  const { templateId } = useEditor();
+  const { template } = useEditor();
 
   return (
     <CanvasWrapper>
@@ -34,7 +34,13 @@ export function Canvas({ src, busy }: { src?: string; busy?: boolean }) {
           return `http://localhost:3000/render_x${rotation.y}_y${rotation.x}_z0.png`;
         }}
       /> */}
-      {src && <img className="main" src={src} />}
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="main" src={src} alt="result" />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="main" src={template.preview} alt="result" />
+      )}
       {/* <div
         style={{
           padding: 40,
