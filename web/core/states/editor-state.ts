@@ -11,4 +11,20 @@ export interface EditorState {
     remaining: number;
     reset: number;
   };
+  // redner state
+  renderMode: "still" | "animation";
+  result: RenderResult;
+  //
+  isRendering: boolean;
+  message?: string;
+}
+
+interface RenderResult {
+  id: string;
+  samples: number;
+  template: string;
+  src: string;
+  srcset: {
+    [key: string]: string;
+  };
 }

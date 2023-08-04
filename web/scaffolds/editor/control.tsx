@@ -9,6 +9,7 @@ import {
 import * as Tabs from "@radix-ui/react-tabs";
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
 import { templates } from "@/k/templates";
+import { useEditor } from "@/core/states/use-editor";
 
 const SnapWrapper = styled.div`
   cursor: pointer;
@@ -68,6 +69,10 @@ export function Controller({
     }
   ) => void;
 }) {
+  const {
+    //
+  } = useEditor();
+
   const [expanded, setExpanded] = useState(false);
   const [preset, setPreset] = useState<string>();
 

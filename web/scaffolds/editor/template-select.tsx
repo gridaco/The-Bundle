@@ -3,6 +3,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { CaretDownIcon, Cross2Icon } from "@radix-ui/react-icons";
 import styled from "@emotion/styled";
 import { presetsMap, templates } from "@/k/templates";
+import { useEditor } from "@/core/states/use-editor";
 
 interface TemplateSelectorProps {
   key: string;
@@ -58,6 +59,7 @@ const TemplateTriggerButtonContainer = styled.button`
 `;
 
 function TemplatesView() {
+  const { switchTemplate } = useEditor();
   const [focus, setFocus] = React.useState<string>("004");
 
   return (
@@ -80,7 +82,17 @@ function TemplatesView() {
       <div className="presets" key={focus}>
         <div className="images">
           {presetsMap[focus].map((preset, i) => {
-            return <PresetPreviewImage width="100%" key={i} src={preset} />;
+            return (
+              <PresetPreviewImage
+                width="100%"
+                key={i}
+                src={preset}
+                onClick={() => {
+                  switchTemplate(focus);
+                  // TODO: clear the popover
+                }}
+              />
+            );
           })}
         </div>
       </div>
@@ -175,12 +187,14 @@ const TemplateMenuItemWrapper = styled.button`
 `;
 
 export function TemplateDropdown() {
+  const { templateId } = useEditor();
+
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
         <TemplateTriggerButton
           data={{
-            key: "004",
+            key: templateId,
             name: (
               <>
                 <b>Glass</b>

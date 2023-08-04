@@ -2,8 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { LinearProgress } from "@mui/material";
 import styled from "@emotion/styled";
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
+import { useEditor } from "@/core/states/use-editor";
 
 export function Canvas({ src, busy }: { src?: string; busy?: boolean }) {
+  const { templateId } = useEditor();
+
   return (
     <CanvasWrapper>
       {busy && (
@@ -32,6 +35,13 @@ export function Canvas({ src, busy }: { src?: string; busy?: boolean }) {
         }}
       /> */}
       {src && <img className="main" src={src} />}
+      {/* <div
+        style={{
+          padding: 40,
+        }}
+      >
+        <h1>{templateId}</h1>
+      </div> */}
     </CanvasWrapper>
   );
 }

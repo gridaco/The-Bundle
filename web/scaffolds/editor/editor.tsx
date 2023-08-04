@@ -10,13 +10,14 @@ import { EditorAction } from "@/core/actions";
 import { editorReducer } from "@/core/reducers";
 import { useEditor } from "@/core/states/use-editor";
 import { initstate } from "./init";
-import { TemplateDropdown } from "@/scaffolds/home";
+import { TemplateDropdown } from "./template-select";
 import { Dialog } from "@/components/dialog";
 import { useRouter } from "next/router";
 import styled from "@emotion/styled";
 import { Client } from "api";
 import { HomeHeader } from "components/header-home";
-import { Canvas, Controller } from "@/scaffolds/home";
+import { Canvas } from "./canvas";
+import { Controller } from "./control";
 import { isAscii, isNotAscii } from "utils/ascii";
 import { downloadImage } from "utils/download-image";
 import {
@@ -31,22 +32,13 @@ const DEFAULT_CREDIT_COUNT = 10;
 const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
 
 export function Editor() {
-  const router = useRouter();
   const [message, setMessage] = useState<string>("");
   const [credit, setCredit] = useState<number>(DEFAULT_CREDIT_COUNT);
-  const [pro, setPro] = useState<boolean>(false);
   const [busy, setBusy] = useState<boolean>(false);
   const [src, setSrc] = useState<string>(DEFAULT_SRC);
   const [showSnap, setShowSnap] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const client = useMemo(() => new Client(), []);
-
-  useEffect(() => {
-    const tmp_pro = router.query.pro;
-    if (tmp_pro) {
-      setPro(true);
-    }
-  }, [router.query]);
 
   // mock credit message
   useEffect(() => {
@@ -65,10 +57,10 @@ export function Editor() {
   }, [src]);
 
   const handleDispatch = useCallback((action: EditorAction) => {
-    initialDispatcher(action);
+    dispatch(action);
   }, []);
 
-  const [state, initialDispatcher] = useReducer(editorReducer, initstate());
+  const [state, dispatch] = useReducer(editorReducer, initstate());
 
   return (
     <StateProvider state={state} dispatch={handleDispatch}>
@@ -156,18 +148,6 @@ export function Editor() {
           </span> */}
       </footer>
     </StateProvider>
-  );
-}
-
-function Test() {
-  const { switchTemplate, templateId } = useEditor();
-
-  return (
-    <div>
-      <button onClick={() => switchTemplate("001")}>001</button>
-      <button onClick={() => switchTemplate("002")}>002</button>
-      <p>{templateId}</p>
-    </div>
   );
 }
 
