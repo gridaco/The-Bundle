@@ -1,6 +1,10 @@
 export const presetsMap = {
   "003": [],
-  "004": ["/lsd/pro/hero-columns/01.png", "/lsd/pro/hero-columns/05.png"],
+  "004": [
+    "/lsd/preview/baked-004.1/motion-preview-0001.gif",
+    "/lsd/preview/baked-004.1/thumbnail.png",
+    "/lsd/pro/hero-columns/05.png",
+  ],
   "005": [
     "/lsd/preview/baked-005/showcase-0001.png",
     "/lsd/preview/baked-005/showcase-0002.png",
