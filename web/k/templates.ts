@@ -1,8 +1,8 @@
 export const presetsMap = {
   // "003": [],
   "004": [
-    "/lsd/preview/baked-004.1/motion-preview-0001.gif",
-    "/lsd/preview/baked-004.1/thumbnail.jpeg",
+    "/lsd/preview/baked-004/motion-preview-0001.gif",
+    "/lsd/preview/baked-004/thumbnail.jpeg",
     "/lsd/pro/hero-columns/05.png",
   ],
   "005": [
@@ -31,9 +31,9 @@ export interface Template {
 // const template_003: Template = {
 //   key: "003",
 //   name: "Glass 1",
-//   thumbnail: "/lsd/preview/baked-004.1/lsd.jpeg",
+//   thumbnail: "/lsd/preview/baked-004/lsd.jpeg",
 //   icon: "",
-//   preview: "/lsd/preview/baked-004.1/lsd.jpeg",
+//   preview: "/lsd/preview/baked-004/lsd.jpeg",
 //   presets: ["scene.collections.001"],
 // };
 
@@ -41,8 +41,8 @@ const template_004: Template = {
   key: "004",
   name: "Glass Dispersion",
   thumbnail: "/lsd/preview/baked-001/0001.png",
-  icon: "/lsd/preview/baked-004.1/icon.png",
-  preview: "/lsd/preview/baked-004.1/thumbnail.jpeg",
+  icon: "/lsd/preview/baked-004/icon.png",
+  preview: "/lsd/preview/baked-004/thumbnail.jpeg",
   presets: ["scene.collections.001"],
 };
 

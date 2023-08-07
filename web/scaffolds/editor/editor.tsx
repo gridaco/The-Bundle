@@ -29,7 +29,7 @@ import {
 
 const DEFAULT_CREDIT_COUNT = 10;
 // const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
-// const DEFAULT_SRC = "/lsd/preview/baked-004.1/lsd.jpeg";
+// const DEFAULT_SRC = "/lsd/preview/baked-004/lsd.jpeg";
 
 export function Editor() {
   const [message, setMessage] = useState<string>("");
@@ -101,7 +101,8 @@ export function Editor() {
                   return;
                 }
                 // TODO: update preset as template
-                const template = options.preset ?? "baked-004.1";
+                // const template = options.preset ?? "004";
+                const template = state.template.key;
                 client
                   .renderStill(template, {
                     data: {

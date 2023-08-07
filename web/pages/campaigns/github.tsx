@@ -27,7 +27,7 @@ export default function StartFromReadme() {
       readme: content,
     });
 
-    const imgres = await client.renderStill("004.1-bg-black", {
+    const imgres = await client.renderStill("004", {
       data: {
         text: {
           data: {
