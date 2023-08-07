@@ -48,7 +48,8 @@ export function render(
 
     // e.g.
     // sudo python3 src/cli.py -t '//templates/003-3d-glass-dispersion-text' -d '//templates/003-3d-glass-dispersion-text/presets/default.json' -o '//out/'
-    const template = path.resolve(templates_path, templateId);
+    // const template = path.resolve(templates_path, templateId);
+    const template = await locateTemplate(templateId);
 
     const args = [
       // template
@@ -114,4 +115,26 @@ export function render(
       }
     });
   });
+}
+
+/**
+ * Locates the user-friendly template directory name with the template key
+ * E.g. with "004" - this will resolve ~/004-3d-glass-dispersion-text-nueue
+ * @param key
+ */
+async function locateTemplate(
+  key: string,
+  cwd: string = templates_path,
+): Promise<string> {
+  // list the templates directory
+  const directories = await fs.readdir(cwd);
+
+  // find the template directory
+  const template = directories.find((item) => item.startsWith(key));
+
+  if (!template) {
+    throw new Error(`Template ${key} not found`);
+  }
+
+  return path.resolve(cwd, template);
 }
