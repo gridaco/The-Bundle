@@ -9,15 +9,57 @@ from dmt.src.camera import camera_focus
 HOME_DIR = Path.home()
 
 
-def _d_apply_mesh_property(obj, **_):
-    ...
+def fmt_blender_rgb(rgb):
+    """
+    if rgb is hex string, convert to rgb tuple and normalize to 0-1
+    the hex string should be in the format of #RRGGBB
+
+    also, if (r, g, b) is provided, make it (r, g, b, 1)
+    """
+    if isinstance(rgb, str) and rgb.startswith("#"):
+        # hex to rgb, and also, skip the first character (#)
+        rgb = tuple(int(rgb[i:i+2], 16) for i in (1, 3, 5))
+        # 255 to 1
+        rgb = tuple([x / 255 for x in rgb])
+
+    if len(rgb) == 3:
+        return (rgb[0], rgb[1], rgb[2], 1)
+    elif len(rgb) == 4:
+        return rgb
+    else:
+        return (0, 0, 0, 1)
 
 
-def _d_apply_global_property(obj, **_):
-    ...
+def _d_apply_object_material(obj, **_):
+    try:
+        material_slots = _.get('material_slots')
+        if material_slots is None:
+            return
+
+        keys = material_slots.keys()
+        for key in keys:
+            material = bpy.data.materials.get(key)
+            material_slot_data = material_slots.get(key)
+            nodes = material_slot_data.get('node_tree').get('nodes')
+            shader_node_keys = nodes.keys()
+            for shader_node_key in shader_node_keys:
+                shader_node = material.node_tree.nodes.get(shader_node_key)
+                if shader_node.type == "GROUP":
+                    group_node_data = nodes.get(
+                        shader_node_key).get('node_tree').get('nodes')
+                    for k, v in group_node_data.items():
+                        shader_node_2 = shader_node.node_tree.nodes.get(k)
+                        if shader_node_2.type == "RGB":
+                            # update the color value with data.
+                            color = fmt_blender_rgb(v)
+                            shader_node_2.outputs[0].default_value = color
+
+    except Exception as e:
+        # this module is still under development, catch all exceptions
+        logging.log(logging.ERROR, e)
 
 
-def _d_aply_text_curve_property(obj: bpy.types.TextCurve, **_):
+def _d_aply_object_text(obj: bpy.types.TextCurve, **_):
     """
     Info: TextCurve is 3D text object
     """
@@ -108,9 +150,8 @@ class TemplateProcessor:
 
     def data(self, **data):
         """
-        Render the template with the given data (not a real rendering, but file modification)
+        apply the data to template objects and materials
         """
-        ...
         keys = data.keys()
 
         for key in keys:
@@ -118,11 +159,17 @@ class TemplateProcessor:
             if obj is None:
                 continue
             obj_data = data.get(key)
-            _d_apply_global_property(obj, **obj_data)
+            _d_apply_object_material(obj, **obj_data)
             if obj.type == 'FONT':
-                _d_aply_text_curve_property(obj, **obj_data)
+                _d_aply_object_text(obj, **obj_data)
             elif obj.type == 'MESH':
-                _d_apply_global_property(obj, **obj_data)
+                ...
+            elif obj.type == 'CURVE':
+                ...
+            elif obj.type == 'LIGHT':
+                ...
+            elif obj.type == 'CAMERA':
+                ...
             else:
                 print("Unsupported object type: {}".format(obj.type))
 

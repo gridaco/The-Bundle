@@ -15,6 +15,9 @@
     "blender": "^3.6.0",
     "dmt": "1.0.0"
   },
+  "dependencies": {
+    "@lysergic/material-001": "1.0.0"
+  },
   "settings": {
     "dmt.camera_auto_zoom": true,
     "dmt.optimize": true
