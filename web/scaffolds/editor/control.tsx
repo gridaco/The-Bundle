@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
+import TextareaAutosize from "react-textarea-autosize";
+import * as Tabs from "@radix-ui/react-tabs";
 import {
   LightningBoltIcon,
   DownloadIcon,
@@ -8,7 +10,6 @@ import {
   ColorWheelIcon,
   FontStyleIcon,
 } from "@radix-ui/react-icons";
-import * as Tabs from "@radix-ui/react-tabs";
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
 import { useEditor } from "@/core/states/use-editor";
 
@@ -148,7 +149,7 @@ function Options() {
   const [font, setFont] = useState<string>();
 
   return (
-    <OptionsWrapper className="TabsRoot" defaultValue="preset">
+    <OptionsWrapper className="TabsRoot" defaultValue="color">
       <Tabs.List className="list" aria-label="Manage your account">
         {/* <Tabs.Trigger className="trigger" value="preset">
           <TransparencyGridIcon />
