@@ -102,10 +102,27 @@ export function Editor() {
                 client
                   .renderStill(template, {
                     data: {
-                      text: {
+                      ["text"]: {
                         data: {
                           body,
                         },
+                        material_slots: state.data["color.0"]
+                          ? {
+                              ["0"]: {
+                                node_tree: {
+                                  nodes: {
+                                    ["data"]: {
+                                      node_tree: {
+                                        nodes: {
+                                          ["color.0"]: state.data["color.0"],
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            }
+                          : undefined,
                       },
                     },
                   })

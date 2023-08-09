@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import * as Tabs from "@radix-ui/react-tabs";
 import {
@@ -9,8 +9,19 @@ import {
 import { useEditor } from "@/core/states/use-editor";
 
 export function Options() {
-  const { template } = useEditor();
-  const [color, setColor] = useState<string>();
+  const { template, data, setUserData } = useEditor();
+
+  const color = data["color.0"];
+
+  const setColor = useCallback(
+    (c: string) =>
+      setUserData({
+        ...data,
+        "color.0": c,
+      }),
+    [data, setUserData]
+  );
+
   const [font, setFont] = useState<string>();
 
   return (
@@ -54,18 +65,23 @@ export function Options() {
         ))}
       </Tabs.Content>
       <Tabs.Content className="content" value="color">
-        {["#FFFFFFFF", "#feea00", "#f7f4ea", "#FADF63", "#531CB3"].map(
-          (c, i) => (
-            <OptionsColorChip
-              key={c}
-              color={c}
-              selected={color === c}
-              onClick={() => {
-                setColor(c);
-              }}
-            />
-          )
-        )}
+        {[
+          "#FFFFFFFF",
+          "#feea00",
+          "#F84AA7",
+          "#FADF63",
+          "#531CB3",
+          "#B5D6D6",
+        ].map((c, i) => (
+          <OptionsColorChip
+            key={c}
+            color={c}
+            selected={color === c}
+            onClick={() => {
+              setColor(c);
+            }}
+          />
+        ))}
       </Tabs.Content>
       <Tabs.Content className="content" value="font">
         {[

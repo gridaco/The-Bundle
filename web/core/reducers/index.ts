@@ -3,6 +3,7 @@ import { produce } from "immer";
 import {
   EditorAction,
   SetRenderResultAction,
+  SetUserTemplateDataAction,
   SwitchTemplateAction,
 } from "core/actions";
 import * as templates from "k/templates";
@@ -49,6 +50,12 @@ export function editorReducer(
           // TODO:
           samples: 256,
         };
+      });
+    }
+    case "set-user-template-data": {
+      const { data } = action as SetUserTemplateDataAction;
+      return produce(state, (draft) => {
+        draft.data = data;
       });
     }
     default: {
