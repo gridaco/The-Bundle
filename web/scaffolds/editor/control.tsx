@@ -5,10 +5,10 @@ import {
   DownloadIcon,
   CameraIcon,
   TransparencyGridIcon,
+  ColorWheelIcon,
 } from "@radix-ui/react-icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
-import { templates } from "@/k/templates";
 import { useEditor } from "@/core/states/use-editor";
 
 const SnapWrapper = styled.div`
@@ -73,8 +73,8 @@ export function Controller({
     //
   } = useEditor();
 
-  // const [expanded, setExpanded] = useState(false);
-  const [preset, setPreset] = useState<string>();
+  const [expanded, setExpanded] = useState(false);
+  // const [preset, setPreset] = useState<string>();
 
   return (
     <div
@@ -85,65 +85,33 @@ export function Controller({
         flexDirection: "column",
       }}
     >
-      {/* {expanded && (
+      {expanded && (
         <Bar
           style={{
             height: "100%",
           }}
         >
-          <Tabs.Root className="TabsRoot" defaultValue="preset">
-            <Tabs.List className="TabsList" aria-label="Manage your account">
-              <Tabs.Trigger className="TabsTrigger" value="preset">
-                Preset <TransparencyGridIcon />
-              </Tabs.Trigger>
-              <Tabs.Trigger className="TabsTrigger" value="camera">
-                Camera <CameraIcon />
-              </Tabs.Trigger>
-            </Tabs.List>
-            <Tabs.Content className="TabsContent" value="preset">
-              <div
-                style={{
-                  display: "flex",
-                  gap: 12,
-                }}
-              >
-                {templates.map((it, i) => (
-                  <ItemContainer
-                    key={i}
-                    data-selected={preset === it.key}
-                    onClick={() => {
-                      setPreset(it.key);
-                    }}
-                  >
-                    <img src={it.thumbnail} width="100%" height="100%" />
-                  </ItemContainer>
-                ))}
-              </div>
-            </Tabs.Content>
-            <Tabs.Content className="TabsContent" value="camera">
-              <CameraComposition />
-            </Tabs.Content>
-          </Tabs.Root>
+          <Options />
         </Bar>
-      )} */}
+      )}
 
       <ControllerWrapper>
         <Bar>
-          {/* <div
+          <div
             className="slot scene"
             onClick={() => {
               setExpanded(!expanded);
             }}
           >
             <TransparencyGridIcon width="100%" height="100%" />
-          </div> */}
+          </div>
           <form
             onSubmit={(e) => {
-              // setExpanded(false);
+              setExpanded(false);
               e.preventDefault();
-              onSubmit?.(e, {
-                preset,
-              });
+              // onSubmit?.(e, {
+              //   preset,
+              // });
             }}
           >
             <input
@@ -172,6 +140,152 @@ export function Controller({
     </div>
   );
 }
+
+function Options() {
+  const { template } = useEditor();
+  const [color, setColor] = useState<string>();
+
+  return (
+    <OptionsWrapper className="TabsRoot" defaultValue="preset">
+      <Tabs.List className="list" aria-label="Manage your account">
+        <Tabs.Trigger className="trigger" value="preset">
+          <TransparencyGridIcon />
+          Preset
+        </Tabs.Trigger>
+        <Tabs.Trigger className="trigger" value="color">
+          <ColorWheelIcon />
+          Color
+        </Tabs.Trigger>
+        <Tabs.Trigger className="trigger" value="camera">
+          <CameraIcon />
+          Camera
+        </Tabs.Trigger>
+      </Tabs.List>
+      <Tabs.Content className="TabsContent" value="preset">
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+          }}
+        >
+          {template.presets.map((it, i) => (
+            <ItemContainer
+              key={i}
+              // data-selected={preset === it.key}
+              // onClick={() => {
+              //   setPreset(it.key);
+              // }}
+            >
+              <img
+                src={
+                  ""
+                  // it.thumbnail
+                }
+                width="100%"
+                height="100%"
+              />
+            </ItemContainer>
+          ))}
+        </div>
+      </Tabs.Content>
+      <Tabs.Content className="TabsContent" value="color">
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+          }}
+        >
+          {["#FFFFFFFF", "#feea00", "#f7f4ea", "#FADF63", "#531CB3"].map(
+            (c, i) => (
+              <OptionsColorChip
+                key={c}
+                color={c}
+                selected={color === c}
+                onClick={() => {
+                  setColor(c);
+                }}
+              />
+            )
+          )}
+        </div>
+      </Tabs.Content>
+      <Tabs.Content className="TabsContent" value="camera">
+        <CameraComposition />
+      </Tabs.Content>
+    </OptionsWrapper>
+  );
+}
+
+const OptionsWrapper = styled(Tabs.Root)`
+  .list {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .trigger {
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    gap: 8px;
+    background: transparent;
+    color: white;
+    opacity: 0.7;
+    &[data-state="active"] {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    outline: none;
+    border: none;
+  }
+`;
+
+function OptionsColorChip({
+  color,
+  selected,
+  ...props
+}: {
+  color: React.CSSProperties["color"];
+  selected: boolean;
+} & React.HTMLAttributes<HTMLButtonElement>) {
+  return (
+    <OptionsColorChipContainer
+      {...props}
+      data-selected={selected}
+      style={{
+        background: color,
+      }}
+    />
+  );
+}
+
+const OptionsColorChipContainer = styled.button`
+  --border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--border-radius);
+  outline: none;
+  border: none;
+
+  &[data-selected="true"] {
+    /* border */
+    ::after {
+      content: "";
+      position: absolute;
+      border-radius: calc(var(--border-radius) + 4px);
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border: white 2px solid;
+    }
+  }
+`;
 
 const ItemContainer = styled.div`
   user-select: none;
