@@ -1,0 +1,76 @@
+{
+  "$schema": "./meta.schema.json",
+  "name": "@lysergic/example",
+  "description": "3D Glass Dispersion Text",
+  "version": "1.0.0",
+  "keywords": ["glass", "text", "dispersion"],
+  "author": "Grida Inc",
+  "homepage": "https://grida.co/lsd/003",
+  "license": "Apache-2.0",
+  "files": ["scene.blend", "fonts", "images"],
+  "thumbnail": "./thumbnail.png",
+  "icon": "./icon.png",
+  "presets": ["./presets/0.json", "./presets/1.json", "./presets/2.json"],
+  "engines": {
+    "blender": "^3.6.0",
+    "dmt": "1.0.0"
+  },
+  "settings": {
+    "dmt.camera_auto_zoom": true,
+    "dmt.optimize": true
+  },
+  "main": "template.py",
+  "scripts": {
+    "template": "./template.py",
+    "sculpt": "./sculpt.py"
+  },
+  "scene": {
+    "camera": {
+      "target": "bpy.data.objects['text']"
+    }
+  },
+  "controls": {
+    "colors.0": {
+      "group": "color",
+      "type": "RGBA",
+      "widget": "COLOR",
+      "description": "Base Color",
+      "default": [0.0, 0.0, 0.0, 1.0],
+      "presets": [],
+      "data": "objects/text/material_slots/0/node_tree/data/color.0"
+    }
+  },
+  "objects": {
+    "camera": {
+      "data": {
+        "type": "enum",
+        "values": ["PERSP", "ORTHO"]
+      }
+    },
+    "text": {
+      "type": "bpy.types.Object",
+      "data": {
+        "body": {
+          "type": "string",
+          "text-transform": "uppercase",
+          "regex": "^[A-Z0-9]+$"
+        }
+      },
+      "material_slots": {
+        "0": {
+          "type": "SURFACE",
+          "node_tree": {
+            "data": {
+              "type": "bpy.types.ShaderNodeCustomGroup",
+              "node_tree": {
+                "color.0": {
+                  "type": "bpy.types.Color"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
