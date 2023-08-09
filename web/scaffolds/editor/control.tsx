@@ -6,6 +6,7 @@ import {
   CameraIcon,
   TransparencyGridIcon,
   ColorWheelIcon,
+  FontStyleIcon,
 } from "@radix-ui/react-icons";
 import * as Tabs from "@radix-ui/react-tabs";
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
@@ -144,73 +145,94 @@ export function Controller({
 function Options() {
   const { template } = useEditor();
   const [color, setColor] = useState<string>();
+  const [font, setFont] = useState<string>();
 
   return (
     <OptionsWrapper className="TabsRoot" defaultValue="preset">
       <Tabs.List className="list" aria-label="Manage your account">
-        <Tabs.Trigger className="trigger" value="preset">
+        {/* <Tabs.Trigger className="trigger" value="preset">
           <TransparencyGridIcon />
           Preset
-        </Tabs.Trigger>
+        </Tabs.Trigger> */}
         <Tabs.Trigger className="trigger" value="color">
           <ColorWheelIcon />
           Color
+        </Tabs.Trigger>
+        <Tabs.Trigger className="trigger" value="font">
+          <FontStyleIcon />
+          Font
         </Tabs.Trigger>
         <Tabs.Trigger className="trigger" value="camera">
           <CameraIcon />
           Camera
         </Tabs.Trigger>
       </Tabs.List>
-      <Tabs.Content className="TabsContent" value="preset">
-        <div
-          style={{
-            display: "flex",
-            gap: 12,
-          }}
-        >
-          {template.presets.map((it, i) => (
-            <ItemContainer
-              key={i}
-              // data-selected={preset === it.key}
-              // onClick={() => {
-              //   setPreset(it.key);
-              // }}
-            >
-              <img
-                src={
-                  ""
-                  // it.thumbnail
-                }
-                width="100%"
-                height="100%"
-              />
-            </ItemContainer>
-          ))}
-        </div>
+      <Tabs.Content className="content" value="preset">
+        {template.presets.map((it, i) => (
+          <ItemContainer
+            key={i}
+            // data-selected={preset === it.key}
+            // onClick={() => {
+            //   setPreset(it.key);
+            // }}
+          >
+            <img
+              src={
+                ""
+                // it.thumbnail
+              }
+              width="100%"
+              height="100%"
+            />
+          </ItemContainer>
+        ))}
       </Tabs.Content>
-      <Tabs.Content className="TabsContent" value="color">
-        <div
-          style={{
-            display: "flex",
-            gap: 12,
-          }}
-        >
-          {["#FFFFFFFF", "#feea00", "#f7f4ea", "#FADF63", "#531CB3"].map(
-            (c, i) => (
-              <OptionsColorChip
-                key={c}
-                color={c}
-                selected={color === c}
-                onClick={() => {
-                  setColor(c);
-                }}
-              />
-            )
-          )}
-        </div>
+      <Tabs.Content className="content" value="color">
+        {["#FFFFFFFF", "#feea00", "#f7f4ea", "#FADF63", "#531CB3"].map(
+          (c, i) => (
+            <OptionsColorChip
+              key={c}
+              color={c}
+              selected={color === c}
+              onClick={() => {
+                setColor(c);
+              }}
+            />
+          )
+        )}
       </Tabs.Content>
-      <Tabs.Content className="TabsContent" value="camera">
-        <CameraComposition />
+      <Tabs.Content className="content" value="font">
+        {[
+          {
+            id: "arial-400",
+            fontFamily: "Arial",
+            fontWeight: 400,
+          },
+          {
+            id: "arial-700",
+            fontFamily: "Arial",
+            fontWeight: 700,
+          },
+          {
+            id: "helvetica-400",
+            fontFamily: "Helvetica",
+            fontWeight: 700,
+          },
+        ].map((d, i) => (
+          <OptionsFontChip
+            key={i}
+            fontFamily={d.fontFamily}
+            fontWeight={d.fontWeight}
+            selected={font === d.id}
+            onClick={() => {
+              setFont(d.id);
+            }}
+          />
+        ))}
+      </Tabs.Content>
+      <Tabs.Content className="content" value="camera">
+        <div>angle</div>
+        {/* <CameraComposition /> */}
       </Tabs.Content>
     </OptionsWrapper>
   );
@@ -240,6 +262,12 @@ const OptionsWrapper = styled(Tabs.Root)`
     }
     outline: none;
     border: none;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
   }
 `;
 
@@ -284,6 +312,65 @@ const OptionsColorChipContainer = styled.button`
       bottom: -4px;
       border: white 2px solid;
     }
+  }
+`;
+
+function OptionsFontChip({
+  fontFamily,
+  fontWeight,
+  selected,
+  ...props
+}: {
+  fontFamily: React.CSSProperties["fontFamily"];
+  fontWeight: React.CSSProperties["fontWeight"];
+  selected?: boolean;
+} & React.HTMLAttributes<HTMLButtonElement>) {
+  return (
+    <OptionsFontChipContainer data-selected={selected} {...props}>
+      <span
+        style={{
+          fontFamily,
+          fontWeight,
+        }}
+      >
+        Ag
+      </span>
+    </OptionsFontChipContainer>
+  );
+}
+
+const OptionsFontChipContainer = styled.button`
+  --border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--border-radius);
+  outline: none;
+  border: none;
+
+  &[data-selected="true"] {
+    /* border */
+    ::after {
+      content: "";
+      position: absolute;
+      border-radius: calc(var(--border-radius) + 4px);
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border: white 2px solid;
+    }
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    user-select: none;
+    font-size: 40px;
   }
 `;
 
