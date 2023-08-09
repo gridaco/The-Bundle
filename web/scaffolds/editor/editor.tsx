@@ -35,8 +35,7 @@ export function Editor() {
   const [message, setMessage] = useState<string>("");
   const [credit, setCredit] = useState<number>(DEFAULT_CREDIT_COUNT);
   const [busy, setBusy] = useState<boolean>(false);
-  const [src, setSrc] = useState<string>();
-  const [showSnap, setShowSnap] = useState<boolean>(false);
+  const [showDownload, setShowDownload] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const client = useMemo(() => new Client(), []);
 
@@ -48,19 +47,20 @@ export function Editor() {
     }
   }, [credit]);
 
+  const [state, dispatch] = useReducer(editorReducer, initstate());
+
   // enable snap function if src is ready
   useEffect(() => {
+    const src = state.result?.src;
     if (src === "" || src === undefined || src === null) {
       return;
     }
-    setShowSnap(true);
-  }, [src]);
+    setShowDownload(true);
+  }, [state.result?.src]);
 
   const handleDispatch = useCallback((action: EditorAction) => {
     dispatch(action);
   }, []);
-
-  const [state, dispatch] = useReducer(editorReducer, initstate());
 
   return (
     <StateProvider state={state} dispatch={handleDispatch}>
@@ -70,14 +70,14 @@ export function Editor() {
 
         <div className="editor">
           <div className="frame">
-            <Canvas busy={busy} src={src} />
+            <Canvas busy={busy} />
           </div>
           <div className="controller-position">
             <Controller
-              showDownload={showSnap}
+              showDownload={showDownload}
               onDownload={() => {
-                if (src) {
-                  downloadImage(src, `${text}.png`);
+                if (state.result?.src) {
+                  downloadImage(state.result?.src, `${text}.png`);
                 } else {
                   alert("Please render first.");
                 }
@@ -89,7 +89,7 @@ export function Editor() {
                 }
 
                 setBusy(true);
-                setShowSnap(false);
+                setShowDownload(false);
                 const elements = e.target["elements"];
                 const body = elements["body"].value.toUpperCase();
 
@@ -110,7 +110,10 @@ export function Editor() {
                     },
                   })
                   .then(({ still, still_2x }) => {
-                    setSrc(still_2x ?? still);
+                    dispatch({
+                      type: "set-render-result",
+                      src: still_2x ?? still,
+                    });
                   })
                   .finally(() => {
                     setBusy(false);

@@ -1,4 +1,4 @@
-const ascii = /^[ -~]+$/;
+const ascii = /^[ -~\n]+$/;
 
 /**
  * check if text is all-ascii characters

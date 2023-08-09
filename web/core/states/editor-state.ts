@@ -41,7 +41,7 @@ export interface EditorState {
     };
   };
   mode: "still" | "animation";
-  result: RenderResult;
+  result?: RenderResult | null;
   camera: CameraSphere;
   scene: {};
   canvas: CanvasState;

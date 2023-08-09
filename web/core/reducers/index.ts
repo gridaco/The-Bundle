@@ -1,6 +1,10 @@
 import { DEFAULT_PRESET, EditorState } from "@/core/states";
 import { produce } from "immer";
-import { EditorAction, SwitchTemplateAction } from "core/actions";
+import {
+  EditorAction,
+  SetRenderResultAction,
+  SwitchTemplateAction,
+} from "core/actions";
 import * as templates from "k/templates";
 import { Template } from "k/templates";
 
@@ -12,6 +16,9 @@ export function editorReducer(
     case "switch-template": {
       const { key } = action as SwitchTemplateAction;
       return produce(state, (draft) => {
+        // clear the render resilt regarless to if selected the same template
+        draft.result = null;
+
         if (key === draft.template.key) {
           return;
         }
@@ -29,6 +36,18 @@ export function editorReducer(
           preset: DEFAULT_PRESET,
           presets: template.presets,
           preview: template.preview,
+        };
+      });
+    }
+    case "set-render-result": {
+      const { src } = action as SetRenderResultAction;
+      return produce(state, (draft) => {
+        draft.result = {
+          id: Date.now().toString(),
+          src,
+          template: draft.template.key,
+          // TODO:
+          samples: 256,
         };
       });
     }
