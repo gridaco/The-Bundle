@@ -13,9 +13,17 @@ export const presetsMap = {
     "/lsd/preview/baked-006/showcase-0001.png",
     "/lsd/preview/baked-006/showcase-0002.png",
   ],
+  "007": [
+    "/lsd/preview/baked-007/showcase-0001.png",
+    "/lsd/preview/baked-007/showcase-0002.png",
+  ],
   "008": [
     "/lsd/preview/baked-008/showcase-0001.png",
     "/lsd/preview/baked-008/showcase-0002.png",
+  ],
+  "009": [
+    // TODO:
+    "/lsd/preview/baked-009/icon.png",
   ],
 } as const;
 
@@ -64,12 +72,30 @@ const template_006: Template = {
   presets: ["scene.collections.001"],
 };
 
+const template_007: Template = {
+  key: "007",
+  name: "Fluffy Monster",
+  thumbnail: "/lsd/preview/baked-007/icon.png",
+  icon: "/lsd/preview/baked-007/icon.png",
+  preview: "/lsd/preview/baked-007/thumbnail.png",
+  presets: ["scene.collections.001"],
+};
+
 const template_008: Template = {
   key: "008",
   name: "Y2K",
   thumbnail: "/lsd/preview/baked-008/icon.png",
   icon: "/lsd/preview/baked-008/icon.png",
   preview: "/lsd/preview/baked-008/thumbnail.png",
+  presets: ["scene.collections.001"],
+};
+
+const template_009: Template = {
+  key: "009",
+  name: "Inflated Balloon",
+  thumbnail: "/lsd/preview/baked-009/icon.png",
+  icon: "/lsd/preview/baked-009/icon.png",
+  preview: "/lsd/preview/baked-009/thumbnail.png",
   presets: ["scene.collections.001"],
 };
 
@@ -80,7 +106,9 @@ export const templatesMap = {
   "004": template_004,
   "005": template_005,
   "006": template_006,
+  "007": template_007,
   "008": template_008,
+  "009": template_009,
 } as const;
 
 export const templates = Object.values(templatesMap);
