@@ -4,18 +4,23 @@ import os
 import json
 from pathlib import Path
 
+from dmt.src.camera import camera_focus
+
 HOME_DIR = Path.home()
 
 
-def _d_render_mesh_property(obj, **_):
+def _d_apply_mesh_property(obj, **_):
     ...
 
 
-def _d_render_global_property(obj, **_):
+def _d_apply_global_property(obj, **_):
     ...
 
 
-def _d_render_font_property(obj: bpy.types.Object, **_):
+def _d_aply_text_curve_property(obj: bpy.types.TextCurve, **_):
+    """
+    Info: TextCurve is 3D text object
+    """
     data = _.get('data')
 
     # text
@@ -23,18 +28,18 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     obj.data.body = data_body
 
     # # font
-    # data_font = data.get('font', None)
+    data_font = data.get('font', None)
     # # Local fonts directory -
     # # TODO: - resolve font path by name or id
     # # TODO: Add google font support
-    # if data_font:
-    #     try:
-    #         font_file = HOME_DIR / './Library/Fonts' / (data_font + '.ttf')
-    #         font = bpy.data.fonts.load(font_file)
-    #         obj.data.font = font
-    #     except:
-    #         logging.log(logging.ERROR, 'Font not found: ' + data_font)
-    #         ...
+    if data_font:
+        try:
+            font_file = HOME_DIR / './Library/Fonts' / (data_font + '.ttf')
+            font = bpy.data.fonts.load(font_file)
+            obj.data.font = font
+        except:
+            logging.log(logging.ERROR, 'Font not found: ' + data_font)
+            ...
 
     # == Paragraph ==
     # alignment
@@ -72,6 +77,12 @@ def _d_render_font_property(obj: bpy.types.Object, **_):
     if data_bevel_depth:
         obj.data.bevel_depth = data_bevel_depth
 
+    # below steps are required to ensure the text object's geometry is updated as well
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.mode_set(mode='EDIT')
+    bpy.ops.object.mode_set(mode='OBJECT')
+    # this way, the text object's geometry is updated properly (known bug in blender)
+
 
 def _d_render_material_property(obj, **_):
     ...
@@ -107,11 +118,11 @@ class TemplateProcessor:
             if obj is None:
                 continue
             obj_data = data.get(key)
-            _d_render_global_property(obj, **obj_data)
+            _d_apply_global_property(obj, **obj_data)
             if obj.type == 'FONT':
-                _d_render_font_property(obj, **obj_data)
+                _d_aply_text_curve_property(obj, **obj_data)
             elif obj.type == 'MESH':
-                _d_render_global_property(obj, **obj_data)
+                _d_apply_global_property(obj, **obj_data)
             else:
                 print("Unsupported object type: {}".format(obj.type))
 
@@ -222,4 +233,17 @@ if __name__ == "__main__":
     #         processor.render(**request)
     #     except:
     #         ...
+
+    # focus
+    # fit_camera_to_object(
+    #     target_object=bpy.data.objects['text'])
+    camera = bpy.context.scene.camera
+    target = bpy.data.objects['text']
+
+    try:
+        scale_value = camera_focus.ortho_fit(target)
+        bpy.context.scene.camera.data.ortho_scale = scale_value
+    except ValueError:
+        ...
+
     processor.render()
