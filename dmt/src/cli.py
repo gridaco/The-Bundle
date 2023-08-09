@@ -106,7 +106,7 @@ def load_template(template):
         return load_template_zip(archive_zip, to=tmp)
     else:
         raise ValueError(
-            "No supported archive found in the given template directory.")
+            f"No supported archive found in the given template directory - {template}")
 
 
 def load_template_gz(archive_gz, to):
