@@ -82,9 +82,7 @@ export function Editor() {
                   alert("Please render first.");
                 }
               }}
-              onSubmit={(e, options) => {
-                e.preventDefault();
-
+              onSubmit={(e) => {
                 if (credit <= 0) {
                   alert("You have no credits left. Please upgrade to PRO.");
                   return;
@@ -100,8 +98,6 @@ export function Editor() {
                   setBusy(false);
                   return;
                 }
-                // TODO: update preset as template
-                // const template = options.preset ?? "004";
                 const template = state.template.key;
                 client
                   .renderStill(template, {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import styled from "@emotion/styled";
 import {
@@ -63,7 +63,7 @@ export function Controller({
   onDownload?: () => void;
   onSubmit?: (
     e: React.FormEvent<HTMLFormElement>,
-    options: {
+    options?: {
       preset?: string;
     }
   ) => void;
@@ -71,7 +71,8 @@ export function Controller({
   const {
     //
   } = useEditor();
-
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [expanded, setExpanded] = useState(false);
   // const [preset, setPreset] = useState<string>();
 
@@ -105,15 +106,18 @@ export function Controller({
             <TransparencyGridIcon width="100%" height="100%" />
           </div>
           <form
+            ref={formRef}
             onSubmit={(e) => {
               setExpanded(false);
               e.preventDefault();
-              // onSubmit?.(e, {
-              //   preset,
-              // });
+              onSubmit?.(e, {});
+
+              // focus out the textarea
+              inputRef.current?.blur();
             }}
           >
             <TextareaAutosize
+              ref={inputRef}
               id="body"
               placeholder="Type text to render"
               // maxLength={7}
@@ -126,9 +130,15 @@ export function Controller({
                 if (e.key === "Enter") {
                   if (e.shiftKey) {
                     return;
+                  } else {
+                    e.preventDefault();
+                    // mock form submit
+                    const event = new Event("submit", {
+                      bubbles: true,
+                      cancelable: true,
+                    });
+                    formRef.current?.dispatchEvent(event);
                   }
-                  e.preventDefault();
-                  // onsubmit?.();
                 }
               }}
             />
