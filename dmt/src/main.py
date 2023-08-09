@@ -241,8 +241,13 @@ if __name__ == "__main__":
     target = bpy.data.objects['text']
 
     try:
-        scale_value = camera_focus.ortho_fit(target)
-        bpy.context.scene.camera.data.ortho_scale = scale_value
+        camera_focus.fit_camera_to_object(
+            camera=camera,
+            target_object=target,
+            margin=0.3,
+            zoom_in=True,
+            zoom_out=True
+        )
     except ValueError:
         ...
 
