@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import TextareaAutosize from "react-textarea-autosize";
 import styled from "@emotion/styled";
 import {
   LightningBoltIcon,
@@ -14,7 +15,7 @@ const SnapWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 60px;
+  /* height: 60px; */
   aspect-ratio: 1 / 1;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -112,13 +113,24 @@ export function Controller({
               // });
             }}
           >
-            <input
+            <TextareaAutosize
               id="body"
-              type="text"
               placeholder="Type text to render"
-              maxLength={7}
+              // maxLength={7}
+              minRows={1}
+              maxRows={3}
               autoFocus
               autoComplete="off"
+              onKeyDown={(e) => {
+                // disable default enter behaviour - on enter, submit, not new line
+                if (e.key === "Enter") {
+                  if (e.shiftKey) {
+                    return;
+                  }
+                  e.preventDefault();
+                  // onsubmit?.();
+                }
+              }}
             />
             <button type="submit">
               <LightningBoltIcon />
@@ -143,7 +155,7 @@ const Bar = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 60px;
+  min-height: 60px;
   border-radius: 12px;
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -166,7 +178,7 @@ const ControllerWrapper = styled.div`
 
   .slot.scene {
     cursor: pointer;
-    height: 100%;
+    height: 36px;
     aspect-ratio: 1 /1;
     color: white;
   }
@@ -175,17 +187,20 @@ const ControllerWrapper = styled.div`
     display: flex;
     width: 100%;
     flex-direction: row;
+    align-items: center;
     gap: 16px;
   }
 
-  input {
+  textarea {
     flex: 1;
     width: 100%;
+    height: 100%;
     padding: 8px;
     background: none;
     border: none;
     color: white;
     outline: none;
+    resize: none;
   }
 
   button {
