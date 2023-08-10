@@ -1,7 +1,0 @@
-{
-  "name": "@dmt/fonts",
-  "version": "0.0.0",
-  "dependencies": {
-    "@fontsource/roboto": "^5.0.8"
-  }
-}
