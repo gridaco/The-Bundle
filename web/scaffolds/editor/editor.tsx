@@ -105,10 +105,14 @@ export function Editor() {
                       ["text"]: {
                         data: {
                           body,
-                          font: {
-                            "font-family": state.data["font"]["font-family"],
-                            "font-weight": state.data["font"]["font-weight"],
-                          },
+                          font: state.data["font"]
+                            ? {
+                                "font-family":
+                                  state.data["font"]["font-family"],
+                                "font-weight":
+                                  state.data["font"]["font-weight"],
+                              }
+                            : undefined,
                         },
                         material_slots: state.data["color.0"]
                           ? {
