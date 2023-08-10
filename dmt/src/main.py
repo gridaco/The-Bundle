@@ -2,12 +2,9 @@ import logging
 import bpy
 import os
 import json
-from pathlib import Path
 
 from dmt.src.camera import camera_focus
 from dmt.src.fonts.fonts import font
-
-HOME_DIR = Path.home()
 
 
 def fmt_blender_rgb(rgb):
@@ -78,13 +75,18 @@ def _d_aply_object_text(obj: bpy.types.TextCurve, **_):
         font_file = str(font(familly=font_family, weight=font_weight))
         if font_file:
             try:
-                obj.data.font = bpy.data.fonts.load(font_file)
+                bfont = bpy.data.fonts.load(font_file)
+                obj.data.font = bfont
+                obj.data.font_bold = bfont
+                obj.data.font_italic = bfont
+                obj.data.font_bold_italic = bfont
+                print(f'Applied font_file: {font_file}')
             except:
-                logging.log(logging.ERROR, 'Error while applying font: ' +
-                            font_file)
+                logging.log(logging.ERROR,
+                            f'Error while applying font: {font_file}')
         else:
-            logging.log(logging.ERROR, 'Font not found: ' +
-                        json.dumps(data_font))
+            logging.log(logging.ERROR,
+                        f'Font not found: {json.dumps(data_font)}')
 
     # == Paragraph ==
     # alignment
