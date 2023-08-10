@@ -36,13 +36,17 @@ class GoogleFontsRepository:
             .replace('_', '')\
             .replace('+', '')
 
-        return self.fonts_path_map[name]
+        return self.fonts_path_map.get(name)
 
     def font(self, family, weight):
         """
         finds the font by family and weight
         """
-        path = self.repo / self.family(family)
+        _family = self.family(family)
+        if not _family:
+            return None
+
+        path = self.repo / _family
 
         # Convert the weight string to integer for comparison
         weight_int = int(weight)

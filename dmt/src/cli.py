@@ -4,7 +4,6 @@ import subprocess
 import zipfile
 import tarfile
 import shutil
-import platform
 import tempfile
 import numpy as np
 import imageio
