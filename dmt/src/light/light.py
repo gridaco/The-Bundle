@@ -1,5 +1,5 @@
 import bpy
-from ..types import RGBA
+from ..type import RGBA
 
 
 class LightModifier:
