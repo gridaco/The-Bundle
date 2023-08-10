@@ -93,11 +93,11 @@ export function Editor() {
                 const elements = e.target["elements"];
                 const body = elements["body"].value.toUpperCase();
 
-                if (isNotAscii(body)) {
-                  alert("Only ASCII characters are allowed.");
-                  setBusy(false);
-                  return;
-                }
+                // if (isNotAscii(body)) {
+                //   alert("Only ASCII characters are allowed.");
+                //   setBusy(false);
+                //   return;
+                // }
                 const template = state.template.key;
                 client
                   .renderStill(template, {
@@ -105,6 +105,10 @@ export function Editor() {
                       ["text"]: {
                         data: {
                           body,
+                          font: {
+                            "font-family": state.data["font"]["font-family"],
+                            "font-weight": state.data["font"]["font-weight"],
+                          },
                         },
                         material_slots: state.data["color.0"]
                           ? {

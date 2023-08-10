@@ -8,10 +8,48 @@ import {
 } from "@radix-ui/react-icons";
 import { useEditor } from "@/core/states/use-editor";
 
+const colors = [
+  "#FFFFFFFF",
+  "#feea00",
+  "#F84AA7",
+  "#FADF63",
+  "#531CB3",
+  "#B5D6D6",
+];
+
+const fonts = [
+  {
+    id: "Inter-400",
+    fontFamily: "Inter",
+    fontWeight: 400,
+  },
+  {
+    id: "Cherry Bomb One",
+    fontFamily: "Cherry Bomb One",
+    fontWeight: 400,
+  },
+  {
+    id: "Pacifico",
+    fontFamily: "Pacifico",
+    fontWeight: 400,
+  },
+  {
+    id: "Bowlby One",
+    fontFamily: "Bowlby One",
+    fontWeight: 400,
+  },
+  {
+    id: "Fugaz One",
+    fontFamily: "Fugaz One",
+    fontWeight: 400,
+  },
+] as const;
+
 export function Options() {
   const { template, data, setUserData } = useEditor();
 
   const color = data["color.0"];
+  const font = data["font"];
 
   const setColor = useCallback(
     (c: string) =>
@@ -22,7 +60,18 @@ export function Options() {
     [data, setUserData]
   );
 
-  const [font, setFont] = useState<string>();
+  const setFont = useCallback(
+    (id: string, family: string, weight: number | string) =>
+      setUserData({
+        ...data,
+        ["font"]: {
+          id: id,
+          "font-family": family,
+          "font-weight": weight,
+        },
+      }),
+    [data, setUserData]
+  );
 
   return (
     <OptionsWrapper className="TabsRoot" defaultValue="color">
@@ -65,14 +114,7 @@ export function Options() {
         ))}
       </Tabs.Content>
       <Tabs.Content className="content" value="color">
-        {[
-          "#FFFFFFFF",
-          "#feea00",
-          "#F84AA7",
-          "#FADF63",
-          "#531CB3",
-          "#B5D6D6",
-        ].map((c, i) => (
+        {colors.map((c, i) => (
           <OptionsColorChip
             key={c}
             color={c}
@@ -84,30 +126,14 @@ export function Options() {
         ))}
       </Tabs.Content>
       <Tabs.Content className="content" value="font">
-        {[
-          {
-            id: "arial-400",
-            fontFamily: "Arial",
-            fontWeight: 400,
-          },
-          {
-            id: "arial-700",
-            fontFamily: "Arial",
-            fontWeight: 700,
-          },
-          {
-            id: "helvetica-400",
-            fontFamily: "Helvetica",
-            fontWeight: 700,
-          },
-        ].map((d, i) => (
+        {fonts.map((d, i) => (
           <OptionsFontChip
             key={i}
             fontFamily={d.fontFamily}
             fontWeight={d.fontWeight}
-            selected={font === d.id}
+            selected={font?.id === d.id}
             onClick={() => {
-              setFont(d.id);
+              setFont(d.id, d.fontFamily, d.fontWeight);
             }}
           />
         ))}
@@ -201,21 +227,50 @@ function OptionsFontChip({
   fontFamily,
   fontWeight,
   selected,
+  children,
   ...props
-}: {
+}: React.PropsWithChildren<{
   fontFamily: React.CSSProperties["fontFamily"];
   fontWeight: React.CSSProperties["fontWeight"];
   selected?: boolean;
-} & React.HTMLAttributes<HTMLButtonElement>) {
+}> &
+  React.HTMLAttributes<HTMLButtonElement>) {
+  const [fontLoaded, setFontLoaded] = useState(false);
+
+  useEffect(() => {
+    // Load the font dynamically using the Google Fonts API
+    const link = document.createElement("link");
+    const href = `https://fonts.googleapis.com/css2?family=${fontFamily!.replace(
+      " ",
+      "+"
+    )}:wght@400&display=swap`;
+    console.log(href);
+    link.href = href;
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+
+    link.onload = () => {
+      setFontLoaded(true);
+    };
+
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, [fontFamily]);
+
   return (
-    <OptionsFontChipContainer data-selected={selected} {...props}>
+    <OptionsFontChipContainer
+      data-selected={selected}
+      {...props}
+      title={fontFamily}
+    >
       <span
         style={{
           fontFamily,
           fontWeight,
         }}
       >
-        Ag
+        {children ?? <>Ag</>}
       </span>
     </OptionsFontChipContainer>
   );
