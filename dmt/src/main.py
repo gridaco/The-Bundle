@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from dmt.src.camera import camera_focus
+from dmt.src.fonts.fonts import font
 
 HOME_DIR = Path.home()
 
@@ -69,19 +70,21 @@ def _d_aply_object_text(obj: bpy.types.TextCurve, **_):
     data_body = data.get('body', obj.data.body)
     obj.data.body = data_body
 
-    # # font
+    # font
     data_font = data.get('font', None)
-    # # Local fonts directory -
-    # # TODO: - resolve font path by name or id
-    # # TODO: Add google font support
     if data_font:
-        try:
-            font_file = HOME_DIR / './Library/Fonts' / (data_font + '.ttf')
-            font = bpy.data.fonts.load(font_file)
-            obj.data.font = font
-        except:
-            logging.log(logging.ERROR, 'Font not found: ' + data_font)
-            ...
+        font_family = data_font.get('font-family')
+        font_weight = data_font.get('font-weight')
+        font_file = str(font(familly=font_family, weight=font_weight))
+        if font_file:
+            try:
+                obj.data.font = bpy.data.fonts.load(font_file)
+            except:
+                logging.log(logging.ERROR, 'Error while applying font: ' +
+                            font_file)
+        else:
+            logging.log(logging.ERROR, 'Font not found: ' +
+                        json.dumps(data_font))
 
     # == Paragraph ==
     # alignment
