@@ -29,7 +29,8 @@ class GoogleFontsRepository:
         while searching, it will
         flatten the font family name, e.g. Noto Sans KR -> notosanskr
         """
-        name = name.lower().replace(' ', '')
+        # remove spaces, dashes, etc.
+        name = name.lower().replace(' ', '').replace('-', '').replace('_', '')
         return self.fonts_path_map[name]
 
     def font(self, family, weight):
@@ -55,7 +56,15 @@ class GoogleFontsRepository:
                     # load the font
                     return font_file
             else:
-                ...
+                # this is a non-variable font
+                if 'OS/2' not in ttfont:
+                    continue  # skip this font if it doesn't have an OS/2 table
+
+                os2_table = ttfont['OS/2']
+
+                if os2_table.usWeightClass == weight_int:
+                    # the font has the desired weight
+                    return font_file
 
 
 if __name__ == '__main__':
