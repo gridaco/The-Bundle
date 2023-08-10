@@ -30,7 +30,12 @@ class GoogleFontsRepository:
         flatten the font family name, e.g. Noto Sans KR -> notosanskr
         """
         # remove spaces, dashes, etc.
-        name = name.lower().replace(' ', '').replace('-', '').replace('_', '')
+        name = name.lower()\
+            .replace(' ', '')\
+            .replace('-', '')\
+            .replace('_', '')\
+            .replace('+', '')
+
         return self.fonts_path_map[name]
 
     def font(self, family, weight):
