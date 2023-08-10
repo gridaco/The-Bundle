@@ -5,3 +5,4 @@ pillow
 apng
 tqdm
 mathutils
+fonttools
