@@ -1,3 +1,17 @@
+import fonts from "./fonts";
+
+export const options = {
+  colors: [
+    ["#FFFFFF", "#747CFF", "#6EC6FF"],
+    ["#FFFFFF", "#85FFC5", "#FF9661"],
+    ["#FFFFFF", "#D37CFF", "#8EAEE0"],
+    ["#FFF19F", "#FFD869", "#E0A320"],
+    ["#FFF19F", "#FFD869", "#E0A320"],
+    ["#FFFFFF", "#FFFFFF", "#3B3B3B"],
+  ],
+  fonts: [fonts["Lugrasimo"]],
+} as const;
+
 export default function data({
   text,
   font,

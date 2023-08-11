@@ -1,7 +1,8 @@
-import _005 from "./005";
+import _005, { options as _005_options } from "./005";
+import { options as _006_options } from "./006";
 import _008 from "./008";
 
-export const presetsMap = {
+export const previews = {
   // "003": [],
   "004": [
     "/lsd/preview/baked-004/motion-preview-0001.gif",
@@ -40,6 +41,13 @@ export interface Template {
   custom_data_transformer?: (...d: any) => any;
   plan: "free" | "pro";
   visibility: "visible" | "comming_soon";
+  options: {
+    colors: ReadonlyArray<ReadonlyArray<string>>;
+    fonts: ReadonlyArray<{
+      "font-family": string;
+      "font-weight": number;
+    }>;
+  };
 }
 
 // const template_003: Template = {
@@ -60,6 +68,10 @@ const template_004: Template = {
   presets: ["scene.collections.001"],
   plan: "pro",
   visibility: "visible",
+  options: {
+    colors: [],
+    fonts: [],
+  },
 };
 
 const template_005: Template = {
@@ -72,6 +84,7 @@ const template_005: Template = {
   plan: "pro",
   visibility: "visible",
   custom_data_transformer: _005,
+  options: _005_options,
 };
 
 const template_006: Template = {
@@ -83,6 +96,7 @@ const template_006: Template = {
   presets: ["scene.collections.001"],
   plan: "pro",
   visibility: "visible",
+  options: _006_options,
 };
 
 const template_007: Template = {
@@ -94,6 +108,10 @@ const template_007: Template = {
   presets: ["scene.collections.001"],
   plan: "pro",
   visibility: "comming_soon",
+  options: {
+    colors: [],
+    fonts: [],
+  },
 };
 
 const template_008: Template = {
@@ -106,6 +124,10 @@ const template_008: Template = {
   custom_data_transformer: _008,
   plan: "pro",
   visibility: "visible",
+  options: {
+    colors: [],
+    fonts: [],
+  },
 };
 
 const template_009: Template = {
@@ -117,6 +139,10 @@ const template_009: Template = {
   presets: ["scene.collections.001"],
   plan: "pro",
   visibility: "comming_soon",
+  options: {
+    colors: [],
+    fonts: [],
+  },
 };
 
 export const defaultTemplateKey = "004";
