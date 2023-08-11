@@ -1,3 +1,4 @@
+import _005 from "./005";
 import _008 from "./008";
 
 export const presetsMap = {
@@ -70,6 +71,7 @@ const template_005: Template = {
   presets: ["scene.collections.001"],
   plan: "pro",
   visibility: "visible",
+  custom_data_transformer: _005,
 };
 
 const template_006: Template = {

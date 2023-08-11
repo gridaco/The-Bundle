@@ -10,7 +10,7 @@ export default function data({
     "font-weight": string;
   };
 }) {
-  const text_objects = ["border", "text"];
+  const text_objects = ["text"];
 
   const text_objects_data = text_objects.reduce(
     (p, c) => ({
@@ -52,5 +52,8 @@ export default function data({
       }, {})
     : {};
 
-  return { ...text_objects_data, ...light_objects_data };
+  return {
+    ...text_objects_data,
+    ...light_objects_data,
+  };
 }
