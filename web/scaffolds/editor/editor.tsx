@@ -91,7 +91,8 @@ export function Editor() {
                 setBusy(true);
                 setShowDownload(false);
                 const elements = e.target["elements"];
-                const text: string = elements["body"].value.toUpperCase();
+                const text: string = elements["body"].value;
+                // .toUpperCase();
 
                 // if (isNotAscii(body)) {
                 //   alert("Only ASCII characters are allowed.");

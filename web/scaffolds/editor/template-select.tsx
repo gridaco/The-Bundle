@@ -6,7 +6,7 @@ import {
   LockClosedIcon,
 } from "@radix-ui/react-icons";
 import styled from "@emotion/styled";
-import { presetsMap, templates } from "@/k/templates";
+import { previews, templates } from "@/k/templates";
 import { useEditor } from "@/core/states/use-editor";
 
 interface TemplateSelectorProps {
@@ -94,7 +94,7 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
       </div>
       <div className="presets" key={focus}>
         <div className="images">
-          {presetsMap[focus].map((preset, i) => {
+          {previews[focus].map((preset, i) => {
             return (
               <PresetPreviewImage
                 width="100%"
