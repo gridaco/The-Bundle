@@ -5,9 +5,10 @@ import json
 
 from dmt.src.camera import camera_focus
 from dmt.src.fonts.fonts import font
+from dmt.src.light.light import LightModifier
 
 
-def fmt_blender_rgb(rgb):
+def fmt_blender_rgb(rgb, alpha=True):
     """
     if rgb is hex string, convert to rgb tuple and normalize to 0-1
     the hex string should be in the format of #RRGGBB
@@ -21,14 +22,23 @@ def fmt_blender_rgb(rgb):
         rgb = tuple([x / 255 for x in rgb])
 
     if len(rgb) == 3:
-        return (rgb[0], rgb[1], rgb[2], 1)
+        if alpha:
+            return (rgb[0], rgb[1], rgb[2], 1)
+        else:
+            return rgb
     elif len(rgb) == 4:
-        return rgb
+        if alpha:
+            return rgb
+        else:
+            return (rgb[0], rgb[1], rgb[2])
     else:
-        return (0, 0, 0, 1)
+        if alpha:
+            return (0, 0, 0, 1)
+        else:
+            return (0, 0, 0)
 
 
-def _d_apply_object_material(obj, **_):
+def _d_apply_data_to_object_material(obj, **_):
     try:
         material_slots = _.get('material_slots')
         if material_slots is None:
@@ -57,7 +67,7 @@ def _d_apply_object_material(obj, **_):
         logging.log(logging.ERROR, e)
 
 
-def _d_aply_object_text(obj: bpy.types.TextCurve, **_):
+def _d_aply_data_to_object_text(obj: bpy.types.TextCurve, **_):
     """
     Info: TextCurve is 3D text object
     """
@@ -131,8 +141,22 @@ def _d_aply_object_text(obj: bpy.types.TextCurve, **_):
     # this way, the text object's geometry is updated properly (known bug in blender)
 
 
-def _d_render_material_property(obj, **_):
+def _d_apply_data_to_material(obj, **_):
     ...
+
+
+def _d_apply_data_to_light(obj, **_):
+    modifier = LightModifier(obj.data)
+    light_data = _.get('data')
+
+    if light_data is None:
+        return
+
+    # apply color
+    color = light_data.get('color')
+    color = fmt_blender_rgb(color, alpha=False)
+
+    modifier.apply_color(color)
 
 
 class TemplateProcessor:
@@ -164,15 +188,15 @@ class TemplateProcessor:
             if obj is None:
                 continue
             obj_data = data.get(key)
-            _d_apply_object_material(obj, **obj_data)
+            _d_apply_data_to_object_material(obj, **obj_data)
             if obj.type == 'FONT':
-                _d_aply_object_text(obj, **obj_data)
+                _d_aply_data_to_object_text(obj, **obj_data)
             elif obj.type == 'MESH':
                 ...
             elif obj.type == 'CURVE':
                 ...
             elif obj.type == 'LIGHT':
-                ...
+                _d_apply_data_to_light(obj, **obj_data)
             elif obj.type == 'CAMERA':
                 ...
             else:
