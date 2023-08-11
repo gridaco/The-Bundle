@@ -37,6 +37,7 @@ export function editorReducer(
           preset: DEFAULT_PRESET,
           presets: template.presets,
           preview: template.preview,
+          custom_data_transformer: template.custom_data_transformer,
         };
       });
     }

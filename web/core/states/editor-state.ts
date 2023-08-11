@@ -30,6 +30,11 @@ export interface EditorState {
      * list of available presets to this template
      */
     presets: string[];
+
+    /**
+     * custom data transformer on client side for temporary hacks
+     */
+    custom_data_transformer?: (...d: any) => any;
   };
   data: UserTemplateData;
   user: {

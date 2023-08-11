@@ -91,48 +91,55 @@ export function Editor() {
                 setBusy(true);
                 setShowDownload(false);
                 const elements = e.target["elements"];
-                const body = elements["body"].value.toUpperCase();
+                const text: string = elements["body"].value.toUpperCase();
 
                 // if (isNotAscii(body)) {
                 //   alert("Only ASCII characters are allowed.");
                 //   setBusy(false);
                 //   return;
                 // }
+
                 const template = state.template.key;
-                client
-                  .renderStill(template, {
-                    data: {
-                      ["text"]: {
-                        data: {
-                          body,
-                          font: state.data["font"]
-                            ? {
-                                "font-family":
-                                  state.data["font"]["font-family"],
-                                "font-weight":
-                                  state.data["font"]["font-weight"],
-                              }
-                            : undefined,
-                        },
-                        material_slots: state.data["color.0"]
+                const data = {
+                  ...state.data,
+                  ["text"]: text,
+                };
+                const transformer =
+                  state.template.custom_data_transformer ??
+                  ((data) => ({
+                    ["text"]: {
+                      data: {
+                        body: data["text"],
+                        font: data["font"]
                           ? {
-                              ["0"]: {
-                                node_tree: {
-                                  nodes: {
-                                    ["data"]: {
-                                      node_tree: {
-                                        nodes: {
-                                          ["color.0"]: state.data["color.0"],
-                                        },
+                              "font-family": data["font"]["font-family"],
+                              "font-weight": data["font"]["font-weight"],
+                            }
+                          : undefined,
+                      },
+                      material_slots: data["color.0"]
+                        ? {
+                            ["0"]: {
+                              node_tree: {
+                                nodes: {
+                                  ["data"]: {
+                                    node_tree: {
+                                      nodes: {
+                                        ["color.0"]: data["color.0"],
                                       },
                                     },
                                   },
                                 },
                               },
-                            }
-                          : undefined,
-                      },
+                            },
+                          }
+                        : undefined,
                     },
+                  }));
+
+                client
+                  .renderStill(template, {
+                    data: transformer(data),
                   })
                   .then(({ still, still_2x }) => {
                     dispatch({
@@ -144,7 +151,7 @@ export function Editor() {
                     setBusy(false);
                     // mock credit use
                     setCredit((credit) => credit - 1);
-                    setText(body);
+                    setText(text);
                   });
               }}
             />

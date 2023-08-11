@@ -1,3 +1,5 @@
+import _008 from "./008";
+
 export const presetsMap = {
   // "003": [],
   "004": [
@@ -34,6 +36,9 @@ export interface Template {
   icon: string;
   preview: string;
   presets: string[];
+  custom_data_transformer?: (...d: any) => any;
+  plan: "free" | "pro";
+  visibility: "visible" | "comming_soon";
 }
 
 // const template_003: Template = {
@@ -52,6 +57,8 @@ const template_004: Template = {
   icon: "/lsd/preview/baked-004/icon.png",
   preview: "/lsd/preview/baked-004/thumbnail.jpeg",
   presets: ["scene.collections.001"],
+  plan: "pro",
+  visibility: "visible",
 };
 
 const template_005: Template = {
@@ -61,6 +68,8 @@ const template_005: Template = {
   icon: "/lsd/preview/baked-005/icon.png",
   preview: "/lsd/preview/baked-005/thumbnail.png",
   presets: ["scene.collections.001"],
+  plan: "pro",
+  visibility: "visible",
 };
 
 const template_006: Template = {
@@ -70,6 +79,8 @@ const template_006: Template = {
   icon: "/lsd/preview/baked-006/icon.png",
   preview: "/lsd/preview/baked-006/thumbnail.png",
   presets: ["scene.collections.001"],
+  plan: "pro",
+  visibility: "visible",
 };
 
 const template_007: Template = {
@@ -79,6 +90,8 @@ const template_007: Template = {
   icon: "/lsd/preview/baked-007/icon.png",
   preview: "/lsd/preview/baked-007/thumbnail.png",
   presets: ["scene.collections.001"],
+  plan: "pro",
+  visibility: "comming_soon",
 };
 
 const template_008: Template = {
@@ -88,6 +101,9 @@ const template_008: Template = {
   icon: "/lsd/preview/baked-008/icon.png",
   preview: "/lsd/preview/baked-008/thumbnail.png",
   presets: ["scene.collections.001"],
+  custom_data_transformer: _008,
+  plan: "pro",
+  visibility: "visible",
 };
 
 const template_009: Template = {
@@ -97,6 +113,8 @@ const template_009: Template = {
   icon: "/lsd/preview/baked-009/icon.png",
   preview: "/lsd/preview/baked-009/thumbnail.png",
   presets: ["scene.collections.001"],
+  plan: "pro",
+  visibility: "comming_soon",
 };
 
 export const defaultTemplateKey = "004";
