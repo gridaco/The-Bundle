@@ -1,6 +1,10 @@
 import React from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { CaretDownIcon, Cross2Icon } from "@radix-ui/react-icons";
+import {
+  CaretDownIcon,
+  Cross2Icon,
+  LockClosedIcon,
+} from "@radix-ui/react-icons";
 import styled from "@emotion/styled";
 import { presetsMap, templates } from "@/k/templates";
 import { useEditor } from "@/core/states/use-editor";
@@ -62,16 +66,25 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
   const { switchTemplate, template } = useEditor();
   const [focus, setFocus] = React.useState<string>(template.key);
 
+  const sorted_templates = React.useMemo(() => {
+    return templates.sort((a, b) => {
+      if (a.visibility === "comming_soon") return 1;
+      if (b.visibility === "comming_soon") return -1;
+      return 0;
+    });
+  }, []);
+
   return (
     <TemplatesViewWrapper>
       <div className="templates">
-        {templates.map((template, i) => {
+        {sorted_templates.map((template, i) => {
           return (
             <TemplateMenuItem
               key={template.key}
               name={template.name}
               iconSrc={template.icon}
               selected={focus === template.key}
+              locked={template.visibility === "comming_soon"}
               onClick={() => {
                 setFocus(template.key);
               }}
@@ -142,9 +155,11 @@ const TemplateMenuItem = React.forwardRef(function TemplateMenuItem(
     name,
     iconSrc,
     selected,
+    locked,
     ...props
   }: TemplateSelectorProps & {
     selected?: boolean;
+    locked?: boolean;
   } & React.HTMLAttributes<HTMLButtonElement>,
   forwaredRef?: React.Ref<HTMLButtonElement>
 ) {
@@ -153,9 +168,15 @@ const TemplateMenuItem = React.forwardRef(function TemplateMenuItem(
       ref={forwaredRef}
       {...props}
       data-selected={selected}
+      data-visible={locked ? "false" : "true"}
     >
       <img alt="template thumbnail" src={iconSrc} width={44} height={44} />
-      <span>{name}</span>
+      <span style={{ flex: 1 }}>{name}</span>
+      {locked && (
+        <div className="lock">
+          <LockClosedIcon />
+        </div>
+      )}
     </TemplateMenuItemWrapper>
   );
 });
@@ -183,6 +204,17 @@ const TemplateMenuItemWrapper = styled.button`
 
   &[data-selected="true"] {
     background: rgba(255, 255, 255, 0.2);
+  }
+
+  &[data-visible="false"] {
+    opacity: 0.5;
+  }
+
+  .lock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
   }
 `;
 
