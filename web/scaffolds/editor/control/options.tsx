@@ -12,35 +12,7 @@ import {
   OptionsColorThemeChip,
   OptionsFontChip,
 } from "./chips";
-import { Template, templates, templatesMap } from "@/k/templates";
-
-const fonts = [
-  {
-    id: "Inter-400",
-    fontFamily: "Inter",
-    fontWeight: 400,
-  },
-  {
-    id: "Cherry Bomb One",
-    fontFamily: "Cherry Bomb One",
-    fontWeight: 400,
-  },
-  {
-    id: "Pacifico",
-    fontFamily: "Pacifico",
-    fontWeight: 400,
-  },
-  {
-    id: "Bowlby One",
-    fontFamily: "Bowlby One",
-    fontWeight: 400,
-  },
-  {
-    id: "Fugaz One",
-    fontFamily: "Fugaz One",
-    fontWeight: 400,
-  },
-] as const;
+import { Template, templatesMap } from "@/k/templates";
 
 export function Options() {
   const { template, data, setUserData } = useEditor();
@@ -60,19 +32,17 @@ export function Options() {
   );
 
   const setFont = useCallback(
-    (id: string, family: string, weight: number | string) =>
+    (d: { "font-family": string; "font-weight": number }) =>
       setUserData({
         ...data,
-        ["font"]: {
-          id: id,
-          "font-family": family,
-          "font-weight": weight,
-        },
+        ["font"]: d,
       }),
     [data, setUserData]
   );
 
   const options = (templatesMap[template.key] as Template).options;
+  // const options_colors = options.colors;
+  // const options_fonts = options.fonts;
 
   return (
     <OptionsWrapper defaultValue="color">
@@ -144,14 +114,14 @@ export function Options() {
         })}
       </Tabs.Content>
       <Tabs.Content className="content" value="font">
-        {fonts.map((d, i) => (
+        {options.fonts.map((d, i) => (
           <OptionsFontChip
             key={i}
-            fontFamily={d.fontFamily}
-            fontWeight={d.fontWeight}
-            selected={font?.id === d.id}
+            fontFamily={d["font-family"]}
+            fontWeight={d["font-weight"]}
+            selected={font?.["font-family"] === d["font-family"]}
             onClick={() => {
-              setFont(d.id, d.fontFamily, d.fontWeight);
+              setFont(d);
             }}
           />
         ))}

@@ -23,6 +23,22 @@ const fonts = {
     "font-family": "Anton Regular",
     "font-weight": 400,
   },
+  ["Inter"]: {
+    "font-family": "Inter",
+    "font-weight": 400,
+  },
+  ["Pacifico"]: {
+    "font-family": "Pacifico",
+    "font-weight": 400,
+  },
+  "Bowlby One": {
+    "font-family": "Bowlby One",
+    "font-weight": 400,
+  },
+  "Fugaz One": {
+    "font-family": "Fugaz One",
+    "font-weight": 400,
+  },
 } as const;
 
 export default fonts;
