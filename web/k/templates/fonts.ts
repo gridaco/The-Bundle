@@ -19,8 +19,8 @@ const fonts = {
     "font-family": "Russo One",
     "font-weight": 400,
   },
-  "Anton Regular": {
-    "font-family": "Anton Regular",
+  Anton: {
+    "font-family": "Anton",
     "font-weight": 400,
   },
   ["Inter"]: {

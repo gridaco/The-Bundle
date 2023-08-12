@@ -13,7 +13,7 @@ export const options = {
     // fonts["Cherry Bomb One"],
     // fonts["Press Start 2P"],
     // fonts["Russo One"],
-    // fonts["Anton Regular"],
+    // fonts["Anton"],
   ],
 } as const;
 
