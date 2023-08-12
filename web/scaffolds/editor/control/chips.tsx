@@ -5,15 +5,20 @@ interface ChipProps {
   selected?: boolean;
 }
 
-export function OptionsColorThemeChip({ colors }: { colors: string[] }) {
+export function OptionsColorThemeChip({
+  colors,
+  selected,
+  ...props
+}: ChipProps & {
+  colors: string[] | ReadonlyArray<string>;
+} & React.HTMLAttributes<HTMLButtonElement>) {
   return (
-    <div
+    <OptionsColorChipContainer
+      {...props}
+      data-selected={selected}
       style={{
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 4,
+        background: "transparent",
+        aspectRatio: "auto",
         padding: 8,
       }}
     >
@@ -21,14 +26,14 @@ export function OptionsColorThemeChip({ colors }: { colors: string[] }) {
         <div
           key={i}
           style={{
-            width: 60,
-            height: 60,
+            width: 36,
+            height: 36,
             background: color,
-            borderRadius: 12,
+            borderRadius: "50%",
           }}
         />
       ))}
-    </div>
+    </OptionsColorChipContainer>
   );
 }
 
@@ -52,10 +57,15 @@ export function OptionsColorChip({
 
 const OptionsColorChipContainer = styled.button`
   --border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
   position: relative;
   cursor: pointer;
-  width: 60px;
+  gap: 8px;
   height: 60px;
+  aspect-ratio: 1 / 1;
   border-radius: var(--border-radius);
   outline: none;
   border: none;

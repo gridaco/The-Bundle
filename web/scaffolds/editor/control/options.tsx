@@ -7,16 +7,12 @@ import {
   FontStyleIcon,
 } from "@radix-ui/react-icons";
 import { useEditor } from "@/core/states/use-editor";
-import { OptionsColorChip, OptionsFontChip } from "./chips";
-
-const colors = [
-  "#FFFFFFFF",
-  "#feea00",
-  "#F84AA7",
-  "#FADF63",
-  "#531CB3",
-  "#B5D6D6",
-];
+import {
+  OptionsColorChip,
+  OptionsColorThemeChip,
+  OptionsFontChip,
+} from "./chips";
+import { Template, templates, templatesMap } from "@/k/templates";
 
 const fonts = [
   {
@@ -49,15 +45,17 @@ const fonts = [
 export function Options() {
   const { template, data, setUserData } = useEditor();
 
-  const color = data["color.0"];
+  const colorsData = data["colors"];
   const font = data["font"];
 
-  const setColor = useCallback(
-    (c: string) =>
+  const setColorsData = useCallback(
+    (colors: ReadonlyArray<string>) => {
       setUserData({
         ...data,
-        "color.0": c,
-      }),
+        colors,
+        // "color.0": c,
+      });
+    },
     [data, setUserData]
   );
 
@@ -74,8 +72,10 @@ export function Options() {
     [data, setUserData]
   );
 
+  const options = (templatesMap[template.key] as Template).options;
+
   return (
-    <OptionsWrapper className="TabsRoot" defaultValue="color">
+    <OptionsWrapper defaultValue="color">
       <Tabs.List className="list" aria-label="Manage your account">
         {/* <Tabs.Trigger className="trigger" value="preset">
           <TransparencyGridIcon />
@@ -115,16 +115,33 @@ export function Options() {
         ))}
       </Tabs.Content>
       <Tabs.Content className="content" value="color">
-        {colors.map((c, i) => (
-          <OptionsColorChip
-            key={c}
-            color={c}
-            selected={color === c}
-            onClick={() => {
-              setColor(c);
-            }}
-          />
-        ))}
+        {options.colors.map((colors, i) => {
+          const key = colors.join(".");
+          if (colors.length === 0) {
+            return <></>;
+          } else if (colors.length === 1) {
+            return (
+              <OptionsColorChip
+                key={key}
+                color={colors[0]}
+                selected={colorsData?.join(".") === key}
+                onClick={() => {
+                  setColorsData(colors);
+                }}
+              />
+            );
+          }
+          return (
+            <OptionsColorThemeChip
+              key={key}
+              colors={colors}
+              selected={colorsData?.join(".") === key}
+              onClick={() => {
+                setColorsData(colors);
+              }}
+            />
+          );
+        })}
       </Tabs.Content>
       <Tabs.Content className="content" value="font">
         {fonts.map((d, i) => (
@@ -148,6 +165,10 @@ export function Options() {
 }
 
 const OptionsWrapper = styled(Tabs.Root)`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
   .list {
     display: flex;
     flex-direction: row;
@@ -176,7 +197,10 @@ const OptionsWrapper = styled(Tabs.Root)`
   .content {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 16px;
+    height: auto;
+    width: 100%;
   }
 `;
 

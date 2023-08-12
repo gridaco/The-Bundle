@@ -6,7 +6,6 @@ export const options = {
     ["#FFFFFF", "#85FFC5", "#FF9661"],
     ["#FFFFFF", "#D37CFF", "#8EAEE0"],
     ["#FFF19F", "#FFD869", "#E0A320"],
-    ["#FFF19F", "#FFD869", "#E0A320"],
     ["#FFFFFF", "#FFFFFF", "#3B3B3B"],
   ],
   fonts: [fonts["Lugrasimo"]],
@@ -15,10 +14,10 @@ export const options = {
 export default function data({
   text,
   font,
-  ...data
+  colors,
 }: {
   text: string;
-  "color.0": string;
+  colors?: string[];
   font?: {
     "font-family": string;
     "font-weight": string;
@@ -39,13 +38,7 @@ export default function data({
     {}
   );
 
-  const light_objects = [
-    // "light.0", - base light - do not change
-    "light.1",
-    "light.2",
-  ];
-
-  const colors = [data["color.0"]];
+  const light_objects = ["light.0", "light.1", "light.2"];
 
   const light_objects_data = colors
     ? light_objects.reduce((d, c, i) => {
