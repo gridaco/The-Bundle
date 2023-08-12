@@ -8,7 +8,15 @@ from dmt.src.fonts.fonts import font
 from dmt.src.light.light import LightModifier
 
 
-def fmt_blender_rgb(rgb, alpha=True):
+def srgb_to_linear(srgb):
+    """Converts an sRGB color to linear space."""
+    if srgb <= 0.04045:
+        return srgb / 12.92
+    else:
+        return ((srgb + 0.055) / 1.055) ** 2.4
+
+
+def fmt_blender_rgb(rgb, alpha=True, linearize=True):
     """
     if rgb is hex string, convert to rgb tuple and normalize to 0-1
     the hex string should be in the format of #RRGGBB
@@ -20,6 +28,9 @@ def fmt_blender_rgb(rgb, alpha=True):
         rgb = tuple(int(rgb[i:i+2], 16) for i in (1, 3, 5))
         # 255 to 1
         rgb = tuple([x / 255 for x in rgb])
+        if linearize:
+            # Convert the sRGB tuple to linear space
+            rgb = tuple([srgb_to_linear(x) for x in rgb])
 
     if len(rgb) == 3:
         if alpha:
