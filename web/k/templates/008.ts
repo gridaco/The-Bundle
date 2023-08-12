@@ -1,10 +1,29 @@
+import fonts from "./fonts";
+
+export const options = {
+  colors: [
+    ["#E2FFEE", "#E84BFF", "#FFFFFF"],
+    ["#E2FFEE", "#49FF31", "#FFFFFF"],
+    ["#E2FFEE", "#FF6800", "#FFFFFF"],
+    ["#E2FFEE", "#5400FF", "#FFFFFF"],
+    ["#E2FFEE", "#31FFEF", "#FFFFFF"],
+  ],
+  fonts: [
+    // fonts["Racing Sans One"],
+    // fonts["Cherry Bomb One"],
+    // fonts["Press Start 2P"],
+    // fonts["Russo One"],
+    // fonts["Anton Regular"],
+  ],
+} as const;
+
 export default function data({
   text,
   font,
-  ...data
+  colors,
 }: {
   text: string;
-  "color.0": string;
+  colors?: string[];
   font?: {
     "font-family": string;
     "font-weight": string;
@@ -25,13 +44,7 @@ export default function data({
     {}
   );
 
-  const light_objects = [
-    // "light.0", - base light - do not change
-    "light.1",
-    "light.2",
-  ];
-
-  const colors = [data["color.0"]];
+  const light_objects = ["light.0", "light.1", "light.2"];
 
   const light_objects_data = colors
     ? light_objects.reduce((d, c, i) => {

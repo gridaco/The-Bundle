@@ -1,6 +1,6 @@
 import _005, { options as _005_options } from "./005";
 import { options as _006_options } from "./006";
-import _008 from "./008";
+import _008, { options as _008_options } from "./008";
 
 export const previews = {
   // "003": [],
@@ -124,10 +124,7 @@ const template_008: Template = {
   custom_data_transformer: _008,
   plan: "pro",
   visibility: "visible",
-  options: {
-    colors: [],
-    fonts: [],
-  },
+  options: _008_options,
 };
 
 const template_009: Template = {
