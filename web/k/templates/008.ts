@@ -9,11 +9,11 @@ export const options = {
     ["#E2FFEE", "#31FFEF", "#FFFFFF"],
   ],
   fonts: [
-    // fonts["Racing Sans One"],
-    // fonts["Cherry Bomb One"],
-    // fonts["Press Start 2P"],
-    // fonts["Russo One"],
-    // fonts["Anton"],
+    fonts["Racing Sans One"],
+    fonts["Cherry Bomb One"],
+    fonts["Press Start 2P"],
+    fonts["Russo One"],
+    fonts["Anton"],
   ],
 } as const;
 
