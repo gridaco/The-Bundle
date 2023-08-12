@@ -118,7 +118,7 @@ export function Editor() {
                             }
                           : undefined,
                       },
-                      material_slots: data["color.0"]
+                      material_slots: data["colors"]?.length
                         ? {
                             ["0"]: {
                               node_tree: {
@@ -126,7 +126,7 @@ export function Editor() {
                                   ["data"]: {
                                     node_tree: {
                                       nodes: {
-                                        ["color.0"]: data["color.0"],
+                                        ["color.0"]: data["colors"][0],
                                       },
                                     },
                                   },
