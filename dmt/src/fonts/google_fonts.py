@@ -4,7 +4,7 @@ from fontTools.ttLib import TTFont
 from dmt.src.fonts.axes import get_font_axes
 
 __dir = os.path.dirname(os.path.realpath(__file__))
-font_repo = os.path.join(__dir, '..', '..', '..', 'fonts')
+font_repo = os.path.join(__dir, '../../..', 'fonts', 'fonts.google.com')
 
 
 class GoogleFontsRepository:
