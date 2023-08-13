@@ -132,7 +132,7 @@ export function Controller({
                 onEscapeKeyDown={close}
                 onInteractOutside={close}
                 style={{
-                  width: 500,
+                  width: 580,
                 }}
               >
                 <Bar

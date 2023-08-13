@@ -44,18 +44,22 @@ export function Options({ options }: { options: Template["options"] }) {
           <TransparencyGridIcon />
           Preset
         </Tabs.Trigger> */}
-        <Tabs.Trigger className="trigger" value="color">
-          <ColorWheelIcon />
-          Color
-        </Tabs.Trigger>
-        <Tabs.Trigger className="trigger" value="font">
-          <FontStyleIcon />
-          Font
-        </Tabs.Trigger>
-        <Tabs.Trigger className="trigger" value="camera">
+        {options.colors.length > 1 && (
+          <Tabs.Trigger className="trigger" value="color">
+            <ColorWheelIcon />
+            Color
+          </Tabs.Trigger>
+        )}
+        {options.fonts.length > 1 && (
+          <Tabs.Trigger className="trigger" value="font">
+            <FontStyleIcon />
+            Font
+          </Tabs.Trigger>
+        )}
+        {/* <Tabs.Trigger className="trigger" value="camera">
           <CameraIcon />
           Camera
-        </Tabs.Trigger>
+        </Tabs.Trigger> */}
       </Tabs.List>
       {/* <Tabs.Content className="content" value="preset">
         {template.presets.map((it, i) => (
