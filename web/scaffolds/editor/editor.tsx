@@ -225,13 +225,14 @@ const Main = styled.main`
   width: 100vw;
 
   .editor {
+    margin-top: 60px;
     max-width: 800px;
     max-height: 800px;
     aspect-ratio: 1 / 1;
 
     /* media */
-    @media (max-width: 640px) {
-      width: 100vw;
+    @media (max-width: 640px), (max-height: 700px) {
+      width: 400px;
       height: 400px;
     }
 
