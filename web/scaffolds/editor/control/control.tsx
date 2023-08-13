@@ -13,7 +13,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { motion } from "framer-motion";
 import { Template, templatesMap } from "@/k/templates";
 
-const SnapWrapper = styled.div`
+const DownloadButton = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -208,13 +208,13 @@ export function Controller({
           </form>
         </Bar>
         {showDownload && (
-          <SnapWrapper
+          <DownloadButton
             onClick={() => {
               onDownload?.();
             }}
           >
             <DownloadIcon />
-          </SnapWrapper>
+          </DownloadButton>
         )}
       </ControllerWrapper>
     </motion.div>

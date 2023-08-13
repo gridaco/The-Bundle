@@ -18,13 +18,7 @@ export function initstate(): EditorState {
     },
     data: {},
     mode: "still",
-    result: {
-      id: "initial",
-      samples: 256,
-      src: template.preview,
-      srcset: {},
-      template: templates.defaultTemplateKey,
-    },
+    result: null,
     camera: {
       phi: 0,
       theta: 0,

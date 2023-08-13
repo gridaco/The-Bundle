@@ -53,10 +53,7 @@ export function Editor() {
   // enable snap function if src is ready
   useEffect(() => {
     const src = state.result?.src;
-    if (src === "" || src === undefined || src === null) {
-      return;
-    }
-    setShowDownload(true);
+    setShowDownload(!(src === "" || src === undefined || src === null));
   }, [state.result?.src]);
 
   const handleDispatch = useCallback((action: EditorAction) => {

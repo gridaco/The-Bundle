@@ -42,6 +42,7 @@ export function editorReducer(
 
         // clear the user data on template switch
         draft.data = {};
+        draft.result = null;
       });
     }
     case "set-render-result": {
