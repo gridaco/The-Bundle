@@ -1,7 +1,14 @@
 import Stripe from "stripe";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const STRIPE_SECRET_KEY_TEST = process.env.STRIPE_SECRET_KEY;
+const STRIPE_SECRET_KEY_LIVE = process.env.STRIPE_SECRET_KEY_LIVE;
+const STRIPE_SECRET_KEY =
+  process.env.NODE_ENV === "production"
+    ? STRIPE_SECRET_KEY_LIVE
+    : STRIPE_SECRET_KEY_TEST;
+
+const stripe = new Stripe(STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
 });
 
@@ -51,6 +58,8 @@ export default async function handler(req, res) {
 
   try {
     // Create Checkout Sessions from body params.
+    // - enable promotion codes
+    // - 3 day trial
     const session = await stripe.checkout.sessions.create({
       customer: customer_id,
       line_items: [
@@ -60,6 +69,12 @@ export default async function handler(req, res) {
           quantity: 1,
         },
       ],
+      // enable promotion codes
+      allow_promotion_codes: true,
+      // 3 day trial
+      subscription_data: {
+        trial_period_days: 3,
+      },
       mode: "subscription",
       success_url: `${baseurl}/?return-reason=pro-activated`,
       cancel_url: `${baseurl}/`,
