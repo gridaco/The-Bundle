@@ -25,14 +25,15 @@ export function CBTSignin() {
       <UpgradeToProSplashView
         hero={
           <ColumnImages
-            src={[
-              "/lsd/pro/hero-columns/01.png",
-              "/lsd/pro/hero-columns/02.png",
-              "/lsd/pro/hero-columns/03.png",
-              "/lsd/pro/hero-columns/04.png",
-              "/lsd/pro/hero-columns/05.png",
-              "/lsd/pro/hero-columns/06.png",
-            ]}
+            src="/lsd/pro/pro-featured-banner.png"
+            // src={[
+            //   "/lsd/pro/hero-columns/01.png",
+            //   "/lsd/pro/hero-columns/02.png",
+            //   "/lsd/pro/hero-columns/03.png",
+            //   "/lsd/pro/hero-columns/04.png",
+            //   "/lsd/pro/hero-columns/05.png",
+            //   "/lsd/pro/hero-columns/06.png",
+            // ]}
           />
         }
       >
