@@ -1,8 +1,18 @@
+import React, { useEffect, useState } from "react";
 import { CAMPAIGN_CBT_001 } from "@/k/campaigns";
 import { CBTSignin } from "@/scaffolds/cbt";
 
 export default function CBTGate() {
-  return <CBTSignin />;
+  const [host, setHost] = useState<string>();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHost(window.location.origin);
+    }
+  }, []);
+
+  const redirect = `${host}/lsd/auth/callback`;
+  return <CBTSignin redirect={redirect} />;
 }
 
 // supabase
