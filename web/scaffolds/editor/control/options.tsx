@@ -14,11 +14,8 @@ import {
 } from "./chips";
 import { Template, templatesMap } from "@/k/templates";
 
-export function Options() {
+export function Options({ options }: { options: Template["options"] }) {
   const { template, data, setUserData } = useEditor();
-
-  const colorsData = data["colors"];
-  const font = data["font"];
 
   const setColorsData = useCallback(
     (colors: ReadonlyArray<string>) => {
@@ -40,10 +37,6 @@ export function Options() {
     [data, setUserData]
   );
 
-  const options = (templatesMap[template.key] as Template).options;
-  // const options_colors = options.colors;
-  // const options_fonts = options.fonts;
-
   return (
     <OptionsWrapper defaultValue="color">
       <Tabs.List className="list" aria-label="Manage your account">
@@ -64,7 +57,7 @@ export function Options() {
           Camera
         </Tabs.Trigger>
       </Tabs.List>
-      <Tabs.Content className="content" value="preset">
+      {/* <Tabs.Content className="content" value="preset">
         {template.presets.map((it, i) => (
           <PresetContainer
             key={i}
@@ -83,7 +76,7 @@ export function Options() {
             />
           </PresetContainer>
         ))}
-      </Tabs.Content>
+      </Tabs.Content> */}
       <Tabs.Content className="content" value="color">
         {options.colors.map((colors, i) => {
           const key = colors.join(".");
@@ -94,7 +87,7 @@ export function Options() {
               <OptionsColorChip
                 key={key}
                 color={colors[0]}
-                selected={colorsData?.join(".") === key}
+                selected={data["colors"]?.join(".") === key}
                 onClick={() => {
                   setColorsData(colors);
                 }}
@@ -105,7 +98,7 @@ export function Options() {
             <OptionsColorThemeChip
               key={key}
               colors={colors}
-              selected={colorsData?.join(".") === key}
+              selected={data["colors"]?.join(".") === key}
               onClick={() => {
                 setColorsData(colors);
               }}
@@ -119,7 +112,7 @@ export function Options() {
             key={i}
             fontFamily={d["font-family"]}
             fontWeight={d["font-weight"]}
-            selected={font?.["font-family"] === d["font-family"]}
+            selected={data["font"]?.["font-family"] === d["font-family"]}
             onClick={() => {
               setFont(d);
             }}

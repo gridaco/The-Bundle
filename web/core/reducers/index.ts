@@ -39,6 +39,9 @@ export function editorReducer(
           preview: template.preview,
           custom_data_transformer: template.custom_data_transformer,
         };
+
+        // clear the user data on template switch
+        draft.data = {};
       });
     }
     case "set-render-result": {

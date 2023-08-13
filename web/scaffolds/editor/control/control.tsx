@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import styled from "@emotion/styled";
 import {
@@ -11,6 +11,7 @@ import { useEditor } from "@/core/states/use-editor";
 import { Options } from "./options";
 import * as Popover from "@radix-ui/react-popover";
 import { motion } from "framer-motion";
+import { Template, templatesMap } from "@/k/templates";
 
 const SnapWrapper = styled.div`
   cursor: pointer;
@@ -85,6 +86,12 @@ export function Controller({
     setExpanded((prev) => !prev);
   }, []);
 
+  const { template, data, setUserData } = useEditor();
+
+  const options = (templatesMap[template.key] as Template).options;
+  const hasOptions =
+    options["colors"].length > 0 || options["fonts"].length > 0;
+
   return (
     <motion.div
       initial={{
@@ -109,11 +116,13 @@ export function Controller({
       <ControllerWrapper>
         <Bar>
           <Popover.Root open={expanded}>
-            <Popover.Trigger asChild>
-              <div className="slot scene" onClick={toggle}>
-                <TransparencyGridIcon width="100%" height="100%" />
-              </div>
-            </Popover.Trigger>
+            {hasOptions && (
+              <Popover.Trigger asChild>
+                <div className="slot scene" onClick={toggle}>
+                  <TransparencyGridIcon width="100%" height="100%" />
+                </div>
+              </Popover.Trigger>
+            )}
             <Popover.Portal>
               <Popover.Content
                 side="bottom"
@@ -142,7 +151,7 @@ export function Controller({
                     duration: 0.2,
                   }}
                 >
-                  <Options />
+                  <Options options={options} />
                 </Bar>
               </Popover.Content>
             </Popover.Portal>
@@ -162,6 +171,7 @@ export function Controller({
               ref={inputRef}
               id="body"
               placeholder="Type text to render"
+              minLength={1}
               // maxLength={7}
               minRows={1}
               maxRows={3}
@@ -184,9 +194,17 @@ export function Controller({
                 }
               }}
             />
-            <button type="submit">
+            <motion.button
+              whileHover={{
+                scale: 1.2,
+              }}
+              whileTap={{
+                scale: 0.8,
+              }}
+              type="submit"
+            >
               <LightningBoltIcon />
-            </button>
+            </motion.button>
           </form>
         </Bar>
         {showDownload && (
