@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
+import { HexColorPicker } from "react-colorful";
+import * as Popover from "@radix-ui/react-popover";
+import { OpacityIcon } from "@radix-ui/react-icons";
 
 interface ChipProps {
   selected?: boolean;
@@ -52,6 +55,44 @@ export function OptionsColorChip({
         background: color,
       }}
     />
+  );
+}
+
+export function OptionsColorPickerChip({
+  color,
+  selected,
+  onChange,
+  ...props
+}: ChipProps & {
+  color: React.CSSProperties["color"];
+  onChange?: (color: string) => void;
+} & React.HTMLAttributes<HTMLButtonElement>) {
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <OptionsColorChipContainer
+          {...props}
+          data-selected={selected}
+          style={{
+            background: color,
+          }}
+        >
+          <OpacityIcon color={invertColor(color)} />
+        </OptionsColorChipContainer>
+      </Popover.Trigger>
+      <Popover.Content align="center" alignOffset={20}>
+        <div
+          style={{
+            background: "black",
+            border: "rgba(255, 255, 255, 0.2) 1px solid",
+            borderRadius: 12,
+            padding: 8,
+          }}
+        >
+          <HexColorPicker color={color} onChange={onChange} />
+        </div>
+      </Popover.Content>
+    </Popover.Root>
   );
 }
 
@@ -173,3 +214,28 @@ const OptionsFontChipContainer = styled.button`
     font-size: 40px;
   }
 `;
+
+function invertColor(hex) {
+  if (hex.indexOf("#") === 0) {
+    hex = hex.slice(1);
+  }
+  // convert 3-digit hex to 6-digits.
+  if (hex.length === 3) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  }
+  if (hex.length !== 6) {
+    throw new Error("Invalid HEX color.");
+  }
+  // invert color components
+  var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
+    g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
+    b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
+  // pad each with zeros and return
+  return "#" + padZero(r) + padZero(g) + padZero(b);
+}
+
+function padZero(str, len?) {
+  len = len || 2;
+  var zeros = new Array(len).join("0");
+  return (zeros + str).slice(-len);
+}

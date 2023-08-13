@@ -9,6 +9,7 @@ import {
 import { useEditor } from "@/core/states/use-editor";
 import {
   OptionsColorChip,
+  OptionsColorPickerChip,
   OptionsColorThemeChip,
   OptionsFontChip,
 } from "./chips";
@@ -16,6 +17,9 @@ import { Template, templatesMap } from "@/k/templates";
 
 export function Options({ options }: { options: Template["options"] }) {
   const { template, data, setUserData } = useEditor();
+
+  const single_color_mode =
+    options.colors.length && options.colors[0].length === 1;
 
   const setColorsData = useCallback(
     (colors: ReadonlyArray<string>) => {
@@ -82,6 +86,15 @@ export function Options({ options }: { options: Template["options"] }) {
         ))}
       </Tabs.Content> */}
       <Tabs.Content className="content" value="color">
+        {single_color_mode && (
+          <OptionsColorPickerChip
+            selected={true}
+            color={data["colors"]?.[0] || "#000000"}
+            onChange={(color) => {
+              setColorsData([color]);
+            }}
+          />
+        )}
         {options.colors.map((colors, i) => {
           const key = colors.join(".");
           if (colors.length === 0) {
