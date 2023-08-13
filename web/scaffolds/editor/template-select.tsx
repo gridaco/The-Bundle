@@ -74,6 +74,8 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
   const { switchTemplate, template } = useEditor();
   const [focus, setFocus] = React.useState<string>(template.key);
 
+  const locked = templatesMap[focus].visibility === "comming_soon";
+
   const sorted_templates = React.useMemo(() => {
     return templates.sort((a, b) => {
       if (a.visibility === "comming_soon") return 1;
@@ -86,14 +88,14 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
     <TemplatesViewWrapper>
       <div className="templates">
         {sorted_templates.map((template, i) => {
-          const locked = template.visibility === "comming_soon";
+          const _locked = template.visibility === "comming_soon";
           return (
             <TemplateMenuItem
               key={template.key}
               name={template.name}
               iconSrc={template.icon}
               selected={focus === template.key}
-              locked={locked}
+              locked={_locked}
               onClick={() => {
                 setFocus(template.key);
               }}
@@ -102,16 +104,14 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
         })}
       </div>
       <div className="presets" key={focus}>
-        <div className="images">
+        <div className="images" data-locked={locked}>
           {previews[focus].map((preset, i) => {
-            const locked = templatesMap[focus].visibility === "comming_soon";
             return (
               <PresetPreviewImage
                 key={i}
                 width={277}
                 height={208}
                 src={preset}
-                data-locked={locked}
                 onClick={() => {
                   if (locked) return;
                   switchTemplate(focus);
@@ -131,11 +131,6 @@ const PresetPreviewImage = styled(SmoothLoadImage)`
   border-radius: 8px;
   overflow: hidden;
   object-fit: cover;
-
-  &[data-locked="true"] {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
 `;
 
 const TemplatesViewWrapper = styled.div`
@@ -164,6 +159,11 @@ const TemplatesViewWrapper = styled.div`
       display: flex;
       flex-direction: column;
       gap: 10px;
+
+      &[data-locked="true"] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
     }
   }
 `;
