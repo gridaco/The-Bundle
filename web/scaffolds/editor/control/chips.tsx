@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { HexColorPicker } from "react-colorful";
 import * as Popover from "@radix-ui/react-popover";
 import { OpacityIcon } from "@radix-ui/react-icons";
+import * as Select from "@radix-ui/react-select";
 
 interface ChipProps {
   selected?: boolean;
@@ -80,7 +81,7 @@ export function OptionsColorPickerChip({
           <OpacityIcon color={invertColor(color)} />
         </OptionsColorChipContainer>
       </Popover.Trigger>
-      <Popover.Content align="center" alignOffset={20}>
+      <Popover.Content align="center" sideOffset={16}>
         <div
           style={{
             background: "black",
@@ -139,6 +140,115 @@ export function OptionsFontChip({
   }
 > &
   React.HTMLAttributes<HTMLButtonElement>) {
+  return (
+    <OptionsFontChipContainer
+      data-selected={selected}
+      {...props}
+      title={fontFamily}
+    >
+      <FontView fontFamily={fontFamily} fontWeight={fontWeight}>
+        {children}
+      </FontView>
+    </OptionsFontChipContainer>
+  );
+}
+
+const listGoogleFonts = async () => {
+  const res = await fetch("/lsd/fonts/data/fonts.google.com/list.json");
+  const data = await res.json();
+  return data;
+};
+
+export function OptionsFontSelectChip({
+  fontFamily,
+  fontWeight,
+  onChange,
+  selected,
+}: ChipProps & {
+  onChange?: (fontFamily: React.CSSProperties["fontFamily"]) => void;
+  fontFamily?: React.CSSProperties["fontFamily"];
+  fontWeight?: React.CSSProperties["fontWeight"];
+}) {
+  const [fonts, setFonts] = useState<ReadonlyArray<string> | null>(null);
+
+  useEffect(() => {
+    listGoogleFonts().then((data) => {
+      setFonts(data);
+    });
+  }, []);
+
+  console.log(fontFamily);
+
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <OptionsFontChipContainer data-selected={selected}>
+          <div>
+            {fontFamily ? (
+              <FontView fontFamily={fontFamily} fontWeight={fontWeight} />
+            ) : (
+              "More"
+            )}
+          </div>
+        </OptionsFontChipContainer>
+      </Popover.Trigger>
+      <Popover.Content align="center" sideOffset={16}>
+        <FontsList>
+          {fonts?.map((d, i) => (
+            <Popover.Close
+              className="item"
+              key={d}
+              onClick={() => {
+                onChange?.(d);
+              }}
+            >
+              <FontView fontFamily={d}>{d}</FontView>
+            </Popover.Close>
+          ))}
+        </FontsList>
+      </Popover.Content>
+    </Popover.Root>
+  );
+}
+
+const FontsList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  padding: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 200px;
+  user-select: none;
+  border-radius: 12px;
+  border: rgba(255, 255, 255, 0.2) 1px solid;
+  background: black;
+
+  .item {
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    /* disable dot */
+    list-style: none;
+    font-size: 21px;
+    border-radius: 4px;
+    padding: 4px;
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+`;
+
+function FontView({
+  fontFamily,
+  fontWeight,
+  children,
+}: React.PropsWithChildren<{
+  fontFamily: React.CSSProperties["fontFamily"];
+  fontWeight?: React.CSSProperties["fontWeight"];
+}>) {
   const [fontLoaded, setFontLoaded] = useState(false);
 
   useEffect(() => {
@@ -163,20 +273,14 @@ export function OptionsFontChip({
   }, [fontFamily]);
 
   return (
-    <OptionsFontChipContainer
-      data-selected={selected}
-      {...props}
-      title={fontFamily}
+    <span
+      style={{
+        fontFamily,
+        fontWeight,
+      }}
     >
-      <span
-        style={{
-          fontFamily,
-          fontWeight,
-        }}
-      >
-        {children ?? <>Ag</>}
-      </span>
-    </OptionsFontChipContainer>
+      {children ?? <>Ag</>}
+    </span>
   );
 }
 

@@ -12,6 +12,7 @@ import {
   OptionsColorPickerChip,
   OptionsColorThemeChip,
   OptionsFontChip,
+  OptionsFontSelectChip,
 } from "./chips";
 import { Template } from "@/k/templates";
 
@@ -33,11 +34,12 @@ export function Options({ options }: { options: Template["options"] }) {
   );
 
   const setFont = useCallback(
-    (d: { "font-family": string; "font-weight": number }) =>
+    (d: { "font-family": string; "font-weight": number }) => {
       setUserData({
         ...data,
         ["font"]: d,
-      }),
+      });
+    },
     [data, setUserData]
   );
 
@@ -124,6 +126,16 @@ export function Options({ options }: { options: Template["options"] }) {
         })}
       </Tabs.Content>
       <Tabs.Content className="content" value="font">
+        {
+          <OptionsFontSelectChip
+            fontFamily={data["font"]?.["font-family"]}
+            fontWeight={data["font"]?.["font-weight"]}
+            selected
+            onChange={(font) => {
+              setFont({ "font-family": font!, "font-weight": 400 });
+            }}
+          />
+        }
         {options.fonts.map((d, i) => (
           <OptionsFontChip
             key={i}
