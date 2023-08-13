@@ -51,19 +51,25 @@ class GoogleFontsRepository:
         # Convert the weight string to integer for comparison
         weight_int = int(weight)
 
+        font_files = list(path.glob('*.ttf'))
+
         # Iterate through all font files in the directory
-        for font_file in path.glob('*.ttf'):
+        for font_file in font_files:
             ttfont = TTFont(font_file)
             axes = get_font_axes(ttfont)
             if axes:
-                # this is a variable font
-                # find the weight axis
-                weight_axis = next(
-                    filter(lambda axis: axis['tag'] == 'wght', axes))
-                if weight_axis['min'] <= weight_int <= weight_axis['max']:
-                    # the weight is within the range
-                    # load the font
-                    return font_file
+                try:
+                    # this is a variable font
+                    # find the weight axis
+                    weight_axis = next(
+                        filter(lambda axis: axis['tag'] == 'wght', axes))
+                    if weight_axis['min'] <= weight_int <= weight_axis['max']:
+                        # the weight is within the range
+                        # load the font
+                        return font_file
+                except StopIteration:
+                    # the font doesn't have a weight axis
+                    continue
             else:
                 # this is a non-variable font
                 if 'OS/2' not in ttfont:
@@ -74,6 +80,12 @@ class GoogleFontsRepository:
                 if os2_table.usWeightClass == weight_int:
                     # the font has the desired weight
                     return font_file
+
+        # if no font was found with the desired weight, return the first font
+        if len(font_files) > 0:
+            return font_files[0]
+
+        raise Exception(f'Empty fonts directory: {family} {weight}')
 
 
 if __name__ == '__main__':
