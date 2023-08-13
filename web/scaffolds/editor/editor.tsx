@@ -229,6 +229,12 @@ const Main = styled.main`
     max-height: 800px;
     aspect-ratio: 1 / 1;
 
+    /* media */
+    @media (max-width: 640px) {
+      width: 100vw;
+      height: 400px;
+    }
+
     width: 640px;
     height: 640px;
 
