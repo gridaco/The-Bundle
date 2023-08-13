@@ -1,7 +1,7 @@
 {
   "personal": {
-    "id": "price_1NekXWAvR3geCh5rhPqQ9K6B",
-    "link": "https://payments.grida.co/b/9AQfZf1GQ4MUaeAaES",
+    "id": "price_1NZWzVAvR3geCh5rz7uRXUnF",
+    "link": "https://payments.grida.co/b/test_4gw4hVchU7OcdwY5kl",
     "price": {
       "value": 20,
       "currency": "usd",
@@ -10,8 +10,8 @@
     }
   },
   "team": {
-    "id": "price_1NekXWAvR3geCh5rA9M4HzQc",
-    "link": "https://payments.grida.co/b/4gw5kBadmdjq1I428l",
+    "id": "price_1NZWzVAvR3geCh5rQ5Rl2w2t",
+    "link": "https://payments.grida.co/b/test_14k29N1Dg6K81OgdQQ",
     "price": {
       "value": 90,
       "currency": "usd",

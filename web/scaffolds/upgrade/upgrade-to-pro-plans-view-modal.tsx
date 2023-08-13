@@ -1,10 +1,13 @@
 import { PricingCard } from "components/pricing";
 import styled from "@emotion/styled";
-import plans from "k/plans.json";
+import plans_live from "k/plans.json";
+import plans_test from "k/plans.test.json";
 import contacts from "k/contacts.json";
 import faqs from "k/faq.json";
 import { motion } from "framer-motion";
 import { FaqItem } from "@/components/faq";
+
+const plans = process.env.NODE_ENV === "production" ? plans_live : plans_test;
 
 const price_size = {
   normal: { width: 220 } as const,

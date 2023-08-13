@@ -6,8 +6,11 @@ import { FaqItem } from "components/faq";
 import { PricingCard } from "components/pricing";
 import { motion } from "framer-motion";
 import faqs from "k/faq.json";
-import plans from "k/plans.json";
+import plans_live from "k/plans.json";
+import plans_test from "k/plans.test.json";
 import contacts from "k/contacts.json";
+
+const plans = process.env.NODE_ENV === "production" ? plans_live : plans_test;
 
 const price_size = {
   normal: { width: 220 } as const,
