@@ -26,7 +26,10 @@ import {
   ColumnImages,
   UpgradeToProPlansView,
   UpgradeToProBadge,
+  ProBadge,
 } from "@/scaffolds/upgrade";
+import * as Popover from "@radix-ui/react-popover";
+import Link from "next/link";
 
 const DEFAULT_CREDIT_COUNT = 10;
 // const DEFAULT_SRC = "/lsd/preview/baked-001/TEXT-b.gif";
@@ -62,7 +65,7 @@ export function Editor() {
 
   return (
     <StateProvider state={state} dispatch={handleDispatch}>
-      <HomeHeader left={<TemplateDropdown />} right={<UpgradeToProDialog />} />
+      <HomeHeader left={<TemplateDropdown />} right={<ProPopover />} />
       <Main>
         <ProActivatedPortal />
 
@@ -354,19 +357,7 @@ function UpgradeToProDialog() {
         </div>
       ) : (
         <UpgradeToProSplashView
-          hero={
-            <ColumnImages
-              src="/lsd/pro/pro-featured-banner.png"
-              // src={[
-              //   "/lsd/pro/hero-columns/01.png",
-              //   "/lsd/pro/hero-columns/02.png",
-              //   "/lsd/pro/hero-columns/03.png",
-              //   "/lsd/pro/hero-columns/04.png",
-              //   "/lsd/pro/hero-columns/05.png",
-              //   "/lsd/pro/hero-columns/06.png",
-              // ]}
-            />
-          }
+          hero={<ColumnImages src="/lsd/pro/pro-featured-banner.png" />}
         >
           <>
             <h1>Upgrade to Pro</h1>
@@ -382,6 +373,90 @@ function UpgradeToProDialog() {
         </UpgradeToProSplashView>
       )}
     </Dialog>
+  );
+}
+
+function ProPopover() {
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <ProBadge />
+      </Popover.Trigger>
+      <Popover.Content sideOffset={16} align="end">
+        <div
+          style={{
+            padding: 16,
+            minWidth: 200,
+            background: "black",
+            color: "white",
+            borderRadius: 8,
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "Inter, sans-serif",
+              fontSize: 12,
+            }}
+          >
+            v0.0.1
+            <br />
+            <Link
+              href={"mailto:han@grida.co"}
+              style={{
+                opacity: 0.8,
+              }}
+            >
+              Contact Support
+            </Link>
+            <br />
+            <Link
+              href={"mailto:han@grida.co"}
+              style={{
+                opacity: 0.8,
+              }}
+            >
+              Contact Sales
+            </Link>
+            <br />
+            <br />
+            <span
+              style={{
+                opacity: 0.5,
+              }}
+            >
+              Made with 💉 by Team Grida
+              <br />-{" "}
+              <a
+                href="https://www.instagram.com/zizonzzangryu/"
+                target="_blank"
+              >
+                Ryu
+              </a>
+              ,{" "}
+              <a
+                href="https://www.instagram.com/jonghan_future/"
+                target="_blank"
+              >
+                Han
+              </a>
+              ,{" "}
+              <a
+                href="https://www.instagram.com/helix.the.meow.pow/"
+                target="_blank"
+              >
+                Helix
+              </a>{" "}
+              and{" "}
+              <a href="https://www.instagram.com/univ___erse/" target="_blank">
+                Universe
+              </a>{" "}
+              -
+            </span>
+          </div>
+        </div>
+      </Popover.Content>
+    </Popover.Root>
   );
 }
 

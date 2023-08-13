@@ -14,6 +14,18 @@ export const UpgradeToProBadge = React.forwardRef(function UpgradeToProBadge(
   );
 });
 
+export const ProBadge = React.forwardRef(function ProBadge(
+  props: React.ComponentProps<"button">,
+  ref: React.Ref<HTMLButtonElement>
+) {
+  return (
+    <Badge ref={ref} {...props}>
+      <DiamondIcon color="white" width={24} height={24} />
+      Pro
+    </Badge>
+  );
+});
+
 const Badge = styled.button`
   cursor: pointer;
 

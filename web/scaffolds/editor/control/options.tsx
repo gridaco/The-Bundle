@@ -13,7 +13,7 @@ import {
   OptionsColorThemeChip,
   OptionsFontChip,
 } from "./chips";
-import { Template, templatesMap } from "@/k/templates";
+import { Template } from "@/k/templates";
 
 export function Options({ options }: { options: Template["options"] }) {
   const { template, data, setUserData } = useEditor();
