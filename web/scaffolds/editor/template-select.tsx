@@ -222,6 +222,10 @@ export function TemplateDropdown() {
   const [open, setOpen] = React.useState(false);
   const { template } = useEditor();
 
+  const close = React.useCallback(() => {
+    setOpen(false);
+  }, []);
+
   return (
     <Popover.Root open={open}>
       <Popover.Trigger asChild>
@@ -237,7 +241,13 @@ export function TemplateDropdown() {
         />
       </Popover.Trigger>
       <Popover.Portal>
-        <ContentContainer sideOffset={20} side="top" align="start">
+        <ContentContainer
+          sideOffset={20}
+          side="top"
+          align="start"
+          onEscapeKeyDown={close}
+          onPointerDownOutside={close}
+        >
           <TemplatesView
             onSubmit={() => {
               setOpen(false);
