@@ -26,6 +26,18 @@ const lsdascii = `
           |     |
           H     H
 
+
+      Made with 💉 by Grida
+
 `;
 
 console.log(lsdascii);
+
+const mycat = `
+
+Checkout my kitty on instagram 👉 https://instagram.com/helix.the.meow.pow/
+
+
+`;
+
+console.log(mycat);

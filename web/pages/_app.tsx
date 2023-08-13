@@ -27,7 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Script
         id="lsdascii"
         strategy="afterInteractive"
-        src="/lsd/welcome.js"
+        src="/lsd/💉.js"
       ></Script>
       <SessionContextProvider
         supabaseClient={supabaseClient}
