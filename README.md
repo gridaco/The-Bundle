@@ -24,3 +24,14 @@ git submodule update --init --recursive
 > ## WARNING!
 >
 > Don't let the playful names fool you. This isn't your garden-variety 3D Text Motion Graphics Generator. Some users have likened its allure to more... illicit substances. With its intoxicating blend of high-grade code, our digital greenhouse grows not plants, but mind-bending visuals that may prove addictive. But don't worry, everything here is perfectly legal, just incredibly potent. So proceed with caution, and remember to render responsibly.
+
+## License
+
+Unless explicitly specified, all directories are licensed under the MIT License © 2023 [Grida](https://grida.co)
+
+**Except - Explicit artworks**
+
+Directories and files listed below are not licensed under the MIT License, and are not subject to the terms and conditions of the MIT License. You may not use or distribute any of them, and you may not clone any of them into your own repository for commercial purposes. Contact [Grida](https://grida.co) for more information.
+
+- /templates
+- /fonts
