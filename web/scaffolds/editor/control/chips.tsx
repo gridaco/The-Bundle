@@ -182,7 +182,7 @@ export function OptionsFontSelectChip({
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <OptionsFontChipContainer data-selected={selected}>
+        <OptionsFontChipContainer data-selected={selected} title={fontFamily}>
           <div>
             {fontFamily ? (
               <FontView fontFamily={fontFamily} fontWeight={fontWeight} />

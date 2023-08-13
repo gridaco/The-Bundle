@@ -126,16 +126,6 @@ export function Options({ options }: { options: Template["options"] }) {
         })}
       </Tabs.Content>
       <Tabs.Content className="content" value="font">
-        {
-          <OptionsFontSelectChip
-            fontFamily={data["font"]?.["font-family"]}
-            fontWeight={data["font"]?.["font-weight"]}
-            selected
-            onChange={(font) => {
-              setFont({ "font-family": font!, "font-weight": 400 });
-            }}
-          />
-        }
         {options.fonts.map((d, i) => (
           <OptionsFontChip
             key={i}
@@ -147,6 +137,16 @@ export function Options({ options }: { options: Template["options"] }) {
             }}
           />
         ))}
+        {
+          <OptionsFontSelectChip
+            fontFamily={data["font"]?.["font-family"]}
+            fontWeight={data["font"]?.["font-weight"]}
+            selected
+            onChange={(font) => {
+              setFont({ "font-family": font!, "font-weight": 400 });
+            }}
+          />
+        }
       </Tabs.Content>
       <Tabs.Content className="content" value="camera">
         <div>angle</div>
