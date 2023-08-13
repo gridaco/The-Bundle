@@ -43,11 +43,27 @@
       "data": "objects/text/material_slots/0/node_tree/data/color.0"
     }
   },
+  "data": {
+    "text": {
+      "type": "string",
+      "text-transform": "uppercase",
+      "regex": "^[A-Z0-9]+$"
+    }
+  },
   "objects": {
     "camera": {
       "data": {
         "type": "enum",
         "values": ["PERSP", "ORTHO"]
+      }
+    },
+    "text-2": {
+      "type": "bpy.types.Object",
+      "data": {
+        "body": {
+          "type": "string",
+          "value": "data.text"
+        }
       }
     },
     "text": {
