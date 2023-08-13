@@ -26,8 +26,10 @@ export const previews = {
     "/lsd/preview/baked-008/showcase-0002.png",
   ],
   "009": [
-    // TODO:
-    "/lsd/preview/baked-009/icon.png",
+    "/lsd/preview/baked-009/showcase-0001.png",
+    "/lsd/preview/baked-009/showcase-0002.png",
+    "/lsd/preview/baked-009/showcase-0003.png",
+    "/lsd/preview/baked-009/showcase-0004.png",
   ],
 } as const;
 
