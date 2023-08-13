@@ -1,0 +1,22 @@
+{
+  "personal": {
+    "id": "price_1NZWzVAvR3geCh5rz7uRXUnF",
+    "link": "https://payments.grida.co/b/test_4gw4hVchU7OcdwY5kl",
+    "price": {
+      "value": 9,
+      "currency": "usd",
+      "symbol": "$",
+      "interval": "month"
+    }
+  },
+  "team": {
+    "id": "price_1NZWzVAvR3geCh5rQ5Rl2w2t",
+    "link": "https://payments.grida.co/b/test_14k29N1Dg6K81OgdQQ",
+    "price": {
+      "value": 45,
+      "currency": "usd",
+      "symbol": "$",
+      "interval": "month"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "objects": {
+    "border": {
+      "data": {
+        "body": { "variable": "data.text" }
+      }
+    },
+    "text": {
+      "data": {
+        "body": { "variable": "data.text" }
+      }
+    }
+  },
+  "data": {
+    "text": "Hello World"
+  }
+}

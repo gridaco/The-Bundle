@@ -5,7 +5,7 @@ export async function downloadImage(imageSrc: string, name?: string) {
 
   const link = document.createElement("a");
   link.href = imageURL;
-  link.download = name;
+  link.download = name ?? "image.png";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

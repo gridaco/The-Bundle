@@ -1,9 +1,9 @@
-import shutil
-import click
 import os
+import click
 import subprocess
-import platform
+import zipfile
 import tarfile
+import shutil
 import tempfile
 import numpy as np
 import imageio
@@ -11,22 +11,7 @@ from apng import APNG
 from pathlib import Path
 from PIL import Image
 
-
-def blenderpath():
-    # check if blender is callable with "blender"
-    try:
-        subprocess.run(["blender", "--version"], check=True)
-        return "blender"
-    except:
-        ...
-
-    # otherwise, load
-    if platform.system() == 'Darwin':
-        return "/Applications/Blender.app/Contents/MacOS/Blender"
-    elif platform.system() == 'Linux':
-        return "/usr/bin/blender"
-    else:
-        return "blender"
+from dmt.src.blender import blenderpath
 
 
 n_white = 255
@@ -86,17 +71,58 @@ def pngs_to_apng(input_dir, output_filepath):
 
 
 def load_template(template):
-    # Load the file from the template dir
-    archive = os.path.join(template, 'template.tar.gz')
+    """
+    Loads the required template files from a dedicated template directory either archived as .zip or .tar.gz, or a root directory with required files as a copy to the tmp dir for manipulation.
+    Currently supported:
+    - template.zip
+    - template.tar.gz
+    """
 
-    # Unpack the tar.gz file to the temp dir
+    # Check which archive is available
+    archive_gz = os.path.join(template, 'template.tar.gz')
+    archive_zip = os.path.join(template, 'template.zip')
+
     tmp = tempfile.mkdtemp()
-    with tarfile.open(archive, 'r:gz') as tar:
-        tar.extractall(tmp)
 
-    # find the main .blend file (scene.blend)
-    blendfile = os.path.join(tmp, 'template', 'scene.blend')
+    if os.path.exists(archive_gz):
+        return load_template_gz(archive_gz, to=tmp)
+    elif os.path.exists(archive_zip):
+        return load_template_zip(archive_zip, to=tmp)
+    else:
+        raise ValueError(
+            f"No supported archive found in the given template directory - {template}")
 
+
+def load_template_gz(archive_gz, to):
+
+    with tarfile.open(archive_gz, 'r:gz') as tar:
+        tar.extractall(to)
+
+        # If the root content isn't named "template", rename it
+        extracted_folder_name = tar.getnames()[0].split('/')[0]
+        extracted_folder_path = os.path.join(to, extracted_folder_name)
+        template_folder_path = os.path.join(to, "template")
+
+        if not os.path.exists(template_folder_path):
+            os.rename(extracted_folder_path, template_folder_path)
+
+    blendfile = os.path.join(to, 'template', 'scene.blend')
+    return blendfile
+
+
+def load_template_zip(archive_zip, to):
+    with zipfile.ZipFile(archive_zip, 'r') as zip_ref:
+        zip_ref.extractall(to)
+
+        # If the root content isn't named "template", rename it
+        extracted_folder_name = zip_ref.namelist()[0].split('/')[0]
+        extracted_folder_path = os.path.join(to, extracted_folder_name)
+        template_folder_path = os.path.join(to, "template")
+
+        if not os.path.exists(template_folder_path):
+            os.rename(extracted_folder_path, template_folder_path)
+
+    blendfile = os.path.join(to, 'template', 'scene.blend')
     return blendfile
 
 

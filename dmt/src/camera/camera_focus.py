@@ -1,45 +1,85 @@
 import bpy
-from mathutils import Vector
-from math import tan, radians
+from math import tan, radians, atan
+from mathutils import Vector, Matrix
 
 
-def adjust_camera_to_fit_object(obj_name, margin_pct=10):
-    # Get the object
-    obj = bpy.context.scene.objects[obj_name]
+def fit_camera_to_object(camera, target_object: bpy.types.Object, margin: float = 0.0, zoom_in: bool = False, zoom_out: bool = True):
+    if camera.data.type == 'ORTHO':
+        initial = camera.data.ortho_scale
+        scale = calc_ortho_camera_object_fit_scale(
+            camera, target_object, margin)
 
-    # Calculate the bounding box dimensions
-    bb = [Vector(b) for b in obj.bound_box]
-    bb_size = Vector((max(b[i] for b in bb) - min(b[i]
-                     for b in bb) for i in range(3)))
-    bb_center = Vector((sum(b[i] for b in bb)/8 for i in range(3)))
+        # scale larger = zoom out
+        # scale smaller = zoom in
+        if (zoom_in and scale < initial) or (zoom_out and scale > initial):
+            camera.data.ortho_scale = scale
 
-    # Calculate the scale factor based on the margin percentage
-    scale_factor = 1 + margin_pct / 100
+    elif camera.data.type == 'PERSP':
+        initial = camera.data.angle
+        fov = calc_persp_camera_object_fit_fov(
+            camera, target_object, margin)
 
-    # Get the camera
-    cam = bpy.context.scene.camera
+        # fov smaller = zoom in
+        # fov larger = zoom out
+        if (zoom_in and fov < initial) or (zoom_out and fov > initial):
+            camera.data.angle = fov
 
-    # Calculate the distance from the camera to the object
-    distance = max(bb_size) * scale_factor
+    elif camera.data.type == 'PANO':
+        ...
+    else:
+        raise ValueError("Camera must be orthographic or perspective")
 
-    # Adjust the camera position
-    cam.location = bb_center + \
-        cam.matrix_world.to_quaternion() @ Vector((0.0, 0.0, distance))
 
-    # Point the camera at the object
-    direction = bb_center - cam.location
-    # reset rotation
-    cam.rotation_euler[0] = 0.0
-    cam.rotation_euler[1] = 0.0
-    cam.rotation_euler[2] = 0.0
-    # point the camera to the direction
-    cam.rotation_euler.rotate(direction.to_track_quat('-Z', 'Y'))
+def calc_persp_camera_object_fit_fov(camera: bpy.types.Camera, object: bpy.types.Object, margin: float = 0.0):
+    # Get the distance from the camera to the object's center
+    cam_location = camera.matrix_world.translation
+    obj_center = object.location
+    distance = (cam_location - obj_center).length - object.dimensions.z / 2
 
-    # Adjust the camera's zoom and resolution
-    aspect_ratio = bb_size.x / bb_size.y
-    bpy.context.scene.render.resolution_x = 1080
-    bpy.context.scene.render.resolution_y = int(1080 / aspect_ratio)
+    # Consider the margin
+    width_with_margin = object.dimensions.x * (1 + margin)
+    height_with_margin = object.dimensions.y * (1 + margin)
 
-    # Adjust the camera's field of view (FOV)
-    fov = 2 * atan(bb_size.y / (2 * distance))
-    cam.data.angle = radians(fov)
+    # Calculate required FOVs for both width and height of the object
+    fov_height = 2 * atan((height_with_margin / 2) / distance)
+    fov_width = 2 * atan((width_with_margin / 2) / (distance *
+                         bpy.context.scene.render.resolution_x / bpy.context.scene.render.resolution_y))
+
+    # Use the larger of the two FOVs to ensure the object fits
+    fov = max(fov_height, fov_width)
+
+    return fov
+
+
+def calc_ortho_camera_object_fit_scale(camera: bpy.types.Camera, object: bpy.types.Object, margin: float = 0.0):
+    """
+    Calculate the orthographic scale to fit the object in the camera view.
+    Takes margin (%) as argument, e.g. 0.1 will add a 10% margin.
+    """
+    # Ensure the camera is orthographic
+
+    if camera.data.type != 'ORTHO':
+        raise ValueError("Camera must be orthographic")
+
+    # Transform the bounding box to the camera's space
+    matrix = camera.matrix_world.inverted() @ object.matrix_world
+    bbox = [matrix @ Vector(corner) for corner in object.bound_box]
+
+    # Get width and height of bounding box in camera space
+    xs = [coord.x for coord in bbox]
+    ys = [coord.y for coord in bbox]
+    width = max(xs) - min(xs)
+    height = max(ys) - min(ys)
+
+    # Get camera's aspect ratio
+    aspect_ratio = bpy.context.scene.render.resolution_x / \
+        bpy.context.scene.render.resolution_y
+
+    # Calculate the orthographic scale based on the bounding box's size
+    if aspect_ratio >= 1:  # width >= height
+        scale_value = max(width * aspect_ratio, height)
+    else:
+        scale_value = max(width, height / aspect_ratio)
+
+    # Apply the margin to the scale value
+    return scale_value * (1 + margin)
