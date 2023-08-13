@@ -10,6 +10,7 @@ import styled from "@emotion/styled";
 import { previews, templates, templatesMap } from "@/k/templates";
 import { useEditor } from "@/core/states/use-editor";
 import { motion } from "framer-motion";
+import { SmoothLoadImage } from "@/components/smooth-load-image";
 
 interface TemplateSelectorProps {
   key: string;
@@ -106,8 +107,9 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
             const locked = templatesMap[focus].visibility === "comming_soon";
             return (
               <PresetPreviewImage
-                width="100%"
                 key={i}
+                width={277}
+                height={208}
                 src={preset}
                 data-locked={locked}
                 onClick={() => {
@@ -115,6 +117,7 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
                   switchTemplate(focus);
                   onSubmit();
                 }}
+                alt={"template render preview"}
               />
             );
           })}
@@ -124,8 +127,7 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
   );
 }
 
-const PresetPreviewImage = styled.img`
-  height: 216px;
+const PresetPreviewImage = styled(SmoothLoadImage)`
   border-radius: 8px;
   overflow: hidden;
   object-fit: cover;
@@ -186,7 +188,12 @@ const TemplateMenuItem = React.forwardRef(function TemplateMenuItem(
       data-selected={selected}
       data-visible={locked ? "false" : "true"}
     >
-      <Image alt="template thumbnail" src={iconSrc} width={44} height={44} />
+      <SmoothLoadImage
+        alt="template thumbnail"
+        src={iconSrc}
+        width={44}
+        height={44}
+      />
       <span style={{ flex: 1 }}>{name}</span>
       {locked && (
         <div className="lock">
@@ -263,34 +270,30 @@ export function TemplateDropdown() {
           align="start"
           onEscapeKeyDown={close}
           onPointerDownOutside={close}
+          initial={{
+            opacity: 0.8,
+            y: -10,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.2,
+          }}
         >
-          <motion.div
-            initial={{
-              opacity: 0.8,
-              y: -10,
+          <TemplatesView
+            onSubmit={() => {
+              setOpen(false);
             }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.2,
-            }}
-          >
-            <TemplatesView
-              onSubmit={() => {
-                setOpen(false);
-              }}
-            />
-          </motion.div>
-          {/* <Popover.Arrow className="PopoverArrow" /> */}
+          />
         </ContentContainer>
       </Popover.Portal>
     </Popover.Root>
   );
 }
 
-const ContentContainer = styled(Popover.Content)`
+const ContentContainer = styled(motion(Popover.Content))`
   z-index: 99;
 
   display: flex;
