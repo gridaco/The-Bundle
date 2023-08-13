@@ -61,7 +61,7 @@ export interface Template {
 
 const template_004: Template = {
   key: "004",
-  name: "Glass Dispersion",
+  name: "Glass",
   thumbnail: "/lsd/preview/baked-001/0001.png",
   icon: "/lsd/preview/baked-004/icon.png",
   preview: "/lsd/preview/baked-004/thumbnail.jpeg",
@@ -89,7 +89,7 @@ const template_005: Template = {
 
 const template_006: Template = {
   key: "006",
-  name: "PVC",
+  name: "Plastic",
   thumbnail: "/lsd/preview/baked-006/showcase-0001.png",
   icon: "/lsd/preview/baked-006/icon.png",
   preview: "/lsd/preview/baked-006/thumbnail.png",
@@ -102,7 +102,7 @@ const template_006: Template = {
 
 const template_007: Template = {
   key: "007",
-  name: "Fluffy Monster",
+  name: "Fluffy",
   thumbnail: "/lsd/preview/baked-007/icon.png",
   icon: "/lsd/preview/baked-007/icon.png",
   preview: "/lsd/preview/baked-007/thumbnail.png",
@@ -130,7 +130,7 @@ const template_008: Template = {
 
 const template_009: Template = {
   key: "009",
-  name: "Inflated Balloon",
+  name: "Balloon",
   thumbnail: "/lsd/preview/baked-009/icon.png",
   icon: "/lsd/preview/baked-009/icon.png",
   preview: "/lsd/preview/baked-009/thumbnail.png",

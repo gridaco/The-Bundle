@@ -81,14 +81,23 @@ export function Controller({
     setExpanded(false);
   }, []);
 
-  const open = React.useCallback(() => {
-    setExpanded(true);
+  const toggle = React.useCallback(() => {
+    setExpanded((prev) => !prev);
   }, []);
 
   return (
     <motion.div
-      whileHover={{
-        y: -4,
+      initial={{
+        opacity: 0,
+        y: 10,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        delay: 0.5,
+        duration: 0.2,
       }}
       style={{
         display: "flex",
@@ -101,7 +110,7 @@ export function Controller({
         <Bar>
           <Popover.Root open={expanded}>
             <Popover.Trigger asChild>
-              <div className="slot scene" onClick={open}>
+              <div className="slot scene" onClick={toggle}>
                 <TransparencyGridIcon width="100%" height="100%" />
               </div>
             </Popover.Trigger>
@@ -112,7 +121,7 @@ export function Controller({
                 sideOffset={20}
                 alignOffset={-14}
                 onEscapeKeyDown={close}
-                onPointerDownOutside={close}
+                onInteractOutside={close}
                 style={{
                   width: 500,
                 }}

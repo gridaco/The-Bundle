@@ -1,5 +1,6 @@
 import React from "react";
 import * as Popover from "@radix-ui/react-popover";
+import Image from "next/image";
 import {
   CaretDownIcon,
   Cross2Icon,
@@ -30,7 +31,12 @@ const TemplateTriggerButton = React.forwardRef(function TemplateTriggerButton(
       aria-label="Update dimensions"
       {...props}
     >
-      <img alt="template thumbnail" src={data.iconSrc} width={44} height={44} />
+      <Image
+        alt="template thumbnail"
+        src={data.iconSrc}
+        width={44}
+        height={44}
+      />
       <span>{data.name}</span>
       <CaretDownIcon />
     </TemplateTriggerButtonContainer>
@@ -171,7 +177,7 @@ const TemplateMenuItem = React.forwardRef(function TemplateMenuItem(
       data-selected={selected}
       data-visible={locked ? "false" : "true"}
     >
-      <img alt="template thumbnail" src={iconSrc} width={44} height={44} />
+      <Image alt="template thumbnail" src={iconSrc} width={44} height={44} />
       <span style={{ flex: 1 }}>{name}</span>
       {locked && (
         <div className="lock">
