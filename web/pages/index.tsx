@@ -12,7 +12,7 @@ export default function Home() {
         <meta property="og:title" content="LSD" />
         <meta property="og:description" content="Acid Text Generator" />
         <meta property="og:image" content="https://grida.co/lsd/og-image.gif" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/lsd/favicon.png" />
       </Head>
       <Editor />
     </>
