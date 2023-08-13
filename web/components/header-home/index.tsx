@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import styled from "@emotion/styled";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function HomeHeader({
   left,
@@ -12,18 +13,62 @@ export function HomeHeader({
 }) {
   return (
     <HeaderWrapper>
-      <Link href="/">
-        <Image
-          src="/lsd/lsd.png"
-          alt="Logo"
-          className="logo home"
-          width={52}
-          height={32}
-          priority
-        />
-      </Link>
-      <div className="left">{left}</div>
-      <div className="right">{right}</div>
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 10,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          delay: 0.4,
+        }}
+      >
+        <Link href="/">
+          <Image
+            src="/lsd/lsd.png"
+            alt="Logo"
+            className="logo home"
+            width={52}
+            height={32}
+            priority
+          />
+        </Link>
+      </motion.div>
+      <motion.div
+        className="left"
+        initial={{
+          opacity: 0,
+          y: 10,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          delay: 0.5,
+        }}
+      >
+        {left}
+      </motion.div>
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 10,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          delay: 0.5,
+        }}
+        className="right"
+      >
+        {right}
+      </motion.div>
       {/* <div className="menu">
         <Link href="/crystal">
           <span className="item">CRYSTAL</span>

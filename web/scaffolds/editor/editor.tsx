@@ -20,6 +20,7 @@ import { Canvas } from "./canvas";
 import { Controller } from "./control";
 import { isAscii, isNotAscii } from "utils/ascii";
 import { downloadImage } from "utils/download-image";
+import { motion } from "framer-motion";
 import {
   UpgradeToProSplashView,
   ColumnImages,
@@ -68,10 +69,40 @@ export function Editor() {
       <Main>
         <ProActivatedPortal />
 
-        <div className="editor">
-          <div className="frame">
+        <motion.div
+          initial={{
+            opacity: 0.0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            delay: 0.2,
+            duration: 0.2,
+          }}
+          className="editor"
+        >
+          <motion.div
+            className="frame"
+            initial={{
+              filter: "blur(32px)",
+              opacity: 0.8,
+              scale: 0.9,
+            }}
+            animate={{
+              filter: "blur(0px)",
+              scale: 1,
+              opacity: 1,
+            }}
+            transition={{
+              delay: 0.4,
+              duration: 0.2,
+            }}
+          >
             <Canvas busy={busy} />
-          </div>
+          </motion.div>
           <div className="controller-position">
             <Controller
               showDownload={showDownload}
@@ -157,7 +188,7 @@ export function Editor() {
               }}
             />
           </div>
-        </div>
+        </motion.div>
         <p className="message">{message}</p>
       </Main>
       <footer>

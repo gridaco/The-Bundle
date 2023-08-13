@@ -9,6 +9,8 @@ import {
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
 import { useEditor } from "@/core/states/use-editor";
 import { Options } from "./options";
+import * as Popover from "@radix-ui/react-popover";
+import { motion } from "framer-motion";
 
 const SnapWrapper = styled.div`
   cursor: pointer;
@@ -74,10 +76,20 @@ export function Controller({
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [expanded, setExpanded] = useState(false);
-  // const [preset, setPreset] = useState<string>();
+
+  const close = React.useCallback(() => {
+    setExpanded(false);
+  }, []);
+
+  const open = React.useCallback(() => {
+    setExpanded(true);
+  }, []);
 
   return (
-    <div
+    <motion.div
+      whileHover={{
+        y: -4,
+      }}
       style={{
         display: "flex",
         gap: 12,
@@ -85,26 +97,47 @@ export function Controller({
         flexDirection: "column",
       }}
     >
-      {expanded && (
-        <Bar
-          style={{
-            height: "100%",
-          }}
-        >
-          <Options />
-        </Bar>
-      )}
-
       <ControllerWrapper>
         <Bar>
-          <div
-            className="slot scene"
-            onClick={() => {
-              setExpanded(!expanded);
-            }}
-          >
-            <TransparencyGridIcon width="100%" height="100%" />
-          </div>
+          <Popover.Root open={expanded}>
+            <Popover.Trigger asChild>
+              <div className="slot scene" onClick={open}>
+                <TransparencyGridIcon width="100%" height="100%" />
+              </div>
+            </Popover.Trigger>
+            <Popover.Portal>
+              <Popover.Content
+                side="bottom"
+                align="start"
+                sideOffset={20}
+                alignOffset={-14}
+                onEscapeKeyDown={close}
+                onPointerDownOutside={close}
+                style={{
+                  width: 500,
+                }}
+              >
+                <Bar
+                  style={{
+                    height: "100%",
+                  }}
+                  initial={{
+                    opacity: 0,
+                    y: -20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    duration: 0.2,
+                  }}
+                >
+                  <Options />
+                </Bar>
+              </Popover.Content>
+            </Popover.Portal>
+          </Popover.Root>
           <form
             ref={formRef}
             onSubmit={(e) => {
@@ -157,11 +190,11 @@ export function Controller({
           </SnapWrapper>
         )}
       </ControllerWrapper>
-    </div>
+    </motion.div>
   );
 }
 
-const Bar = styled.div`
+const Bar = styled(motion.div)`
   display: flex;
   flex-direction: row;
   width: 100%;

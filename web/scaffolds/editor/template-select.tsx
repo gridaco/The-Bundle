@@ -8,6 +8,7 @@ import {
 import styled from "@emotion/styled";
 import { previews, templates } from "@/k/templates";
 import { useEditor } from "@/core/states/use-editor";
+import { motion } from "framer-motion";
 
 interface TemplateSelectorProps {
   key: string;
@@ -248,11 +249,25 @@ export function TemplateDropdown() {
           onEscapeKeyDown={close}
           onPointerDownOutside={close}
         >
-          <TemplatesView
-            onSubmit={() => {
-              setOpen(false);
+          <motion.div
+            initial={{
+              opacity: 0.8,
+              y: -10,
             }}
-          />
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
+          >
+            <TemplatesView
+              onSubmit={() => {
+                setOpen(false);
+              }}
+            />
+          </motion.div>
           {/* <Popover.Arrow className="PopoverArrow" /> */}
         </ContentContainer>
       </Popover.Portal>
