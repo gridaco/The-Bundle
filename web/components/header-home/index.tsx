@@ -23,7 +23,7 @@ export function HomeHeader({
           y: 0,
         }}
         transition={{
-          delay: 0.4,
+          delay: 1.2,
         }}
       >
         <Link href="/">
@@ -48,7 +48,7 @@ export function HomeHeader({
           y: 0,
         }}
         transition={{
-          delay: 0.5,
+          delay: 1.4,
         }}
       >
         {left}
@@ -63,7 +63,7 @@ export function HomeHeader({
           y: 0,
         }}
         transition={{
-          delay: 0.5,
+          delay: 1.4,
         }}
         className="right"
       >

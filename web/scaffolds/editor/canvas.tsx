@@ -3,14 +3,27 @@ import { LinearProgress } from "@mui/material";
 import styled from "@emotion/styled";
 import { BakedImageSequence3DView } from "components/interactive-3d-object-baked-sequence-view";
 import { useEditor } from "@/core/states/use-editor";
+import { motion } from "framer-motion";
 
 export function Canvas({ busy }: { busy?: boolean }) {
   const { template, result } = useEditor();
 
+  const src = result?.src ?? template.preview;
+
   return (
     <CanvasWrapper>
       {busy && (
-        <div className="loading">
+        <motion.div
+          className="loading"
+          initial={{
+            backdropFilter: "blur(0px)",
+            opacity: 0,
+          }}
+          animate={{
+            backdropFilter: "blur(32px)",
+            opacity: 1,
+          }}
+        >
           <LinearProgress
             sx={{
               backgroundColor: "white",
@@ -22,7 +35,7 @@ export function Canvas({ busy }: { busy?: boolean }) {
               width: "50%",
             }}
           />
-        </div>
+        </motion.div>
       )}
       {/* <BakedImageSequence3DView
         style={{
@@ -34,13 +47,16 @@ export function Canvas({ busy }: { busy?: boolean }) {
           return `http://localhost:3000/render_x${rotation.y}_y${rotation.x}_z0.png`;
         }}
       /> */}
-      {result?.src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img className="main" src={result?.src} alt="result" />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img className="main" src={template.preview} alt="result" />
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className="main"
+        src={src}
+        onLoad={() => {
+          //
+        }}
+        alt="result"
+      />
+
       {/* <div
         style={{
           padding: 40,
@@ -66,8 +82,8 @@ const CanvasWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
     z-index: 1;
-    backdrop-filter: blur(8px);
   }
 
   /* disable right-click */
