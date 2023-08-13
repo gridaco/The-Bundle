@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 function IdleOverlay({ idle }: { idle?: boolean }) {
   return (
-    <motion.div
+    <IdleWrapper
       className="loading"
       variants={{
         hide: {
@@ -20,21 +20,36 @@ function IdleOverlay({ idle }: { idle?: boolean }) {
       animate={idle ? "show" : "hide"}
     >
       {idle && (
-        <LinearProgress
-          sx={{
-            backgroundColor: "white",
-            "& .MuiLinearProgress-bar": {
-              backgroundColor: "black",
-            },
-          }}
-          style={{
-            width: "50%",
-          }}
-        />
+        <div className="message">
+          <LinearProgress
+            sx={{
+              backgroundColor: "white",
+              "& .MuiLinearProgress-bar": {
+                backgroundColor: "black",
+              },
+            }}
+            style={{
+              width: "50%",
+            }}
+          />
+          <span>this may take up to 5 minutes</span>
+        </div>
       )}
-    </motion.div>
+    </IdleWrapper>
   );
 }
+
+const IdleWrapper = styled(motion.div)`
+  .message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    font-size: 12px;
+  }
+`;
 
 export function Canvas({ busy }: { busy?: boolean }) {
   const { template, result } = useEditor();

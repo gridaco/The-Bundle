@@ -182,7 +182,8 @@ export function Editor() {
                   .finally(() => {
                     setBusy(false);
                     // mock credit use
-                    setCredit((credit) => credit - 1);
+                    // disabled for initial launch
+                    // setCredit((credit) => credit - 1);
                     setText(text);
                   });
               }}
