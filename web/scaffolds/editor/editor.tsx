@@ -362,10 +362,7 @@ function UpgradeToProDialog() {
         >
           <>
             <h1>Upgrade to Pro</h1>
-            <p>
-              Upgrade to Pro and get access to exclusive templates and xxx.
-              {/* TODO: update text */}
-            </p>
+            <p>Get access to all resources and full export options.</p>
             <Button
               onClick={() => {
                 setView("plans");

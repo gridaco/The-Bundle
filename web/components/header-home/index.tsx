@@ -4,6 +4,34 @@ import styled from "@emotion/styled";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+const logo_motion = {
+  initial: {
+    opacity: 0,
+    y: 10,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+  },
+  transition: {
+    delay: 1.2,
+  },
+};
+
+const side_motion = {
+  initial: {
+    opacity: 0,
+    y: 10,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+  },
+  transition: {
+    delay: 1.4,
+  },
+};
+
 export function HomeHeader({
   left,
   right,
@@ -13,19 +41,7 @@ export function HomeHeader({
 }) {
   return (
     <HeaderWrapper>
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 10,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          delay: 1.2,
-        }}
-      >
+      <motion.div {...logo_motion}>
         <Link href="/">
           <Image
             src="/lsd/lsd.png"
@@ -37,36 +53,10 @@ export function HomeHeader({
           />
         </Link>
       </motion.div>
-      <motion.div
-        className="left"
-        initial={{
-          opacity: 0,
-          y: 10,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          delay: 1.4,
-        }}
-      >
+      <motion.div className="left" {...side_motion}>
         {left}
       </motion.div>
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 10,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        transition={{
-          delay: 1.4,
-        }}
-        className="right"
-      >
+      <motion.div className="right" {...side_motion}>
         {right}
       </motion.div>
       {/* <div className="menu">
@@ -100,8 +90,8 @@ const HeaderWrapper = styled.header`
   justify-content: center;
   padding: 20px;
   padding-top: 24px;
-  background: rgba(0, 0, 0, 0.01);
-  backdrop-filter: blur(24px);
+  /* background: rgba(0, 0, 0, 0.01); */
+  /* backdrop-filter: blur(24px); */
 
   .home {
     cursor: pointer;
