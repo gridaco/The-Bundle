@@ -47,8 +47,8 @@ export function HomeHeader({
             src="/lsd/lsd.png"
             alt="Logo"
             className="logo home"
-            width={52}
-            height={32}
+            width={55}
+            height={24}
             priority
           />
         </Link>
@@ -59,20 +59,6 @@ export function HomeHeader({
       <motion.div className="right" {...side_motion}>
         {right}
       </motion.div>
-      {/* <div className="menu">
-        <Link href="/crystal">
-          <span className="item">CRYSTAL</span>
-        </Link>
-        <Link href="/acid">
-          <span className="item">ACID</span>
-        </Link>
-        <Link href="/grass">
-          <span className="item">GRASS</span>
-        </Link>
-      </div>
-      <Link href="/rehab">
-        <span>REHAB</span>
-      </Link> */}
     </HeaderWrapper>
   );
 }

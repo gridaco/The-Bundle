@@ -8,10 +8,10 @@ export function Header() {
     <HeaderWrapper>
       <Link href="/">
         <Image
-          src="/logo.svg"
+          src="/lsd/lsd.png"
           alt="Logo"
           className="logo home"
-          width={32}
+          width={55}
           height={24}
           priority
         />
