@@ -283,6 +283,7 @@ function ProActivatedPortal() {
           duration: 6000,
           position: "bottom-right",
         });
+        setOpen(false);
       }, 3000);
     }
   }, [open]);
@@ -463,9 +464,9 @@ function ProPopover() {
               -
             </span>
             <br />
-            <code>
+            {/* <code>
               C<sub>20</sub>H<sub>25</sub>N<sub>3O</sub>
-            </code>
+            </code> */}
           </div>
         </div>
       </Popover.Content>
