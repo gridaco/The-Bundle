@@ -10,7 +10,7 @@ const S3 = new S3Client({});
 const DEV = process.env.NODE_ENV !== 'production';
 const BUCKET = DEV ? 'dev-dmt-out' : 'dmt-out';
 
-interface StillImageRenderUpscaledResult {
+export interface StillImageRenderUpscaledResult {
   /**
    * Original image w/o background (or with, if requested)
    */
