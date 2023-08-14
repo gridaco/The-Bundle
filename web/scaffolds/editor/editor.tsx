@@ -115,15 +115,16 @@ export function Editor() {
                     // downloadImage(state.result?.src, `${text}.png`);
                     const promise = downloadZip({
                       files: state.result.srcset
-                        ? Object.keys(state.result.srcset).reduce(
-                            (d, c, i) => ({
+                        ? Object.keys(state.result.srcset).reduce((d, c, i) => {
+                            const src = state.result!.srcset?.[c];
+                            if (!src) return d;
+                            return {
                               ...d,
                               [`${c}.png`]: {
-                                src: state.result!.srcset?.[c] ?? "",
+                                src,
                               },
-                            }),
-                            {}
-                          )
+                            };
+                          }, {})
                         : {},
                       name: `${text}.zip`,
                     });
