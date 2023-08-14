@@ -6,6 +6,7 @@ import contacts from "k/contacts.json";
 import faqs from "k/faq.json";
 import { motion } from "framer-motion";
 import { FaqItem } from "@/components/faq";
+import { useRouter } from "next/router";
 
 const plans = process.env.NODE_ENV === "production" ? plans_live : plans_test;
 
@@ -14,11 +15,14 @@ const price_size = {
   highlighted: { width: 234, height: 340 } as const,
 } as const;
 
-export function UpgradeToProPlansView({
-  onUpgradeClick,
-}: {
-  onUpgradeClick?: (price: string) => void;
-}) {
+export function UpgradeToProPlansView({}: {}) {
+  const router = useRouter();
+
+  const onUpgradeClick = (price) => {
+    // POST
+    router.push(`/api/checkout/sessions?price=${price}`);
+  };
+
   return (
     <PlansViewWrapper>
       <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -119,7 +123,7 @@ export function UpgradeToProPlansView({
           marginTop: 40,
         }}
       />
-      <motion.section
+      {/* <motion.section
         className="faq section"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -135,12 +139,13 @@ export function UpgradeToProPlansView({
             <FaqItem key={i} {..._} />
           ))}
         </motion.div>
-      </motion.section>
+      </motion.section> */}
     </PlansViewWrapper>
   );
 }
 
 const PlansViewWrapper = styled.div`
+  padding: 40px;
   font-family: "Inter", sans-serif;
 
   display: flex;
