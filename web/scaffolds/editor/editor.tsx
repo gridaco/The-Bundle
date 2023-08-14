@@ -21,6 +21,8 @@ import { Controller } from "./control";
 import { isAscii, isNotAscii } from "utils/ascii";
 import { downloadImage } from "utils/download-image";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import {
   UpgradeToProSplashView,
   ColumnImages,
@@ -273,23 +275,49 @@ function ProActivatedPortal() {
     }
   }, [open, router]);
 
-  return (
-    <Dialog open={open ?? false}>
-      <h1>Pro activated</h1>
-      <button
-        onClick={() => {
-          setOpen(false);
-        }}
-      >
-        Continue
-      </button>
-    </Dialog>
-  );
+  // temporary - remove this and use below.
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        toast.success("Pro activated", {
+          duration: 6000,
+          position: "bottom-right",
+        });
+      }, 3000);
+    }
+  }, [open]);
+
+  // return (
+  //   <Dialog open={open ?? false}>
+  //     <h1>Pro activated</h1>
+  //     <button
+  //       onClick={() => {
+  //         setOpen(false);
+  //       }}
+  //     >
+  //       Continue
+  //     </button>
+  //   </Dialog>
+  // );
+
+  return <></>;
 }
 
 function Providers({ children }: React.PropsWithChildren<{}>) {
   return (
     <>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: "black",
+            color: "white",
+            fontSize: 12,
+            fontFamily: "Inter, sans-serif",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+          },
+        }}
+      />
       {/* <UpgradeToProToContinue> */}
       {children}
       {/* </UpgradeToProToContinue> */}
