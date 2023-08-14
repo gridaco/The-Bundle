@@ -55,11 +55,6 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-
-  /* scroll bar */
-
-  /* For Firefox */
-  scrollbar-color: rgba(255, 255, 255, 0.5) transparent; /* thumb and track color */
 }
 
 a {
@@ -71,30 +66,4 @@ a {
   html {
     color-scheme: dark;
   }
-}
-
-::-webkit-scrollbar {
-  background: transparent;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent; /* This makes the background transparent */
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ); /* This is for the draggable scrolling handle. You can adjust color and transparency */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.2
-  ); /* Color when hovering over the scrollbar thumb */
 }

@@ -147,6 +147,13 @@ const TemplatesViewWrapper = styled.div`
     gap: 8px;
     width: 216px;
     overflow-y: scroll;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 
   .presets {
@@ -154,6 +161,14 @@ const TemplatesViewWrapper = styled.div`
     flex-direction: column;
     width: 280px;
     overflow-y: scroll;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 
     .images {
       display: flex;
