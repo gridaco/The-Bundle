@@ -19,7 +19,7 @@ import { HomeHeader } from "components/header-home";
 import { Canvas } from "./canvas";
 import { Controller } from "./control";
 import { isAscii, isNotAscii } from "utils/ascii";
-import { downloadImage } from "utils/download-image";
+import { downloadImage } from "utils/download";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
