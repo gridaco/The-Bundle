@@ -179,6 +179,11 @@ export function Editor() {
                         },
                       });
                     })
+                    .catch((e) => {
+                      toast.error(
+                        "Failed to render image. Please try again later."
+                      );
+                    })
                     .finally(() => {
                       setBusy(false);
                       // mock credit use
