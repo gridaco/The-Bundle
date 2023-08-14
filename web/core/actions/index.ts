@@ -12,6 +12,9 @@ export type SwitchTemplateAction = {
 export type SetRenderResultAction = {
   type: "set-render-result";
   src: string;
+  srcset?: {
+    [key: string]: string;
+  };
 };
 
 export type SetUserTemplateDataAction<T = any> = {

@@ -46,11 +46,12 @@ export function editorReducer(
       });
     }
     case "set-render-result": {
-      const { src } = action as SetRenderResultAction;
+      const { src, srcset } = action as SetRenderResultAction;
       return produce(state, (draft) => {
         draft.result = {
           id: Date.now().toString(),
           src,
+          srcset: srcset,
           template: draft.template.key,
           // TODO:
           samples: 256,
