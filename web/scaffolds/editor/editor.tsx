@@ -19,7 +19,7 @@ import { HomeHeader } from "components/header-home";
 import { Canvas } from "./canvas";
 import { Controller } from "./control";
 import { isAscii, isNotAscii } from "utils/ascii";
-import { downloadImage } from "utils/download";
+import { downloadImage, downloadZip } from "utils/download";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
@@ -112,7 +112,21 @@ export function Editor() {
                 showDownload={showDownload}
                 onDownload={() => {
                   if (state.result?.src) {
-                    downloadImage(state.result?.src, `${text}.png`);
+                    // downloadImage(state.result?.src, `${text}.png`);
+                    downloadZip({
+                      files: state.result.srcset
+                        ? Object.keys(state.result.srcset).reduce(
+                            (d, c, i) => ({
+                              ...d,
+                              [`${c}.png`]: {
+                                src: state.result!.srcset?.[c] ?? "",
+                              },
+                            }),
+                            {}
+                          )
+                        : {},
+                      name: `${text}.zip`,
+                    });
                   } else {
                     alert("Please render first.");
                   }
@@ -147,10 +161,15 @@ export function Editor() {
                     .renderStill(template, {
                       data: transformer(data),
                     })
-                    .then(({ still, still_2x }) => {
+                    .then(({ still, still_w_background, still_2x }) => {
                       dispatch({
                         type: "set-render-result",
                         src: still_2x ?? still,
+                        srcset: {
+                          still,
+                          still_w_background,
+                          still_2x,
+                        },
                       });
                     })
                     .finally(() => {
