@@ -1,16 +1,6 @@
-import Stripe from "stripe";
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
-
-const STRIPE_SECRET_KEY_TEST = process.env.STRIPE_SECRET_KEY;
-const STRIPE_SECRET_KEY_LIVE = process.env.STRIPE_SECRET_KEY_LIVE;
-const STRIPE_SECRET_KEY =
-  process.env.NODE_ENV === "production"
-    ? STRIPE_SECRET_KEY_LIVE
-    : STRIPE_SECRET_KEY_TEST;
-
-const stripe = new Stripe(STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-11-15",
-});
+import { user_metadata_stripe_customer_id } from "@/k/userkey";
+import { stripe } from "@/server/stripe";
 
 export default async function handler(req, res) {
   // get supabase user
@@ -22,7 +12,7 @@ export default async function handler(req, res) {
 
   const { email, id, user_metadata } = user!;
 
-  const { stripe_customer_id } = user_metadata;
+  const stripe_customer_id = user_metadata[user_metadata_stripe_customer_id];
 
   let customer_id = stripe_customer_id;
 
@@ -76,7 +66,7 @@ export default async function handler(req, res) {
         trial_period_days: 3,
       },
       mode: "subscription",
-      success_url: `${baseurl}/?return-reason=pro-activated`,
+      success_url: `${baseurl}/api/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseurl}/`,
     });
     res.redirect(303, session.url);

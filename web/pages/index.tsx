@@ -23,6 +23,7 @@ export default function Home() {
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { GetServerSidePropsContext } from "next";
 import { Editor } from "@/scaffolds/editor";
+import { app_metadata_subscription_id } from "@/k/userkey";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // check if authenticated
@@ -31,7 +32,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session) {
+  if (!session || !session.user.app_metadata[app_metadata_subscription_id]) {
     return {
       redirect: {
         destination: "/beta",

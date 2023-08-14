@@ -15,7 +15,11 @@ const price_size = {
   highlighted: { width: 234, height: 340 } as const,
 } as const;
 
-export function UpgradeToProPlansView({}: {}) {
+export function UpgradeToProPlansView({
+  heading = "Upgrade to Pro",
+}: {
+  heading?: React.ReactNode;
+}) {
   const router = useRouter();
 
   const onUpgradeClick = (price) => {
@@ -26,7 +30,7 @@ export function UpgradeToProPlansView({}: {}) {
   return (
     <PlansViewWrapper>
       <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-        Upgrade to Pro
+        {heading}
       </motion.h1>
       <motion.section
         className="pricing-table"
@@ -118,11 +122,11 @@ export function UpgradeToProPlansView({}: {}) {
           />
         </motion.div>
       </motion.section>
-      <div
+      {/* <div
         style={{
           marginTop: 40,
         }}
-      />
+      /> */}
       {/* <motion.section
         className="faq section"
         initial={{ opacity: 0, y: 12 }}
