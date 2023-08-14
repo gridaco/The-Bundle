@@ -33,6 +33,9 @@ export default async function handler(req, res) {
     throw error;
   }
 
+  // once updated, refresh session
+  await supabase.auth.refreshSession();
+
   const host = req.headers.host;
   const protocol = req.headers["x-forwarded-proto"];
   const baseurl = `${protocol}://${host}/lsd`;

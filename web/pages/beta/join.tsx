@@ -6,7 +6,7 @@ export default function CBTCheckoutPage() {
   return (
     <Main>
       <Layout>
-        <UpgradeToProPlansView heading={"Select your Plan to continue"} />
+        <UpgradeToProPlansView heading={"Select a Plan to get started"} />
       </Layout>
     </Main>
   );
