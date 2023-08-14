@@ -16,12 +16,18 @@ export async function GET(request: NextRequest) {
 
   // while on CBT session, check if user has a plan, if not, redirect to /beta/join
   const { data: user } = await supabase.auth.getUser();
+
+  const host =
+    process.env.NODE_ENV === "production"
+      ? "https://grida.co/lsd"
+      : requestUrl.origin + "/lsd";
+
   if (user.user?.app_metadata) {
     if (!user.user.app_metadata[app_metadata_subscription_id]) {
-      return NextResponse.redirect(requestUrl.origin + "/lsd/beta/join");
+      return NextResponse.redirect(host + "/beta/join");
     }
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect(requestUrl.origin + "/lsd");
+  return NextResponse.redirect(host);
 }

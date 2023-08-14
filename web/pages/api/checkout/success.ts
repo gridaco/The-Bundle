@@ -1,6 +1,5 @@
 import { createPagesServerClient } from "@supabase/auth-helpers-nextjs";
 import { app_metadata_subscription_id } from "@/k/userkey";
-import { NextResponse } from "next/server";
 import { stripe } from "@/server/stripe";
 import { createClient } from "@supabase/supabase-js";
 
@@ -38,7 +37,10 @@ export default async function handler(req, res) {
 
   const host = req.headers.host;
   const protocol = req.headers["x-forwarded-proto"];
-  const baseurl = `${protocol}://${host}/lsd`;
+  const baseurl =
+    process.env.NODE_ENV === "production"
+      ? "https://grida.co/lsd"
+      : `${protocol}://${host}/lsd`;
 
   //
   const redirect = `${baseurl}/?return-reason=pro-activated`;

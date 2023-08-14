@@ -44,7 +44,10 @@ export default async function handler(req, res) {
   const host = req.headers.host;
   const protocol = req.headers["x-forwarded-proto"];
 
-  const baseurl = `${protocol}://${host}/lsd`;
+  const baseurl =
+    process.env.NODE_ENV === "production"
+      ? "https://grida.co/lsd"
+      : `${protocol}://${host}/lsd`;
 
   try {
     // Create Checkout Sessions from body params.
