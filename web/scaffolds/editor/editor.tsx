@@ -113,7 +113,7 @@ export function Editor() {
                 onDownload={() => {
                   if (state.result?.src) {
                     // downloadImage(state.result?.src, `${text}.png`);
-                    downloadZip({
+                    const promise = downloadZip({
                       files: state.result.srcset
                         ? Object.keys(state.result.srcset).reduce(
                             (d, c, i) => ({
@@ -126,6 +126,12 @@ export function Editor() {
                           )
                         : {},
                       name: `${text}.zip`,
+                    });
+
+                    toast.promise(promise, {
+                      loading: "Zipping Images...",
+                      success: "Download Success",
+                      error: "Download Failed",
                     });
                   } else {
                     alert("Please render first.");

@@ -4,6 +4,7 @@ import { download } from "./download";
 export async function downloadZip({
   files,
   name,
+  ensureok = false,
 }: {
   files: {
     [key: string]:
@@ -15,6 +16,7 @@ export async function downloadZip({
       | { src: string };
   };
   name?: string;
+  ensureok?: boolean;
 }) {
   const zip = new JSZip();
 
@@ -22,13 +24,20 @@ export async function downloadZip({
     let fileContent;
     if (typeof value === "object" && "src" in value) {
       const response = await fetch(value.src);
-      if (!response.ok)
-        throw new Error(`Failed to fetch image from ${value.src}`);
-      fileContent = await response.blob();
+      if (!response.ok) {
+        if (ensureok) {
+          throw new Error(`Failed to fetch image from ${value.src}`);
+        }
+      } else {
+        fileContent = await response.blob();
+      }
     } else {
       fileContent = await value;
     }
-    zip.file(key, fileContent);
+
+    if (fileContent) {
+      zip.file(key, fileContent);
+    }
   }
 
   zip.generateAsync({ type: "blob" }).then(function (content) {
