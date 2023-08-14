@@ -8,6 +8,7 @@ const repo_root_path = path.resolve(__dirname, '..', '..', '..', '..');
 const dmt_path = path.resolve(repo_root_path, 'dmt');
 const templates_path = path.resolve(repo_root_path, 'templates');
 const exe = path.resolve(dmt_path, 'src', 'cli.py');
+const pythonpath = repo_root_path;
 
 export interface DMTRequest<T = any> {
   data: T;
@@ -66,7 +67,12 @@ export function render(
     ];
 
     const txt = ['python3', exe, ...args].join(' ');
-    const pythonProcess = spawn('python3', [exe, ...args]);
+    const pythonProcess = spawn('python3', [exe, ...args], {
+      shell: true,
+      env: {
+        PYTHONPATH: pythonpath,
+      },
+    });
 
     console.log({
       exe,
