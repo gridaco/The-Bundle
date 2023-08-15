@@ -15,6 +15,10 @@ export const options = {
     fonts["Russo One"],
     fonts["Anton"],
   ],
+  text: {
+    min: 3,
+    max: 8,
+  },
 } as const;
 
 export default function data({

@@ -49,6 +49,10 @@ export interface Template {
       "font-family": string;
       "font-weight": number;
     }>;
+    text?: {
+      min?: number;
+      max?: number;
+    };
   };
 }
 

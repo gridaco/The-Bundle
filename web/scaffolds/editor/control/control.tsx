@@ -171,8 +171,8 @@ export function Controller({
               ref={inputRef}
               id="body"
               placeholder="Type text to render"
-              minLength={1}
-              // maxLength={7}
+              minLength={options.text?.min || 1}
+              maxLength={options.text?.max || 64}
               minRows={1}
               maxRows={3}
               autoFocus
