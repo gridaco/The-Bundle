@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import Image from "next/image";
 import {
@@ -97,13 +97,28 @@ function TemplatesView({ onSubmit }: { onSubmit: () => void }) {
               selected={focus === template.key}
               locked={_locked}
               onClick={() => {
-                setFocus(template.key);
+                // WAS
+                // setFocus(template.key);
+
+                // temporal callback on click template itself, not preview
+                if (!_locked) {
+                  setFocus(template.key);
+                  switchTemplate(template.key);
+                  onSubmit();
+                }
               }}
             />
           );
         })}
       </div>
-      <div className="presets" key={focus}>
+      <div
+        style={{
+          // temporal disable
+          display: "none",
+        }}
+        className="presets"
+        key={focus}
+      >
         <div className="images" data-locked={locked}>
           {previews[focus].map((preset, i) => {
             return (

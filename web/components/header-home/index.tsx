@@ -41,7 +41,13 @@ export function HomeHeader({
 }) {
   return (
     <HeaderWrapper>
-      <motion.div {...logo_motion}>
+      <motion.div
+        style={{
+          // temporal display none
+          display: "none",
+        }}
+        {...logo_motion}
+      >
         <Link href="/">
           <Image
             src="/lsd/lsd.png"
