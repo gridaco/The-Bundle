@@ -43,6 +43,10 @@ export interface Template {
   custom_data_transformer?: (...d: any) => any;
   plan: "free" | "pro";
   visibility: "visible" | "comming_soon";
+  config: {
+    target_object?: string;
+    target_collection?: string;
+  };
   options: {
     colors: ReadonlyArray<ReadonlyArray<string>>;
     fonts: ReadonlyArray<{
@@ -78,6 +82,9 @@ const template_004: Template = {
     colors: [],
     fonts: [],
   },
+  config: {
+    target_object: "text",
+  },
 };
 
 const template_005: Template = {
@@ -91,6 +98,9 @@ const template_005: Template = {
   visibility: "visible",
   custom_data_transformer: _005,
   options: _005_options,
+  config: {
+    target_object: "text",
+  },
 };
 
 const template_006: Template = {
@@ -104,6 +114,9 @@ const template_006: Template = {
   visibility: "visible",
   custom_data_transformer: _006,
   options: _006_options,
+  config: {
+    target_object: "text",
+  },
 };
 
 const template_007: Template = {
@@ -115,6 +128,9 @@ const template_007: Template = {
   presets: ["scene.collections.001"],
   plan: "pro",
   visibility: "comming_soon",
+  config: {
+    target_object: "text",
+  },
   options: {
     colors: [],
     fonts: [],
@@ -132,6 +148,9 @@ const template_008: Template = {
   plan: "pro",
   visibility: "visible",
   options: _008_options,
+  config: {
+    target_collection: "template",
+  },
 };
 
 const template_009: Template = {
@@ -146,6 +165,9 @@ const template_009: Template = {
   options: {
     colors: [],
     fonts: [],
+  },
+  config: {
+    target_collection: "template",
   },
 };
 

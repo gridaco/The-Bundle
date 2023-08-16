@@ -38,10 +38,11 @@ export class TemplatesService {
     templateId: string,
     request: DMTRequest,
   ): Promise<StillImageRenderUpscaledResult> {
-    const { data, config } = request;
+    const { data, config, request: request_config } = request;
     const res = await render(templateId, {
       data,
       config,
+      request: request_config,
     });
 
     const background = black;

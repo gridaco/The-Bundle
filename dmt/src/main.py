@@ -3,7 +3,7 @@ import bpy
 import os
 import json
 
-from dmt.src.camera import camera_focus
+from dmt.src.camera import camera_focus, camera_focus_collection
 from dmt.src.fonts.fonts import font
 from dmt.src.light.light import LightModifier
 
@@ -272,7 +272,7 @@ if __name__ == "__main__":
     file = os.getenv('DMT_BLENDER_FILE')
     meta_file = os.getenv('DMT_META_FILE')
     config = os.getenv('DMT_CONFIG')
-    request = os.getenv('DMT_REQUEST')
+    request_file = os.getenv('DMT_REQUEST_FILE')
     data_file = os.getenv('DMT_DATA_FILE')
     out = os.getenv('DMT_OUTPUT_PATH')
 
@@ -284,16 +284,19 @@ if __name__ == "__main__":
             config = None
 
     # try to parse request json string
-    if request is not None:
-        try:
-            request = json.loads(request)
-        except:
-            # default request
-            request = {
-                'format': 'PNG',
-                'engine': 'CYCLES',
-                'still': True
-            }
+    try:
+        with open(request_file, 'r') as json_file:
+            request = json.load(json_file)
+    except:
+        # default request
+        request = {
+            'format': 'PNG',
+            'engine': 'CYCLES',
+            'still': True,
+            # TODO: consider moving this to another place
+            'target_object': None,
+            'target_collection': None,
+        }
 
     try:
         with open(meta_file, 'r') as json_file:
@@ -322,20 +325,36 @@ if __name__ == "__main__":
     #         ...
 
     # focus
-    # fit_camera_to_object(
-    #     target_object=bpy.data.objects['text'])
     camera = bpy.context.scene.camera
-    target = bpy.data.objects['text']
+    target_object_name = request.get(
+        'target_object', None)
+    target_object = bpy.data.objects[target_object_name]if target_object_name else None
+    target_collection_name = request.get('target_collection', None)
+    target_collection = bpy.data.collections[target_collection_name] if target_collection_name else None
 
-    try:
-        camera_focus.fit_camera_to_object(
-            camera=camera,
-            target_object=target,
-            margin=0.3,
-            zoom_in=True,
-            zoom_out=True
-        )
-    except ValueError:
-        ...
+    if target_collection:
+        try:
+            camera_focus_collection.fit_camera_to_collection(
+                camera=camera,
+                target_collection=target_collection,
+                margin=0.3,
+                zoom_in=True,
+                zoom_out=True
+            )
+        except ValueError:
+            ...
+    elif target_object:
+        try:
+            camera_focus.fit_camera_to_object(
+                camera=camera,
+                target_object=target_object,
+                margin=0.3,
+                zoom_in=True,
+                zoom_out=True
+            )
+        except ValueError:
+            ...
+    else:
+        print("No focus target provided, using default scene configurations")
 
     processor.render()

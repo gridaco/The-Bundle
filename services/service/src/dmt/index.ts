@@ -15,6 +15,11 @@ const pythonpath = repo_root_path;
 export interface DMTRequest<T = any> {
   data: T;
   config?: DMTConfig;
+  request?: {
+    format: 'PNG';
+    target_object?: string;
+    target_collection?: string;
+  };
 }
 
 export interface DMTConfig {
@@ -38,8 +43,11 @@ export function render(
   const { data, config } = params;
 
   return new Promise(async (resolve, reject) => {
-    // create json requests as file
+    // create json <data> as file
     const data_file = tmp.fileSync();
+
+    // create json <request> as file
+    const request_file = tmp.fileSync();
 
     // create tmp output dir
     const out_dir = tmp.dirSync();
@@ -48,6 +56,9 @@ export function render(
 
     // write data to file
     await fs.writeFile(data_file.name, JSON.stringify(data));
+
+    // write request to file
+    await fs.writeFile(request_file.name, JSON.stringify(params.request || {}));
 
     // e.g.
     // sudo python3 src/cli.py -t '//templates/003-3d-glass-dispersion-text' -d '//templates/003-3d-glass-dispersion-text/presets/default.json' -o '//out/'
@@ -61,6 +72,9 @@ export function render(
       // data
       '--data',
       data_file.name,
+      // request
+      '--request',
+      request_file.name,
       // output
       '--out',
       out_dir_name,

@@ -38,6 +38,7 @@ export function editorReducer(
           presets: template.presets,
           preview: template.preview,
           custom_data_transformer: template.custom_data_transformer,
+          config: template.config,
         };
 
         // clear the user data on template switch

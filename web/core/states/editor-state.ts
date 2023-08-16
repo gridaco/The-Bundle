@@ -35,6 +35,10 @@ export interface EditorState {
      * custom data transformer on client side for temporary hacks
      */
     custom_data_transformer?: (...d: any) => any;
+    config: {
+      target_object?: string;
+      target_collection?: string;
+    };
   };
   data: UserTemplateData;
   user: {

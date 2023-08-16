@@ -129,8 +129,8 @@ def load_template_zip(archive_zip, to):
 @click.command()
 @click.option('-t', '--template', type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True, help="Path to the template dir")
 @click.option('-d', '--data', type=click.Path(exists=True, file_okay=True, dir_okay=False), required=True, help="New text content")
-@click.option('-c', '--config', required=False, help="config as json string")
-@click.option('-r', '--request', required=False, help="render request as json string")
+@click.option('-c', '--config', required=False, help="config as json file path")
+@click.option('-r', '--request', required=False, help="render request as json file path")
 @click.option('-o', '--out', type=click.Path(), required=True, help="Path to the output file")
 @click.option('-b', '--blender', default=blenderpath(), help="Path to the Blender executable")
 def main(template, data, config, request, out, blender):
@@ -145,7 +145,7 @@ def main(template, data, config, request, out, blender):
     if config:
         os.environ['DMT_CONFIG'] = config
     if request:
-        os.environ['DMT_REQUEST'] = request
+        os.environ['DMT_REQUEST_FILE'] = request
 
     # Call Blender with subprocess
     blender_script = os.path.join(os.path.dirname(

@@ -164,9 +164,17 @@ export function Editor() {
                   const transformer =
                     state.template.custom_data_transformer ??
                     default_data_transformer;
+
+                  const request = {
+                    format: "PNG",
+                    target_object: state.template.config.target_object,
+                    target_collection: state.template.config.target_collection,
+                  } as const;
+
                   client
                     .renderStill(template, {
                       data: transformer(data),
+                      request: request,
                     })
                     .then(({ still, still_w_background, still_2x }) => {
                       dispatch({

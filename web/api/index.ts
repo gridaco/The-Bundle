@@ -12,6 +12,11 @@ const axios = Axios.create({
 export interface DMTRequest<T = any> {
   data: T;
   config?: DMTConfig;
+  request?: {
+    format: "PNG";
+    target_object?: string;
+    target_collection?: string;
+  };
 }
 
 export interface DMTConfig {
