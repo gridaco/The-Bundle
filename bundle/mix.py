@@ -2,6 +2,9 @@ import bpy
 from math import radians
 import os
 
+quality = 100
+res = 2048
+samples = 128
 rotations = [
     [0, 0, 0],
     [0, 0, 15],
@@ -46,11 +49,14 @@ with bpy.data.libraries.load(material_file) as (data_from, data_to):
 # Define the function to generate filenames
 
 
-def outname(object_name, material_name, rotation, quality=100):
+def outname(object_name, material_name, rotation, res=512, quality=100, samples=128):
     rot = "{rotation[0]}°{rotation[1]}°{rotation[2]}°"\
         .format(rotation=rotation)
-    qua = str(quality).zfill(3)
-    return f"{object_name},{material_name},{rot},{qua}.png"
+    res = f'{res}x{res}'
+    qua = f'{quality}%'
+    samples = f'#{samples}'
+    id = f"{object_name},{material_name},{rot},{samples},{res},{qua}.png"
+    return id.replace("/", ":")
 
 
 def boundingbox_dimension(obj):
@@ -150,8 +156,14 @@ def process_and_render():
         for rotation in rotations:
             obj.rotation_euler = [radians(angle) for angle in rotation]
             # Use the scene_name for filename instead of obj.name
-            quality = 30
-            id = outname(scene_name, material_name, rotation, quality=quality)
+            id = outname(
+                scene_name,
+                material_name,
+                rotation,
+                res=res,
+                samples=samples,
+                quality=quality)
+
             scene.render.filepath = f'//pngs/{id}'
 
             # check if image exists
@@ -162,10 +174,10 @@ def process_and_render():
             # Optimize for rendering
             bpy.context.scene.render.engine = 'CYCLES'
             bpy.context.scene.cycles.device = 'GPU'
-            bpy.context.scene.cycles.samples = 100
+            bpy.context.scene.cycles.samples = samples
             # Resolution
-            bpy.context.scene.render.resolution_x = 1024
-            bpy.context.scene.render.resolution_y = 1024
+            bpy.context.scene.render.resolution_x = res
+            bpy.context.scene.render.resolution_y = res
             bpy.context.scene.render.resolution_percentage = quality
 
             bpy.ops.render.render(write_still=True)
