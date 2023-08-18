@@ -38,10 +38,10 @@
 
 **Rendering Feature:**
 
-- `glass` - Glass/Transparent: Typically requires more samples due to refractions, caustics, and potential for fireflies.
+- `glas` - Glass/Transparent: Typically requires more samples due to refractions, caustics, and potential for fireflies.
   Multiplier: 2x
 
-- `gloss` - Glossy/Metallic: Reflective surfaces can be prone to noise but not as much as glass.
+- `glos` - Glossy/Metallic: Reflective surfaces can be prone to noise but not as much as glass.
   Multiplier: 1.5x
 
 - `sss` - Subsurface Scattering: Materials like skin, milk, or marble that have light penetrate their surface.
