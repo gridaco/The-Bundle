@@ -1,17 +1,17 @@
 {
   "8K": {
     "res": 8192,
-    "samples": 32,
+    "samples": 256,
     "resolution_percentage": 100
   },
   "4K": {
     "res": 4096,
-    "samples": 32,
+    "samples": 128,
     "resolution_percentage": 100
   },
   "2K": {
     "res": 2048,
-    "samples": 32,
+    "samples": 64,
     "resolution_percentage": 100
   },
   "1K": {

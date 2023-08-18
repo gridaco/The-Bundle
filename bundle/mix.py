@@ -41,11 +41,12 @@ rotation_profiles = {
     ]
 }
 
+IS_DEBUG = target == 'DEBUG'
 profile: dict = profiles[target]
 resolution_percentage = profile.get('resolution_percentage', 100)
 res = profile['res']
 samples = profile['samples']
-rotations = rotation_profiles['DEBUG' if target == 'DEBUG' else 'xz45-3']
+rotations = rotation_profiles['DEBUG' if IS_DEBUG else 'xz45-3']
 
 print(f"- TARGET {target}...")
 print(f"- PROFILE: {json.dumps(profile, indent=2)}")
@@ -54,6 +55,7 @@ print(f"- #ROTATIONS: {len(rotations)}")
 
 RENDER_SCENE_NAME = "render"
 OBJECTS_FILE = "//objects/objects.blend"
+OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
 MATERIAL_FILES = sorted((__DIR / 'materials').glob('*.blend'))
 MATERIAL_NAME = 'material'
 OUTDIR = __DIR / f'pngs.{target}'
@@ -82,6 +84,9 @@ def sync_objects():
 
     for scene in bpy.data.scenes:
         for obj in scene.objects:
+            # Exclude objects if they contain any of the exclude patterns
+            if any([pattern in scene.name for pattern in OBJECT_SCENE_EXCLUDE_PATTERNS]):
+                continue
             # If the object is visible (enabled)
             if obj.hide_viewport == False:
                 objects_to_render[scene.name] = obj
