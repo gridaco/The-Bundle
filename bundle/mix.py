@@ -26,7 +26,7 @@ profiles: dict = json.load(open(__DIR / 'profiles.json'))
 
 assert target in profiles.keys(), f"Invalid target: {target}"
 
-material_classes = json.load(open(__DIR / 'materials' / 'config.json'))
+material_classes: dict = json.load(open(__DIR / 'materials' / 'config.json'))
 
 rotation_profiles = {
     'DEBUG': [[0, 0, 0]],
@@ -41,8 +41,8 @@ rotation_profiles = {
     ]
 }
 
-profile = profiles[target]
-quality = profile['quality']
+profile: dict = profiles[target]
+resolution_percentage = profile.get('resolution_percentage', 100)
 res = profile['res']
 samples = profile['samples']
 rotations = rotation_profiles['DEBUG' if target == 'DEBUG' else 'xz45-3']
@@ -162,7 +162,7 @@ def fit_scale(obj, box):
     return scale_factor
 
 
-def render(filepath, samples=128, res=512, quality=100):
+def render(filepath, samples=128, res=512, resolution_percentage=100):
     assert filepath is not None, "filepath cannot be None"
 
     # Set the filepath
@@ -175,7 +175,7 @@ def render(filepath, samples=128, res=512, quality=100):
     # Resolution
     bpy.context.scene.render.resolution_x = res
     bpy.context.scene.render.resolution_y = res
-    bpy.context.scene.render.resolution_percentage = quality
+    bpy.context.scene.render.resolution_percentage = resolution_percentage
 
     # === redirect output to log file
     logfile = 'blender_render.log'
@@ -265,7 +265,7 @@ def render_by_material(material_file, material_name):
                 rotation=rotation,
                 res=res,
                 samples=samples,
-                quality=quality
+                quality=resolution_percentage
             )
 
             # Update the progress bar description
@@ -287,7 +287,7 @@ def render_by_material(material_file, material_name):
                 filepath=filepath,
                 samples=samples,
                 res=res,
-                quality=quality,
+                resolution_percentage=resolution_percentage,
             )
 
             # Update the progress bar
