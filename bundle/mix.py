@@ -1,62 +1,114 @@
 import bpy
 from math import radians
 import os
+from pathlib import Path
 
-quality = 100
-res = 2048
-samples = 128
-rotations = [
-    [0, 0, 0],
-    [0, 0, 15],
-    [0, 0, 30],
-    [0, 0, 45],
-    # [0, 0, -45],
-    # [45, 0, 0],
-    # [0, 45, 0],
-]
+# Update the target here
+# - DEBUG
+# - PREVIEW
+# - 512
+# - 1K
+target = 'DEBUG'
 
-__dir = os.path.dirname(bpy.data.filepath)
-objects_file = "//objects/objects.blend"
-material_name = "006"  # Not the ID, the name used internally for our reference
-material_file = "//materials/mat.006.blend"
-render_scene_name = "render"
+profiles = {
+    '8K': {
+        'res': 8192,
+        'samples': 128,
+        'quality': 100,
+    },
+    '4K': {
+        'res': 4096,
+        'samples': 128,
+        'quality': 100,
+    },
+    '2K': {
+        'res': 2048,
+        'samples': 128,
+        'quality': 100,
+    },
+    '1K': {
+        'res': 1024,
+        'samples': 128,
+        'quality': 100,
+    },
+    '512': {
+        'res': 512,
+        'samples': 128,
+        'quality': 100,
+    },
+    'PREVIEW': {
+        'res': 512,
+        'samples': 32,
+        'quality': 50,
+    },
+    'DEBUG': {
+        'res': 512,
+        'samples': 16,
+        'quality': 10,
+    },
+}
 
-# Load objects
-scenes_to_link = []
+rotation_profiles = {
+    'DEBUG': [[0, 0, 0]],
+    'xz45-3': [
+        [0, 0, 0],
+        [0, 0, 15],
+        [0, 0, 30],
+        [0, 0, 45],
+        [15, 0, 0],
+        [30, 0, 0],
+        [45, 0, 0],
+    ]
+}
 
-with bpy.data.libraries.load(objects_file) as (data_from, data_to):
-    scenes_to_link = [scene for scene in data_from.scenes]
-    data_to.scenes = scenes_to_link
-
-linked_scene_names = [
-    scene.name for scene in bpy.data.scenes if scene.library and scene.library.filepath.endswith(objects_file)]
-
-
-# Now, go through each linked scene to identify the object you want
-objects_to_render = {}
-
-for scene in bpy.data.scenes:
-    for obj in scene.objects:
-        # If the object is visible (enabled)
-        if obj.hide_viewport == False:
-            objects_to_render[scene.name] = obj
-            break  # Only take the first visible object per scene, then move on
-
-# Load materials
-with bpy.data.libraries.load(material_file) as (data_from, data_to):
-    data_to.materials = ['material']
-
-# Define the function to generate filenames
+profile = profiles[target]
+quality = profile['quality']
+res = profile['res']
+samples = profile['samples']
+rotations = rotation_profiles['DEBUG' if target == 'DEBUG' else 'xz45-3']
 
 
-def outname(object_name, material_name, rotation, res=512, quality=100, samples=128):
+__DIR = Path(os.path.dirname(bpy.data.filepath))
+RENDER_SCENE_NAME = "render"
+OBJECTS_FILE = "//objects/objects.blend"
+MATERIAL_FILES = (__DIR / 'materials').glob('*.blend')
+MATERIAL_NAME = 'material'
+OUTDIR = __DIR / 'pngs'
+
+
+def sync_objects():
+    # Load objects
+    scenes_to_link = []
+
+    with bpy.data.libraries.load(OBJECTS_FILE) as (data_from, data_to):
+        scenes_to_link = [scene for scene in data_from.scenes]
+        data_to.scenes = scenes_to_link
+
+    # Now, go through each linked scene to identify the object you want
+    objects_to_render = {}
+
+    for scene in bpy.data.scenes:
+        for obj in scene.objects:
+            # If the object is visible (enabled)
+            if obj.hide_viewport == False:
+                objects_to_render[scene.name] = obj
+                break  # Only take the first visible object per scene, then move on
+
+    return objects_to_render
+
+
+def outname(object_name, rotation, material_name=None, res=512, quality=100, samples=128):
     rot = "{rotation[0]}°{rotation[1]}°{rotation[2]}°"\
         .format(rotation=rotation)
     res = f'{res}x{res}'
     qua = f'{quality}%'
     samples = f'#{samples}'
-    id = f"{object_name},{material_name},{rot},{samples},{res},{qua}.png"
-    return id.replace("/", ":")
+    seq = [object_name, material_name, rot, samples, res, qua]
+    # filter out empty strings, None, etc.
+    seq = [s for s in seq if s]
+
+    id = ",".join(seq)
+    return f'{id.replace("/", ":")}.png'
 
 
 def boundingbox_dimension(obj):
@@ -90,20 +142,74 @@ def boundingbox_dimension(obj):
             "Object is neither an acceptable Empty nor a cube Mesh.")
 
 
-def process_and_render():
+def save_blend(name):
+    """
+    Save the current in-mem working file as .blend file in the ./blends directory.
+    """
+    # Create directory if it doesn't exist
+    output_dir = os.path.join(__DIR, "blends")
+    # Sanitize the scene name to remove problematic characters
+    safe_filename = "".join([c if c.isalnum() or c in (
+        ' ', '.', '-', '_') else '_' for c in name])
+    filepath = os.path.join(output_dir, f"{safe_filename}.blend")
+
+    # Save the blend file
+    bpy.ops.wm.save_as_mainfile(filepath=filepath)
+
+
+def fit_scale(obj, box):
+    obj_dimensions = obj.dimensions
+    bb_x, bb_y, bb_z = boundingbox_dimension(box)
+    scale_factor = min(
+        bb_x / obj_dimensions.x if obj_dimensions.x > 0 else 1,
+        bb_y / obj_dimensions.y if obj_dimensions.y > 0 else 1,
+        bb_z / obj_dimensions.z if obj_dimensions.z > 0 else 1,
+    )
+
+    return scale_factor
+
+
+def render(filepath, samples=128, res=512, quality=100):
+    assert filepath is not None, "filepath cannot be None"
+
+    # Set the filepath
+    bpy.context.scene.render.filepath = filepath
+
+    # Optimize for rendering
+    bpy.context.scene.render.engine = 'CYCLES'
+    bpy.context.scene.cycles.device = 'GPU'
+    bpy.context.scene.cycles.samples = samples
+    # Resolution
+    bpy.context.scene.render.resolution_x = res
+    bpy.context.scene.render.resolution_y = res
+    bpy.context.scene.render.resolution_percentage = quality
+
+    bpy.ops.render.render(write_still=True)
+
+    ...
+
+
+def render_by_material(material_file, material_name):
+    # reset the vm to work with a clean slate
+    bpy.ops.wm.read_homefile(use_empty=True)
+
+    out = OUTDIR / material_name
+
+    objects_to_render = sync_objects()
+
     # Assuming you want to do the work in the current blend file.
     # Check if the "render" scene exists, if not, link it from the material_file
-    if render_scene_name not in bpy.data.scenes:
-        with bpy.data.libraries.load(material_file) as (data_from, data_to):
-            data_to.scenes = [render_scene_name]
+    if RENDER_SCENE_NAME not in bpy.data.scenes:
+        with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
+            data_to.scenes = [RENDER_SCENE_NAME]
 
-    scene = bpy.data.scenes[render_scene_name]
+    scene = bpy.data.scenes[RENDER_SCENE_NAME]
     bpy.context.window.scene = scene  # Set current scene
 
     # Fetch the bounding box
     bounding_box = scene.objects.get("boundingbox")
     if not bounding_box:
-        print(f"Error: Could not find {bounding_box} in {render_scene_name}")
+        print(f"Error: Could not find {bounding_box} in {RENDER_SCENE_NAME}")
         return
 
     # Fetch the material
@@ -126,64 +232,67 @@ def process_and_render():
             obj.data.materials.append(material)
 
         # Scale and position the object to fit within bounding_box
-        obj_dimensions = obj.dimensions
-        bb_x, bb_y, bb_z = boundingbox_dimension(bounding_box)
-        scale_factor = min(
-            bb_x / obj_dimensions.x if obj_dimensions.x > 0 else 1,
-            bb_y / obj_dimensions.y if obj_dimensions.y > 0 else 1,
-            bb_z / obj_dimensions.z if obj_dimensions.z > 0 else 1,
-        )
+        scale_factor = fit_scale(obj, bounding_box)
         obj.scale = (scale_factor, scale_factor, scale_factor)
+
+        # Position the object at the center of the bounding box
         obj.location = bounding_box.location
+
+        # Ensure the object is visible on render
         obj.hide_render = False
 
         print(f"Rendering {scene_name}...")
 
-        # # ====
-        # # Save the blend file
-        # # Create directory if it doesn't exist
-        # output_dir = os.path.join(__dir, "blends")
-        # # Sanitize the scene name to remove problematic characters
-        # safe_filename = "".join([c if c.isalnum() or c in (
-        #     ' ', '.', '-', '_') else '_' for c in scene_name])
-        # filepath = os.path.join(output_dir, f"{safe_filename}.blend")
-
-        # # Save the blend file
-        # bpy.ops.wm.save_as_mainfile(filepath=filepath)
-        # # ====
-
         # Render with different rotations
         for rotation in rotations:
-            obj.rotation_euler = [radians(angle) for angle in rotation]
             # Use the scene_name for filename instead of obj.name
             id = outname(
-                scene_name,
-                material_name,
-                rotation,
+                object_name=scene_name,
+                material_name=material_name,
+                rotation=rotation,
                 res=res,
                 samples=samples,
-                quality=quality)
+                quality=quality
+            )
+            filepath = str(out / id)
 
-            scene.render.filepath = f'//pngs/{id}'
+            # Rotate the object
+            obj.rotation_euler = [radians(angle) for angle in rotation]
 
             # check if image exists
-            if os.path.exists(os.path.join(__dir, "pngs", id)):
+            if os.path.exists(filepath):
                 print(f"Skipping {id}")
                 continue
 
-            # Optimize for rendering
-            bpy.context.scene.render.engine = 'CYCLES'
-            bpy.context.scene.cycles.device = 'GPU'
-            bpy.context.scene.cycles.samples = samples
-            # Resolution
-            bpy.context.scene.render.resolution_x = res
-            bpy.context.scene.render.resolution_y = res
-            bpy.context.scene.render.resolution_percentage = quality
-
-            bpy.ops.render.render(write_still=True)
-
+            # Render
+            render(
+                filepath=filepath,
+                samples=samples,
+                res=res,
+                quality=quality,
+            )
         # Remove the object from the scene after rendering
         bpy.data.objects.remove(obj)
 
 
-process_and_render()
+def main():
+    for material_file in MATERIAL_FILES:
+        print(f"Rendering {material_file}...")
+        # Remove the "render" scene if it exists
+        try:
+            bpy.data.scenes.remove(bpy.data.scenes.get(RENDER_SCENE_NAME))
+        except TypeError:
+            ...
+
+        # Clear the material
+        try:
+            bpy.data.materials.remove(bpy.data.materials.get(MATERIAL_NAME))
+        except TypeError:
+            ...
+
+        render_by_material(material_file=material_file,
+                           material_name=material_file.stem)
+
+
+if __name__ == "__main__":
+    main()
