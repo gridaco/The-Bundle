@@ -1,14 +1,17 @@
+import sys
+import json
 import bpy
 from math import radians
 import os
 from pathlib import Path
+import logging
 
 # Update the target here
 # - DEBUG
 # - PREVIEW
 # - 512
 # - 1K
-target = 'DEBUG'
+target = 'PREVIEW'
 
 profiles = {
     '8K': {
@@ -67,13 +70,27 @@ res = profile['res']
 samples = profile['samples']
 rotations = rotation_profiles['DEBUG' if target == 'DEBUG' else 'xz45-3']
 
+print(f"Rendering {target}...")
+print(f"Profile: {json.dumps(profile, indent=2)}")
+print(f"Rotations: {json.dumps(rotations, indent=2)}")
+
 
 __DIR = Path(os.path.dirname(bpy.data.filepath))
 RENDER_SCENE_NAME = "render"
 OBJECTS_FILE = "//objects/objects.blend"
 MATERIAL_FILES = (__DIR / 'materials').glob('*.blend')
 MATERIAL_NAME = 'material'
-OUTDIR = __DIR / 'pngs'
+OUTDIR = __DIR / f'pngs.{target}'
+
+# config logging
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s %(message)s',
+    level=logging.DEBUG,
+    handlers=[
+        logging.FileHandler(__DIR / 'bundle.log'),
+        logging.StreamHandler()
+    ]
+)
 
 
 def sync_objects():
@@ -184,7 +201,22 @@ def render(filepath, samples=128, res=512, quality=100):
     bpy.context.scene.render.resolution_y = res
     bpy.context.scene.render.resolution_percentage = quality
 
+    # === redirect output to log file
+    logfile = 'blender_render.log'
+    open(logfile, 'a').close()
+    old = os.dup(sys.stdout.fileno())
+    sys.stdout.flush()
+    os.close(sys.stdout.fileno())
+    fd = os.open(logfile, os.O_WRONLY)
+    # ===
+
     bpy.ops.render.render(write_still=True)
+
+    # === disable output redirection
+    os.close(fd)
+    os.dup(old)
+    os.close(old)
+    # ===
 
     ...
 
@@ -209,22 +241,24 @@ def render_by_material(material_file, material_name):
     # Fetch the bounding box
     bounding_box = scene.objects.get("boundingbox")
     if not bounding_box:
-        print(f"Error: Could not find {bounding_box} in {RENDER_SCENE_NAME}")
+        logging.error(
+            f"Error: Could not find boundingbox in {RENDER_SCENE_NAME}"
+        )
+
         return
 
     # Fetch the material
-    material = bpy.data.materials.get("material")
+    material = bpy.data.materials.get(MATERIAL_NAME)
     if not material:
-        print("Error: Could not find 'material'")
+        logging.error(f"Error: Could not find '{MATERIAL_NAME}'")
         return
 
     for scene_name, obj in objects_to_render.items():
         # Link object to the scene
         scene.collection.objects.link(obj)
-
         # Assign the material to the object
         if obj.data is None:
-            print(f"Error: {obj.name} has no mesh data")
+            logging.error(f"Error: {obj.name} has no mesh data")
             continue
         if obj.data.materials:
             obj.data.materials[0] = material
@@ -241,7 +275,7 @@ def render_by_material(material_file, material_name):
         # Ensure the object is visible on render
         obj.hide_render = False
 
-        print(f"Rendering {scene_name}...")
+        logging.info(f"Rendering {scene_name}...")
 
         # Render with different rotations
         for rotation in rotations:
@@ -261,7 +295,7 @@ def render_by_material(material_file, material_name):
 
             # check if image exists
             if os.path.exists(filepath):
-                print(f"Skipping {id}")
+                logging.info(f"Skipping {filepath}")
                 continue
 
             # Render
@@ -271,28 +305,25 @@ def render_by_material(material_file, material_name):
                 res=res,
                 quality=quality,
             )
-        # Remove the object from the scene after rendering
-        bpy.data.objects.remove(obj)
+
+        # After rendering, unlink the object from the scene
+        scene.collection.objects.unlink(obj)
 
 
 def main():
     for material_file in MATERIAL_FILES:
-        print(f"Rendering {material_file}...")
-        # Remove the "render" scene if it exists
-        try:
-            bpy.data.scenes.remove(bpy.data.scenes.get(RENDER_SCENE_NAME))
-        except TypeError:
-            ...
-
-        # Clear the material
-        try:
-            bpy.data.materials.remove(bpy.data.materials.get(MATERIAL_NAME))
-        except TypeError:
-            ...
+        logging.info(f"Rendering {material_file}...")
 
         render_by_material(material_file=material_file,
                            material_name=material_file.stem)
 
+        # Remove the "render" scene
+        bpy.data.scenes.remove(bpy.data.scenes.get(RENDER_SCENE_NAME))
+
+        # Clear the material
+        bpy.data.materials.remove(bpy.data.materials.get(MATERIAL_NAME))
+
 
 if __name__ == "__main__":
+
     main()
