@@ -104,6 +104,14 @@ def outname(object_name, rotation, material_name=None, res=512, quality=100, sam
     return f'{id.replace("/", ":")}'
 
 
+def optimzied_samples_scale_by_material(material_name):
+    m_class = material_name.split('.')[0]
+    m_class_config = material_classes.get(m_class)
+    if m_class_config:
+        return m_class_config.get('samples', 1)
+    return 1
+
+
 def boundingbox_dimension(obj):
     """
     Retrieves the dimension of the passed object. Acceptable objects are Empty (with Cube display type) and Mesh (specifically a cube).
@@ -199,6 +207,10 @@ def render(filepath, samples=128, res=512, resolution_percentage=100):
 
 def render_by_material(material_file, material_name):
 
+    m_samples = int(
+        samples * optimzied_samples_scale_by_material(material_name)
+    )
+
     out = OUTDIR / material_name
 
     objects_to_render = sync_objects()
@@ -264,7 +276,7 @@ def render_by_material(material_file, material_name):
                 material_name=material_name,
                 rotation=rotation,
                 res=res,
-                samples=samples,
+                samples=m_samples,
                 quality=resolution_percentage
             )
 
@@ -285,7 +297,7 @@ def render_by_material(material_file, material_name):
             # Render
             render(
                 filepath=filepath,
-                samples=samples,
+                samples=m_samples,
                 res=res,
                 resolution_percentage=resolution_percentage,
             )
