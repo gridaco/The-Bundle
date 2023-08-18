@@ -1,0 +1,30 @@
+{
+  "p": {
+    "name": "plastic",
+    "samples": 0.5
+  },
+  "m": {
+    "name": "metal",
+    "samples": 0.8
+  },
+  "g": {
+    "name": "glass",
+    "samples": 1
+  },
+  "t": {
+    "name": "translucent",
+    "samples": 1
+  },
+  "r": {
+    "name": "rough",
+    "samples": 0.5
+  },
+  "s": {
+    "name": "specular",
+    "samples": 0.5
+  },
+  "sss": {
+    "name": "subsurface-scattering",
+    "samples": 1
+  }
+}

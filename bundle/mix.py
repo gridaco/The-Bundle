@@ -5,51 +5,28 @@ from math import radians
 import os
 from pathlib import Path
 import logging
+from tqdm import tqdm
+
+__DIR = Path(os.path.dirname(bpy.data.filepath))
+
+# read the config file if available
+config_file = __DIR / 'config.json'
+if config_file.exists():
+    with open(config_file) as f:
+        config = json.load(f)
 
 # Update the target here
 # - DEBUG
 # - PREVIEW
 # - 512
 # - 1K
-target = 'PREVIEW'
+target = (config.get('target') if config else None) or 'PREVIEW'
 
-profiles = {
-    '8K': {
-        'res': 8192,
-        'samples': 128,
-        'quality': 100,
-    },
-    '4K': {
-        'res': 4096,
-        'samples': 128,
-        'quality': 100,
-    },
-    '2K': {
-        'res': 2048,
-        'samples': 128,
-        'quality': 100,
-    },
-    '1K': {
-        'res': 1024,
-        'samples': 128,
-        'quality': 100,
-    },
-    '512': {
-        'res': 512,
-        'samples': 128,
-        'quality': 100,
-    },
-    'PREVIEW': {
-        'res': 512,
-        'samples': 32,
-        'quality': 50,
-    },
-    'DEBUG': {
-        'res': 512,
-        'samples': 16,
-        'quality': 10,
-    },
-}
+profiles: dict = json.load(open(__DIR / 'profiles.json'))
+
+assert target in profiles.keys(), f"Invalid target: {target}"
+
+material_classes = json.load(open(__DIR / 'materials' / 'config.json'))
 
 rotation_profiles = {
     'DEBUG': [[0, 0, 0]],
@@ -70,15 +47,14 @@ res = profile['res']
 samples = profile['samples']
 rotations = rotation_profiles['DEBUG' if target == 'DEBUG' else 'xz45-3']
 
-print(f"Rendering {target}...")
-print(f"Profile: {json.dumps(profile, indent=2)}")
-print(f"Rotations: {json.dumps(rotations, indent=2)}")
+print(f"- TARGET {target}...")
+print(f"- PROFILE: {json.dumps(profile, indent=2)}")
+print(f"- #ROTATIONS: {len(rotations)}")
 
 
-__DIR = Path(os.path.dirname(bpy.data.filepath))
 RENDER_SCENE_NAME = "render"
 OBJECTS_FILE = "//objects/objects.blend"
-MATERIAL_FILES = (__DIR / 'materials').glob('*.blend')
+MATERIAL_FILES = sorted((__DIR / 'materials').glob('*.blend'))
 MATERIAL_NAME = 'material'
 OUTDIR = __DIR / f'pngs.{target}'
 
@@ -88,7 +64,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     handlers=[
         logging.FileHandler(__DIR / 'bundle.log'),
-        logging.StreamHandler()
+        # logging.StreamHandler()
     ]
 )
 
@@ -125,7 +101,7 @@ def outname(object_name, rotation, material_name=None, res=512, quality=100, sam
     seq = [s for s in seq if s]
 
     id = ",".join(seq)
-    return f'{id.replace("/", ":")}.png'
+    return f'{id.replace("/", ":")}'
 
 
 def boundingbox_dimension(obj):
@@ -222,12 +198,15 @@ def render(filepath, samples=128, res=512, quality=100):
 
 
 def render_by_material(material_file, material_name):
-    # reset the vm to work with a clean slate
-    bpy.ops.wm.read_homefile(use_empty=True)
 
     out = OUTDIR / material_name
 
     objects_to_render = sync_objects()
+
+    # Initialize the progress bar (tracks each render)
+    pbar = tqdm(
+        total=(len(objects_to_render.items()) * len(rotations)), desc=material_name, leave=True
+    )
 
     # Assuming you want to do the work in the current blend file.
     # Check if the "render" scene exists, if not, link it from the material_file
@@ -275,7 +254,7 @@ def render_by_material(material_file, material_name):
         # Ensure the object is visible on render
         obj.hide_render = False
 
-        logging.info(f"Rendering {scene_name}...")
+        logging.info(f"Rendering {scene_name} in {material_name}...")
 
         # Render with different rotations
         for rotation in rotations:
@@ -288,7 +267,11 @@ def render_by_material(material_file, material_name):
                 samples=samples,
                 quality=quality
             )
-            filepath = str(out / id)
+
+            # Update the progress bar description
+            pbar.set_description(f"{material_name} → <{id}>")
+
+            filepath = str(out / f"{id}.png")
 
             # Rotate the object
             obj.rotation_euler = [radians(angle) for angle in rotation]
@@ -296,6 +279,7 @@ def render_by_material(material_file, material_name):
             # check if image exists
             if os.path.exists(filepath):
                 logging.info(f"Skipping {filepath}")
+                pbar.update(1)
                 continue
 
             # Render
@@ -306,13 +290,23 @@ def render_by_material(material_file, material_name):
                 quality=quality,
             )
 
+            # Update the progress bar
+            pbar.update(1)
+
         # After rendering, unlink the object from the scene
         scene.collection.objects.unlink(obj)
+
+    # clean up
+    pbar.desc = material_name
+    pbar.close()
 
 
 def main():
     for material_file in MATERIAL_FILES:
         logging.info(f"Rendering {material_file}...")
+
+        # reset the vm to work with a clean slate
+        bpy.ops.wm.read_homefile(use_empty=True)
 
         render_by_material(material_file=material_file,
                            material_name=material_file.stem)

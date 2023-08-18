@@ -1,0 +1,37 @@
+{
+  "8K": {
+    "res": 8192,
+    "samples": 64,
+    "quality": 100
+  },
+  "4K": {
+    "res": 4096,
+    "samples": 64,
+    "quality": 100
+  },
+  "2K": {
+    "res": 2048,
+    "samples": 64,
+    "quality": 100
+  },
+  "1K": {
+    "res": 1024,
+    "samples": 64,
+    "quality": 100
+  },
+  "512": {
+    "res": 512,
+    "samples": 32,
+    "quality": 100
+  },
+  "PREVIEW": {
+    "res": 512,
+    "samples": 16,
+    "quality": 50
+  },
+  "DEBUG": {
+    "res": 512,
+    "samples": 4,
+    "quality": 10
+  }
+}
