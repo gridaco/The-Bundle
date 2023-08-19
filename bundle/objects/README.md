@@ -17,12 +17,10 @@
 - `a.cylinder.rounded (0.02)`
 - `a.dodecahedron`
 - `a.dodecahedron.rounded (0.02)`
-- `a.heart`
 - `a.icosahedron`
 - `a.icoshpere`
 - `a.octahedron`
 - `a.sphere`
-- `a.star`
 - `a.torus`
 - `b.cross`
 - `b.cross.xyz`
@@ -30,10 +28,6 @@
 - `b.disdyakis triacontahedron`
 - `b.dodecahedron (rhombic)`
 - `b.hexahedron (tetrakis)`
-- `b.menger-sponge`
-- `b.menger-sponge.2`
-- `b.menger-sponge.3`
-- `b.menger-sponge.4`
 - `b.prism.3-triangular (r10:1 slice)`
 - `b.prism.3-triangular (r1:1 regular)`
 - `b.prism.3-triangular (r1:2 pillar)`
@@ -56,6 +50,14 @@
 - `b.rhombicuboctahedron`
 - `b.torus.clifford`
 - `b.torus.twisted`
+- `c.heart`
+- `c.star`
+- `c.capsule`
+- `c.ellipsoid`
+- `c.menger-sponge`
+- `c.menger-sponge.2`
+- `c.menger-sponge.3`
+- `c.menger-sponge.4`
 - `c.beam`
 - `c.gem`
 - `c.pyramid-stepped`
@@ -63,44 +65,42 @@
 - `c.torus.knot.2`
 - `c.torus.knot.3`
 - `c.torus.knot.trefoil`
-- `d.spring.001`
-- `d.tetrapod (imported)`
-- `e.blob.sphere.000 (wd)`
-- `e.blob.sphere.001`
-- `e.blob.sphere.002`
-- `e.blob.sphere.003`
-- `e.blob.sphere.004`
-- `e.blob.sphere.005`
-- `e.blob.torus.000 (wd)`
-- `e.blob.torus.001`
-- `e.blob.torus.002`
-- `e.blob.torus.003`
-- `f.surface.dini`
-- `f.surface.helicoidal`
-- `f.surface.hexahedron`
-- `f.surface.mobius-strip`
-- `f.surface.sine`
-- `f.surface.z-surface`
-- `m.capsule`
-- `m.ellipsoid`
-- `x.cuboid.boolean (tunnel)`
-- `x.cylinder.boolean (1/4 pie)`
-- `x.cylinder.boolean (2/4 pie)`
-- `x.cylinder.boolean (3/4 pie)`
-- `x.sphere.boolean (1/8)`
-- `x.sphere.boolean (2/8)`
-- `x.sphere.boolean (3/8)`
-- `x.sphere.boolean (4/8 hemisphere)`
-- `x.sphere.boolean (6/8 pacman)`
-- `x.sphere.boolean (7/8 core)`
-- `x.sphere.boolean.001 (pokemon ball)`
-- `x.sphere.boolean.002 (stripe)`
-- `z.comp.circles.array.1 (n5)`
-- `z.comp.circles.array.2 (n4)`
-- `z.comp.circles.array.3 (n3)`
-- `z.comp.circles.array.4 (n2)`
-- `z.comp.cubes.matrix.1 (2^3 n8)`
-- `z.comp.cubes.matrix.2 (3^3 n27)`
-- `z.comp.cuboid.array.000 (wd)`
-- `z.comp.cuboid.array.4 (n4)`
-- `z.comp.cuboid.array.5 (n5)`
+- `c.spring.001`
+- `c.tetrapod (imported)`
+- `f.dini.surface`
+- `f.helicoidal.surface`
+- `f.hexahedron.surface`
+- `f.mobius.surface`
+- `f.sine.surface`
+- `f.z.surface`
+- `o.blob.sphere.000 (wd)`
+- `o.blob.sphere.001`
+- `o.blob.sphere.002`
+- `o.blob.sphere.003`
+- `o.blob.sphere.004`
+- `o.blob.sphere.005`
+- `o.blob.torus.000 (wd)`
+- `o.blob.torus.001`
+- `o.blob.torus.002`
+- `o.blob.torus.003`
+- `x.boolean.cuboid (tunnel)`
+- `x.boolean.cylinder (1/4 pie)`
+- `x.boolean.cylinder (2/4 pie)`
+- `x.boolean.cylinder (3/4 pie)`
+- `x.boolean.sphere (1/8)`
+- `x.boolean.sphere (2/8)`
+- `x.boolean.sphere (3/8)`
+- `x.boolean.sphere (4/8 hemisphere)`
+- `x.boolean.sphere (6/8 pacman)`
+- `x.boolean.sphere (7/8 core)`
+- `x.boolean.sphere.001 (pokemon ball)`
+- `x.boolean.sphere.002 (stripe)`
+- `x.array.circles.1 (n5)`
+- `x.array.circles.2 (n4)`
+- `x.array.circles.3 (n3)`
+- `x.array.circles.4 (n2)`
+- `x.matrix.cubes.1 (2^3 n8)`
+- `x.matrix.cubes.2 (3^3 n27)`
+- `x.array.cuboid.000 (wd)`
+- `x.array.cuboid.4 (n4)`
+- `x.array.cuboid.5 (n5)`
