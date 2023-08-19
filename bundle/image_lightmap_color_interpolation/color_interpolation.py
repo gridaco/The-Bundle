@@ -31,20 +31,21 @@ def color_interpolation(ref_images, ref_colors, target_color):
     return new_img
 
 
+references = [
+    (Image.open("box-black.jpg"), np.array([0, 0, 0])),
+    (Image.open("box-blue.jpg"), np.array([0, 0, 255])),
+    (Image.open("box-red.jpg"), np.array([255, 0, 0])),
+    (Image.open("box-yellow.jpg"), np.array([255, 255, 0])),
+    # (Image.open("box-white.jpg"), np.array([255, 255, 255])),
+]
+
 if __name__ == "__main__":
     # Load reference images
-    ref_images = [Image.open(f"image_{color}.png")
-                  for color in ["red", "green", "blue", "black", "white"]]
+    ref_images = [img for img, _ in references]
     # Define reference colors in RGB format. Assuming you've mentioned "B" twice by mistake.
-    ref_colors = np.array([
-        [255, 0, 0],
-        [0, 255, 0],
-        [0, 0, 255],
-        [0, 0, 0],
-        [255, 255, 255]
-    ])
+    ref_colors = np.array([color for _, color in references])
     # Target color in RGB format
-    target_color = np.array([255, 0, 255])
+    target_color = np.array([200, 200, 200])
 
     new_img = color_interpolation(ref_images, ref_colors, target_color)
     new_img.show()
