@@ -136,3 +136,5 @@ For instance, like below
   - Version control of each material
   - Version control of hdri
   - Version control of render scene
+- Benchmarking
+  - Benchmarking of each material-scene, adjust the angles count, samples, and priority by the benchmarking result
