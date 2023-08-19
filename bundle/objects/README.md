@@ -1,0 +1,106 @@
+# OBJECTS
+
+- `0.demo.cube`
+- `0.demo.sphere`
+- `0.demo.suzanne`
+- `a.circle (cylinder slice)`
+- `a.circle (cylinder slice).rounded (0.02)`
+- `a.cone`
+- `a.cone.rounded (0.02)`
+- `a.cube`
+- `a.cube.rounded.0001`
+- `a.cuboctahedron`
+- `a.cuboctahedron.rounded (0.01)`
+- `a.cuboid`
+- `a.cuboid.rounded (0.25)`
+- `a.cylinder`
+- `a.cylinder.rounded (0.02)`
+- `a.dodecahedron`
+- `a.dodecahedron.rounded (0.02)`
+- `a.heart`
+- `a.icosahedron`
+- `a.icoshpere`
+- `a.octahedron`
+- `a.sphere`
+- `a.star`
+- `a.torus`
+- `b.cross`
+- `b.cross.xyz`
+- `b.cuboctahedron.truncated`
+- `b.disdyakis triacontahedron`
+- `b.dodecahedron (rhombic)`
+- `b.hexahedron (tetrakis)`
+- `b.menger-sponge`
+- `b.menger-sponge.2`
+- `b.menger-sponge.3`
+- `b.menger-sponge.4`
+- `b.prism.3-triangular (r10:1 slice)`
+- `b.prism.3-triangular (r1:1 regular)`
+- `b.prism.3-triangular (r1:2 pillar)`
+- `b.prism.5-pentagonal (r10:1 slice)`
+- `b.prism.5-pentagonal (r1:1 regular)`
+- `b.prism.5-pentagonal (r1:2 pillar)`
+- `b.prism.7-heptagonal (r10:1 slice)`
+- `b.prism.7-heptagonal (r1:1 regular)`
+- `b.prism.7-heptagonal (r1:2 pillar)`
+- `b.prism.8-octagonal (r10:1 slice)`
+- `b.prism.8-octagonal (r1:1 regular)`
+- `b.prism.8-octagonal (r1:2 pillar)`
+- `b.prism.r4-round-rectangle (regular)`
+- `b.pyramid (tetrahedron)`
+- `b.pyramid.4-quadrilateral`
+- `b.pyramid.5-pentagonal`
+- `b.pyramid.6-hexagonal`
+- `b.pyramid.7-heptagonal`
+- `b.pyramid.8-octagonal`
+- `b.rhombicuboctahedron`
+- `b.torus.clifford`
+- `b.torus.twisted`
+- `c.beam`
+- `c.gem`
+- `c.pyramid-stepped`
+- `c.super-toroid`
+- `c.torus.knot.2`
+- `c.torus.knot.3`
+- `c.torus.knot.trefoil`
+- `d.spring.001`
+- `d.tetrapod (imported)`
+- `e.blob.sphere.000 (wd)`
+- `e.blob.sphere.001`
+- `e.blob.sphere.002`
+- `e.blob.sphere.003`
+- `e.blob.sphere.004`
+- `e.blob.sphere.005`
+- `e.blob.torus.000 (wd)`
+- `e.blob.torus.001`
+- `e.blob.torus.002`
+- `e.blob.torus.003`
+- `f.surface.dini`
+- `f.surface.helicoidal`
+- `f.surface.hexahedron`
+- `f.surface.mobius-strip`
+- `f.surface.sine`
+- `f.surface.z-surface`
+- `m.capsule`
+- `m.ellipsoid`
+- `x.cuboid.boolean (tunnel)`
+- `x.cylinder.boolean (1/4 pie)`
+- `x.cylinder.boolean (2/4 pie)`
+- `x.cylinder.boolean (3/4 pie)`
+- `x.sphere.boolean (1/8)`
+- `x.sphere.boolean (2/8)`
+- `x.sphere.boolean (3/8)`
+- `x.sphere.boolean (4/8 hemisphere)`
+- `x.sphere.boolean (6/8 pacman)`
+- `x.sphere.boolean (7/8 core)`
+- `x.sphere.boolean.001 (pokemon ball)`
+- `x.sphere.boolean.002 (stripe)`
+- `z.comp.circles.array.1 (n5)`
+- `z.comp.circles.array.2 (n4)`
+- `z.comp.circles.array.3 (n3)`
+- `z.comp.circles.array.4 (n2)`
+- `z.comp.cubes.matrix.1 (2^3 n8)`
+- `z.comp.cubes.matrix.2 (3^3 n27)`
+- `z.comp.cuboid.array.000 (wd)`
+- `z.comp.cuboid.array.4 (n4)`
+- `z.comp.cuboid.array.5 (n5)`
