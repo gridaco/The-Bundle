@@ -58,7 +58,7 @@ OBJECTS_FILE = "//objects/objects.blend"
 OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
 MATERIAL_FILES = sorted((__DIR / 'materials').glob('*.blend'))
 MATERIAL_NAME = 'material'
-OUTDIR = __DIR / f'pngs.{target}'
+OUTDIR = __DIR / 'dist' / target
 
 # config logging
 logging.basicConfig(
