@@ -54,9 +54,10 @@ print(f"- #ROTATIONS: {len(rotations)}")
 
 
 RENDER_SCENE_NAME = "render"
-OBJECTS_FILE = "//objects/objects.blend"
+OBJECTS_FILE = __DIR / "objects" / "objects.blend"
 OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
-MATERIAL_FILES = sorted((__DIR / 'materials').glob('*.blend'))
+MATERIAL_FILES_PATTERN = '*.blend' if IS_DEBUG else '*.--prod.blend'
+MATERIAL_FILES = sorted((__DIR / 'materials').glob('*.--prod.blend'))
 MATERIAL_NAME = 'material'
 OUTDIR = __DIR / 'dist' / target
 
@@ -75,7 +76,7 @@ def sync_objects():
     # Load objects
     scenes_to_link = []
 
-    with bpy.data.libraries.load(OBJECTS_FILE) as (data_from, data_to):
+    with bpy.data.libraries.load(str(OBJECTS_FILE)) as (data_from, data_to):
         scenes_to_link = [scene for scene in data_from.scenes]
         data_to.scenes = scenes_to_link
 
@@ -318,15 +319,42 @@ def render_by_material(material_file, material_name):
     pbar.close()
 
 
+def matname(filepath: Path):
+    """
+    Extract the material name from the filepath.
+    remove the `--stage` suffix if present. (e.g. `m.al.oxidized.001.--staging.blend` => `m.al.oxidized.001`)
+    """
+    fname = filepath.stem
+    splits = fname.split('.')
+    segs = []
+    for seg in splits:
+        if seg.startswith('--'):
+            break
+        segs.append(seg)
+
+    return '.'.join(segs)
+
+
 def main():
+    print("\n\n")
+    print("=== START ===")
+    print(f"Note: Do not modify or change the name of the following files:\n")
+
+    print(f"- {OBJECTS_FILE}")
+    for mf in MATERIAL_FILES:
+        print(f"- materials/{mf.name}")
+    print("\n\n")
+
     for material_file in MATERIAL_FILES:
         logging.info(f"Rendering {material_file}...")
 
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
 
+        material_name = matname(material_file)
+
         render_by_material(material_file=material_file,
-                           material_name=material_file.stem)
+                           material_name=material_name)
 
         # Remove the "render" scene
         bpy.data.scenes.remove(bpy.data.scenes.get(RENDER_SCENE_NAME))
