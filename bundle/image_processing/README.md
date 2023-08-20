@@ -6,16 +6,28 @@ The primary purpose of this module is to enhance the quality of rendered images 
 
 <!-- before / after image view -->
 
-|         Original          |              Grayscale              |
+|             A             |                  B                  |
 | :-----------------------: | :---------------------------------: |
 | ![](examples/example.png) | ![](examples/example.grayscale.png) |
 
 ## Grain Noise
 
-| i     |         Original          |              Grayscale              |
+| i     |             A             |                  B                  |
 | :---- | :-----------------------: | :---------------------------------: |
 | `0.1` | ![](examples/example.png) | ![](examples/example.grain_0.1.png) |
 | `0.2` | ![](examples/example.png) | ![](examples/example.grain_0.2.png) |
 | `0.3` | ![](examples/example.png) | ![](examples/example.grain_0.3.png) |
 | `0.4` | ![](examples/example.png) | ![](examples/example.grain_0.4.png) |
 | `0.5` | ![](examples/example.png) | ![](examples/example.grain_0.5.png) |
+
+## Bloom
+
+|             A             |                B                |
+| :-----------------------: | :-----------------------------: |
+| ![](examples/example.png) | ![](examples/example.bloom.png) |
+
+## Glow
+
+|             A             |               B                |
+| :-----------------------: | :----------------------------: |
+| ![](examples/example.png) | ![](examples/example.glow.png) |
