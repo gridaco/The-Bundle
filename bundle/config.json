@@ -1,13 +1,14 @@
 {
   "target": "2K",
   "materials": ["materials/*.blend"],
-  "materials_priority": [
-    "p.reflective",
+  "materials_render_queue_priority": [
     "p.rough",
     "m.copper",
-    "m.gold",
     "sss",
-    "m.hologram",
-    "m.chrome"
+    "m.chrome",
+    "p.reflective",
+    "m.gold",
+    "m.cloudy",
+    "m.hologram"
   ]
 }

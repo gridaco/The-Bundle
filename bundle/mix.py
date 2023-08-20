@@ -87,12 +87,12 @@ MATERIAL_FILES = list(set(
 ))
 
 # sort by config.materials_priority
-MATERIALS_PRIORITY = config.get('materials_priority')
+MATERIALS_RENDER_QUEUE_PRIORITY = config.get('materials_render_queue_priority')
 MATERIAL_FILES = sorted(
     MATERIAL_FILES,
     key=lambda p:
-    MATERIALS_PRIORITY.index(matname(p))
-    if matname(p) in MATERIALS_PRIORITY
+    MATERIALS_RENDER_QUEUE_PRIORITY.index(matname(p))
+    if matname(p) in MATERIALS_RENDER_QUEUE_PRIORITY
     else 999
 )
 
