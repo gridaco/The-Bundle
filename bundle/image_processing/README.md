@@ -2,6 +2,11 @@
 
 The primary purpose of this module is to enhance the quality of rendered images on lower sample counts and resolution. This is done by applying various post production effects to the rendered image. while rendering tool takes account more accurate and theoretically correct approach to rendering, this module is primarily focused on the time-saving perspective.
 
+**See also:**
+
+- [color interpolation](../image_color_interpolation/)
+- [signature](../signature/)
+
 ## Grayscale
 
 <!-- before / after image view -->
