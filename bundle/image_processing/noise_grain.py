@@ -40,6 +40,6 @@ if __name__ == '__main__':
         intensity = (i + 1) / 10
         noise_grain(
             'examples/example.png',
-            f'examples/example.grain ({intensity}).png',
+            f'examples/example.grain_{intensity}.png',
             intensity=intensity
         )
