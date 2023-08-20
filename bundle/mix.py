@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import logging
 from tqdm import tqdm
+from functools import reduce
 
 __DIR = Path(os.path.dirname(bpy.data.filepath))
 
@@ -56,10 +57,45 @@ print(f"- #ROTATIONS: {len(rotations)}")
 RENDER_SCENE_NAME = "render"
 OBJECTS_FILE = __DIR / "objects" / "objects.blend"
 OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
-MATERIAL_FILES_PATTERN = '*.blend' if IS_DEBUG else '*.--prod.blend'
-MATERIAL_FILES = sorted((__DIR / 'materials').glob('*.--prod.blend'))
 MATERIAL_NAME = 'material'
 OUTDIR = __DIR / 'dist' / target
+
+
+def matname(filepath: Path):
+    """
+    Extract the material name from the filepath.
+    remove the `--stage` suffix if present. (e.g. `m.al.oxidized.001.--staging.blend` => `m.al.oxidized.001`)
+    """
+    fname = filepath.stem
+    splits = fname.split('.')
+    segs = []
+    for seg in splits:
+        if seg.startswith('--'):
+            break
+        segs.append(seg)
+
+    return '.'.join(segs)
+
+
+# resolve all material files
+MATERIAL_FILES = list(set(
+    reduce(
+        lambda x, y: x + list(y),
+        [__DIR.glob(pattern) for pattern in config.get('materials')],
+        []
+    )
+))
+
+# sort by config.materials_priority
+MATERIALS_PRIORITY = config.get('materials_priority')
+MATERIAL_FILES = sorted(
+    MATERIAL_FILES,
+    key=lambda p:
+    MATERIALS_PRIORITY.index(matname(p))
+    if matname(p) in MATERIALS_PRIORITY
+    else 999
+)
+
 
 # config logging
 logging.basicConfig(
@@ -317,22 +353,6 @@ def render_by_material(material_file, material_name):
     # clean up
     pbar.desc = material_name
     pbar.close()
-
-
-def matname(filepath: Path):
-    """
-    Extract the material name from the filepath.
-    remove the `--stage` suffix if present. (e.g. `m.al.oxidized.001.--staging.blend` => `m.al.oxidized.001`)
-    """
-    fname = filepath.stem
-    splits = fname.split('.')
-    segs = []
-    for seg in splits:
-        if seg.startswith('--'):
-            break
-        segs.append(seg)
-
-    return '.'.join(segs)
 
 
 def main():

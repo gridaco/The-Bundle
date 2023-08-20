@@ -1,3 +1,13 @@
 {
-  "target": "2K"
+  "target": "2K",
+  "materials": ["materials/*.blend"],
+  "materials_priority": [
+    "p.reflective",
+    "p.rough",
+    "m.copper",
+    "m.gold",
+    "sss",
+    "m.hologram",
+    "m.chrome"
+  ]
 }
