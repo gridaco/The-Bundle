@@ -359,6 +359,9 @@ def render_by_material(material_file, material_name):
 
 
 def main():
+    # ensure the dist directory exists before proceeding
+    assert DIST.exists(), f"Invalid dist: {DIST}"
+
     print("\n\n")
     print("=== START ===")
     print(f"Note: Do not modify or change the name of the following files:\n")
