@@ -2,16 +2,16 @@
   <a href="https://html2.io">
     <img src="./artworks/readme-cover.gif" alt="LSD github cover graphic" height="240" />
   </a>
-  <h1 align="center"><a href="https://grida.co/lsd">LSD</a></h1>
-  <p align="center">3D Text motions made easy</p>
+  <h1 align="center"><a href="https://grida.co/lsd">The Bundle</a></h1>
+  <p align="center">The Bundle by Grida - Ultimated 3D rendered graphics resources pack</p>
 </p>
 
+- [objects](./objects/)
+- [materials](./materials/)
 - [templates](./templates/)
 - [dmt](./dmt/)
 - [farm](./farm/)
 - [docs](./docs)
-
-## How to get high
 
 ### Fonts
 
@@ -33,3 +33,4 @@ Directories and files listed below are not licensed under the MIT License, and a
 
 - /templates
 - /fonts
+- /lib
