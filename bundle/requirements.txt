@@ -1,0 +1,6 @@
+bpy
+click
+tqdm
+numpy
+Pillow
+python-opencv
