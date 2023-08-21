@@ -58,7 +58,10 @@ RENDER_SCENE_NAME = "render"
 OBJECTS_FILE = __DIR / "objects" / "objects.blend"
 OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
 MATERIAL_NAME = 'material'
-OUTDIR = __DIR / 'dist' / target
+DIST = __DIR / 'dist' \
+    if config.get('dist') is None \
+    else Path(config.get('dist'))
+OUTDIR = DIST / target
 
 
 def matname(filepath: Path):
