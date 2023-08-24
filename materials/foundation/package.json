@@ -1,0 +1,30 @@
+{
+  "name": "@the-bundle-materials/foundation",
+  "version": "0.0.0",
+  "files": [
+    "m.blobs.blend",
+    "m.chrome.blend",
+    "m.cloudy.blend",
+    "m.copper.--prod.blend",
+    "m.gold.--prod.blend",
+    "m.hologram.--prod.blend",
+    "m.rusty.blend",
+    "m.silver.--prod.blend",
+    "p.reflective.--prod.blend",
+    "p.rough.--prod.blend",
+    "sss.--prod.blend"
+  ],
+  "materials": {
+    "m.blobs": "material",
+    "m.chrome": "material",
+    "m.cloudy": "material",
+    "m.copper": "material",
+    "m.gold": "material",
+    "m.hologram": "material",
+    "m.rusty": "material",
+    "m.silver": "material",
+    "p.reflective": "material",
+    "p.rough": "material",
+    "sss": "material"
+  }
+}
