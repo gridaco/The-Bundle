@@ -8,20 +8,33 @@ import logging
 from tqdm import tqdm
 from functools import reduce
 
+
 __DIR = Path(os.path.dirname(bpy.data.filepath))
 
+
+# config logging
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s %(message)s',
+    level=logging.DEBUG,
+    handlers=[
+        logging.FileHandler(__DIR / 'bundle.log'),
+        # logging.StreamHandler()
+    ]
+)
+
+
 # read the config file if available
-config_file = __DIR / 'config.json'
-if config_file.exists():
-    with open(config_file) as f:
-        config = json.load(f)
+task_file = __DIR / 'task.json'
+if task_file.exists():
+    with open(task_file) as f:
+        task = json.load(f)
 
 # Update the target here
 # - DEBUG
 # - PREVIEW
 # - 512
 # - 1K
-target = (config.get('target') if config else None) or 'PREVIEW'
+target = (task.get('target') if task else None) or 'PREVIEW'
 
 profiles: dict = json.load(open(__DIR / 'profiles.json'))
 
@@ -32,13 +45,13 @@ material_classes: dict = json.load(open(__DIR / 'materials' / 'config.json'))
 rotation_profiles = {
     'DEBUG': [[0, 0, 0]],
     'xz45-3': [
-        [0, 0, 0],
-        [0, 0, 15],
-        [0, 0, 30],
-        [0, 0, 45],
-        [15, 0, 0],
-        [30, 0, 0],
-        [45, 0, 0],
+        [0, 30, 0],
+        [0, 30, 15],
+        [0, 30, 30],
+        [0, 30, 45],
+        [15, 30, 0],
+        [30, 30, 0],
+        [45, 30, 0],
     ]
 }
 
@@ -57,10 +70,10 @@ print(f"- #ROTATIONS: {len(rotations)}")
 RENDER_SCENE_NAME = "render"
 OBJECTS_FILE = __DIR / "objects" / "objects.blend"
 OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
-MATERIAL_NAME = 'material'
+DEFAULT_MATERIAL_NAME = 'material'
 DIST = __DIR / 'dist' \
-    if config.get('dist') is None \
-    else Path(config.get('dist'))
+    if task.get('dist') is None \
+    else Path(task.get('dist'))
 OUTDIR = DIST / target
 
 
@@ -80,35 +93,82 @@ def matname(filepath: Path):
     return '.'.join(segs)
 
 
-# resolve all material files
-MATERIAL_FILES = list(set(
-    reduce(
-        lambda x, y: x + list(y),
-        [__DIR.glob(pattern) for pattern in config.get('materials')],
-        []
-    )
-))
+# # resolve all material files
+# MATERIAL_FILES = list(set(
+#     reduce(
+#         lambda x, y: x + list(y),
+#         [__DIR.glob(pattern) for pattern in config.get('materials')],
+#         []
+#     )
+# ))
 
-# sort by config.materials_priority
-MATERIALS_RENDER_QUEUE_PRIORITY = config.get('materials_render_queue_priority')
-MATERIAL_FILES = sorted(
-    MATERIAL_FILES,
-    key=lambda p:
-    MATERIALS_RENDER_QUEUE_PRIORITY.index(matname(p))
-    if matname(p) in MATERIALS_RENDER_QUEUE_PRIORITY
-    else 999
-)
+# # sort by config.materials_priority
+# MATERIALS_RENDER_QUEUE_PRIORITY = config.get('materials_render_queue_priority')
+# MATERIAL_FILES = sorted(
+#     MATERIAL_FILES,
+#     key=lambda p:
+#     MATERIALS_RENDER_QUEUE_PRIORITY.index(matname(p))
+#     if matname(p) in MATERIALS_RENDER_QUEUE_PRIORITY
+#     else 999
+# )
 
 
-# config logging
-logging.basicConfig(
-    format='%(asctime)s %(levelname)s %(message)s',
-    level=logging.DEBUG,
-    handlers=[
-        logging.FileHandler(__DIR / 'bundle.log'),
-        # logging.StreamHandler()
-    ]
-)
+class MaterialPackage:
+    """
+    Material Package directory and files.
+    """
+
+    # materials by name: file, material name -> E.g. { 'm.al.oxidized.001': { 'file': 'm.al.blend', 'name': 'm.al.oxidized.001' } }
+    base_dir = None
+    materials = {}
+
+    def __init__(self, package_dot_json: Path | str) -> None:
+        package_dot_json = Path(package_dot_json)
+        assert package_dot_json.exists(
+        ), f"Invalid package: {package_dot_json}"
+
+        package_data = json.load(open(package_dot_json))
+
+        self.base_dir = package_dot_json.parent
+
+        materials = package_data['materials']
+        files = package_data['files']
+
+        is_multiple_files = len(files) > 1
+
+        if is_multiple_files:
+            # resolve files
+            raise NotImplementedError(
+                'multiple material files package not supported atm.')
+        else:
+            # map materials by reading the material file
+            material_file = self.base_dir / files[0]
+            assert material_file.exists(
+            ), f"Invalid material file: {material_file}"
+
+            # inspect material files without loading them into the current blend file
+            with bpy.data.libraries.load(str(material_file), link=False) as (data_from, _):
+                for m in data_from.materials:
+                    if m in materials:
+                        self.materials[m] = {
+                            'file': material_file,
+                            'name': m
+                        }
+
+            ...
+
+    def load(self, material_name: str) -> bpy.types.Material | None:
+        """
+        Loads the material to the current blend file.
+        """
+        material = self.materials.get(material_name)
+        if material:
+            with bpy.data.libraries.load(str(material['file'])) as (data_from, data_to):
+                data_to.materials = [material_name]
+
+            return bpy.data.materials.get(material_name)
+
+        return None
 
 
 def sync_objects():
@@ -250,19 +310,19 @@ def render(filepath, samples=128, res=512, resolution_percentage=100):
     ...
 
 
-def render_by_material(material_file, material_name):
+def render_by_material(name, material_file, material_name):
 
     m_samples = int(
-        samples * optimzied_samples_scale_by_material(material_name)
+        samples * optimzied_samples_scale_by_material(name)
     )
 
-    out = OUTDIR / material_name
+    out = OUTDIR / name
 
     objects_to_render = sync_objects()
 
     # Initialize the progress bar (tracks each render)
     pbar = tqdm(
-        total=(len(objects_to_render.items()) * len(rotations)), desc=material_name, leave=True
+        total=(len(objects_to_render.items()) * len(rotations)), desc=name, leave=True
     )
 
     # Assuming you want to do the work in the current blend file.
@@ -284,9 +344,9 @@ def render_by_material(material_file, material_name):
         return
 
     # Fetch the material
-    material = bpy.data.materials.get(MATERIAL_NAME)
+    material = bpy.data.materials.get(material_name)
     if not material:
-        logging.error(f"Error: Could not find '{MATERIAL_NAME}'")
+        logging.error(f"Error: Could not find '{material_name}'")
         return
 
     for scene_name, obj in objects_to_render.items():
@@ -311,14 +371,14 @@ def render_by_material(material_file, material_name):
         # Ensure the object is visible on render
         obj.hide_render = False
 
-        logging.info(f"Rendering {scene_name} in {material_name}...")
+        logging.info(f"Rendering {scene_name} in {name}...")
 
         # Render with different rotations
         for rotation in rotations:
             # Use the scene_name for filename instead of obj.name
             id = outname(
                 object_name=scene_name,
-                material_name=material_name,
+                material_name=name,
                 rotation=rotation,
                 res=res,
                 samples=m_samples,
@@ -326,7 +386,7 @@ def render_by_material(material_file, material_name):
             )
 
             # Update the progress bar description
-            pbar.set_description(f"{material_name} → <{id}>")
+            pbar.set_description(f"{name} → <{id}>")
 
             filepath = str(out / f"{id}.png")
 
@@ -354,7 +414,7 @@ def render_by_material(material_file, material_name):
         scene.collection.objects.unlink(obj)
 
     # clean up
-    pbar.desc = material_name
+    pbar.desc = name
     pbar.close()
 
 
@@ -362,31 +422,44 @@ def main():
     # ensure the dist directory exists before proceeding
     assert DIST.exists(), f"Invalid dist: {DIST}"
 
+    matpack = MaterialPackage(__DIR / 'materials' /
+                              'community-material-pack' / 'package.json')
+
     print("\n\n")
     print("=== START ===")
     print(f"Note: Do not modify or change the name of the following files:\n")
 
     print(f"- {OBJECTS_FILE}")
-    for mf in MATERIAL_FILES:
-        print(f"- materials/{mf.name}")
+    for k, v in matpack.materials.items():
+        print(f"- {k}")
+    # for mf in MATERIAL_FILES:
+    #     print(f"- materials/{mf.name}")
     print("\n\n")
 
-    for material_file in MATERIAL_FILES:
-        logging.info(f"Rendering {material_file}...")
+    for k, v in matpack.materials.items():
+        file = v['file']
+        name = v['name']
+        logging.info(f"Rendering {file}...")
 
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
 
-        material_name = matname(material_file)
+        # load the material
+        matpack.load(name)
 
-        render_by_material(material_file=material_file,
-                           material_name=material_name)
+        render_by_material(name=name, material_file=file,
+                           material_name=name)
+
+        # material_name = matname(material_file)
+        # render_by_material(name=material_name, material_file=material_file,
+        #                    material_name=DEFAULT_MATERIAL_NAME)
 
         # Remove the "render" scene
         bpy.data.scenes.remove(bpy.data.scenes.get(RENDER_SCENE_NAME))
 
-        # Clear the material
-        bpy.data.materials.remove(bpy.data.materials.get(MATERIAL_NAME))
+        # # Clear the material
+        # bpy.data.materials.remove(
+        #     bpy.data.materials.get(DEFAULT_MATERIAL_NAME))
 
 
 if __name__ == "__main__":
