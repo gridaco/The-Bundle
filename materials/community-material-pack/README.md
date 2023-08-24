@@ -25,14 +25,14 @@ Current Version: 3.0
 - Bubble
 - Candy Subsurface
 - Carbon Fiber
-- Catcher
-- Catcher Darker
+- ~Catcher~
+- ~Catcher Darker~
 - Clay
 - Complex Imperfections
 - Corroded Copper
 - Cracked Metal Tiles
-- Cracked Tiles
-- Cracked Tiles.001
+- ~Cracked Tiles~
+- ~Cracked Tiles.001~
 - CRT
 - Cyber Glitch
 - Dispersion Glass
