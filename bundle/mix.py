@@ -390,14 +390,20 @@ def render_by_material(name, material_file, material_name):
 
             filepath = str(out / f"{id}.png")
 
-            # Rotate the object
-            obj.rotation_euler = [radians(angle) for angle in rotation]
-
             # check if image exists
             if os.path.exists(filepath):
                 logging.info(f"Skipping {filepath}")
                 pbar.update(1)
                 continue
+
+            # Rotate the object
+            if obj.rotation_mode == 'QUATERNION':
+                # Convert quaternion to euler
+                obj.rotation_mode = 'XYZ'
+                logging.info(f"Converting quaternion to euler for {obj.name}")
+
+            obj.lock_rotation = [False, False, False]
+            obj.rotation_euler = [radians(angle) for angle in rotation]
 
             # Render
             render(
