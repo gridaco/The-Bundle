@@ -352,6 +352,20 @@ def render_by_material(name, material_file, material_name):
     for scene_name, obj in objects_to_render.items():
         # Link object to the scene
         scene.collection.objects.link(obj)
+
+        # Convert the object to mesh if not. (E.g. matball, etc.)
+        if obj.type != 'MESH':
+            try:
+                bpy.ops.object.select_all(
+                    action='DESELECT')  # Deselect all objects
+                obj.select_set(True)  # Assuming meta_obj is your Meta object
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.convert(target='MESH')
+            except Exception as e:
+                logging.error(
+                    f"Error: Could not convert {obj.name} to mesh: {e}")
+                continue
+
         # Assign the material to the object
         if obj.data is None:
             logging.error(f"Error: {obj.name} has no mesh data")
@@ -398,7 +412,7 @@ def render_by_material(name, material_file, material_name):
 
             # Rotate the object
             if obj.rotation_mode == 'QUATERNION':
-                # Convert quaternion to euler
+                # Convert quaternion to euler - consider not changing the rotation mode.
                 obj.rotation_mode = 'XYZ'
                 logging.info(f"Converting quaternion to euler for {obj.name}")
 
