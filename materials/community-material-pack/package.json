@@ -1,4 +1,16 @@
 {
+  "name": "@the-bundle-materials/community-material-pack",
+  "version": "3.0",
+  "main": "Community Material Pack v3.blend",
+  "authors": [
+    "Curtis Holt",
+    "Grida, Inc."
+  ],
+  "license": "CC-BY-SA-4.0",
+  "homepage": "https://grida.co/bundle/materials/community-material-pack",
+  "files": [
+    "Community Material Pack v3.blend"
+  ],
   "materials": [
     "Alien Ruin Blackish",
     "Alien Ruin Bluish",
