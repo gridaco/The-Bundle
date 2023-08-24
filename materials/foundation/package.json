@@ -5,14 +5,14 @@
     "m.blobs.blend",
     "m.chrome.blend",
     "m.cloudy.blend",
-    "m.copper.--prod.blend",
-    "m.gold.--prod.blend",
-    "m.hologram.--prod.blend",
+    "m.copper.blend",
+    "m.gold.blend",
+    "m.hologram.blend",
     "m.rusty.blend",
-    "m.silver.--prod.blend",
-    "p.reflective.--prod.blend",
-    "p.rough.--prod.blend",
-    "sss.--prod.blend"
+    "m.silver.blend",
+    "p.reflective.blend",
+    "p.rough.blend",
+    "sss.blend"
   ],
   "materials": {
     "m.blobs": "material",
