@@ -56,24 +56,21 @@ def import_svg_and_extrude(filepath: Path, extrude_amount=0.1, join=True, scale_
     scale_collection(name, scale_factor)
 
     print("SVG imported, extruded, and scaled.")
-# Example usage:
-# import_svg_and_extrude("/path/to/your/file.svg", extrude_amount=0.1, scale_factor=0.01)
 
 
 def main():
     svgs = Path("data/radix-icons").glob("*.svg")
     for svg in svgs:
         name = svg.stem
-        blenderfile = f"scenes/radix-icons/{name}.blend"
 
-        # create new blender file
-        bpy.ops.wm.read_factory_settings(use_empty=True)
-        bpy.ops.wm.save_as_mainfile(filepath=blenderfile)
+        # Create a new scene
+        new_scene = bpy.data.scenes.new(name)
+        bpy.context.window.scene = new_scene
 
         import_svg_and_extrude(svg, extrude_amount=100, scale_factor=500)
 
-        # save blender file
-        bpy.ops.wm.save_as_mainfile(filepath=blenderfile)
+    # Save the main blender file with all scenes
+    bpy.ops.wm.save_as_mainfile(filepath="scenes/radix-icons.blend")
 
 
 if __name__ == "__main__":
