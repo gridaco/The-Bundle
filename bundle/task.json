@@ -1,5 +1,5 @@
 {
-  "target": "PREVIEW",
+  "target": "2K",
   "materials": ["materials/*.blend"],
   "materials_render_queue_priority": [
     "p.rough",

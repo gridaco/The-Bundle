@@ -331,7 +331,7 @@ class RenderJobFile:
         if self.use_animation:
             self.__insert_keyframes()
 
-    def save(self, path):
+    def save(self, path, resolution_x, resolution_y, resolution_percentage=100, samples=128):
         """
         Saves the render scene file as a new blend file.
         """
@@ -349,6 +349,16 @@ class RenderJobFile:
         remove_unused_objects()
         remove_unused_materials()
         remove_unused_textures()
+
+        # config the render settings
+        bpy.context.scene.render.engine = 'CYCLES'
+        bpy.context.scene.cycles.device = 'GPU'
+        bpy.context.scene.cycles.samples = samples
+        bpy.context.scene.cycles.preview_samples = samples
+        # res
+        bpy.context.scene.render.resolution_x = resolution_x
+        bpy.context.scene.render.resolution_y = resolution_y
+        bpy.context.scene.render.resolution_percentage = resolution_percentage
 
         # Save the current blend file to the specified path
         bpy.ops.wm.save_as_mainfile(filepath=path)
@@ -614,6 +624,18 @@ def render(filepath, samples=128, res=512, resolution_percentage=100):
     ...
 
 
+def xp_path(path: str):
+    """
+    Make the path acceptable for Linux, Mac, and Windows.
+    """
+    # Replace reserved characters with underscores
+    invalid_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
+    for char in invalid_chars:
+        path = path.replace(char, '_')
+
+    return path
+
+
 def main():
     # ensure the dist directory exists before proceeding
     assert DIST.exists(), f"Invalid dist: {DIST}"
@@ -658,6 +680,7 @@ def main():
         for key in objpack.object_keys:
             try:
                 key = key.replace('/', ':')
+                key = xp_path(key)
                 filepath = jobs / f"{key}.blend"
                 if filepath.exists():
                     pbar.update(len(rotations))
@@ -675,7 +698,13 @@ def main():
                 # for result in jobfile.render_all():
                 #     pbar.update(1)
 
-                jobfile.save(str(filepath))
+                jobfile.save(
+                    str(filepath),
+                    resolution_x=res,
+                    resolution_y=res,
+                    resolution_percentage=resolution_percentage,
+                    samples=samples
+                )
                 pbar.update(len(rotations))
             except Exception as e:
                 logging.error(f"Error: {e}")
