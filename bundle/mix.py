@@ -171,6 +171,79 @@ class MaterialPackage:
         return None
 
 
+class ObjectPackage:
+
+    # list of names of the scenes that contain the objects
+    object_scenes: [str] = []
+    # dict of objects by scene name, following the format of { 'key': { 'file': <file path>,  'scene': <scene name>, 'name': <object name> } }
+    objects: dict[str, dict] = {}
+    exclude_patterns: list[str] = []
+
+    def __init__(self, file: Path | str, exclude_patterns: list[str] = []) -> None:
+        ...
+        self.file = Path(file)
+        self.exclude_patterns = exclude_patterns
+
+        # Index objects
+        # first, sync the objects to the current blend file, after indexing is done, delete the scenes and objects
+        # so that the current blend file is clean
+        self.object_scenes = []
+        __objects = self.sync()
+        # create empty scene for to be the last scene
+        bpy.ops.scene.new(type='EMPTY')
+        # clean
+        for key, obj in __objects.items():
+            self.object_scenes.append(key)
+            self.objects[key] = {
+                'file': self.file,
+                'scene': key,
+                'name': obj.name
+            }
+            # remove
+            bpy.data.objects.remove(obj)
+            bpy.data.scenes.remove(bpy.data.scenes.get(key))
+
+    def load(self, key: str):
+        assert key in self.objects.keys(), f"Invalid key: {key}"
+        objdata = self.objects.get(key)
+        objname = objdata.get('name')
+
+        with bpy.data.libraries.load(str(self.file)) as (data_from, data_to):
+            data_to.objects = [objname]
+
+        return bpy.data.objects.get(objname)
+
+    def sync(self):
+        """
+        sync all scenes and objects from the package to the current blend file.
+        """
+
+        # sync scenes
+        with bpy.data.libraries.load(str(self.file)) as (data_from, data_to):
+            scenes_to_link = []
+
+            for scene in data_from.scenes:
+                # Exclude objects if they contain any of the exclude patterns
+                if any([pattern in scene for pattern in self.exclude_patterns]):
+                    continue
+
+                scenes_to_link.append(scene)
+
+            data_to.scenes = scenes_to_link
+
+        # Now, go through each linked scene to identify the object you want
+        objects_to_render = {}
+
+        for scene in bpy.data.scenes:
+            for obj in scene.objects:
+                # If the object is visible (enabled)
+                if obj.hide_viewport == False:
+                    objects_to_render[scene.name] = obj
+                    break  # Only take the first visible object per scene, then move on
+
+        return objects_to_render
+
+
 def sync_objects():
     # Load objects
     scenes_to_link = []
@@ -447,6 +520,12 @@ def main():
 
     matpack = MaterialPackage(__DIR / 'materials' /
                               'community-material-pack' / 'package.json')
+    # objpack = ObjectPackage(
+    #     OBJECTS_FILE, exclude_patterns=OBJECT_SCENE_EXCLUDE_PATTERNS)
+
+    # # print(objpack.objects)
+    # # key = list(objpack.objects.keys())[0]
+    # # print(objpack.load(key))
 
     print("\n\n")
     print("=== START ===")
