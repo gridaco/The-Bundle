@@ -179,6 +179,8 @@ class ObjectPackage:
     objects: dict[str, dict] = {}
     exclude_patterns: list[str] = []
 
+    _whole_synced = False
+
     def __init__(self, file: Path | str, exclude_patterns: list[str] = []) -> None:
         ...
         self.file = Path(file)
@@ -202,6 +204,7 @@ class ObjectPackage:
             # remove
             bpy.data.objects.remove(obj)
             bpy.data.scenes.remove(bpy.data.scenes.get(key))
+        self._whole_synced = False
 
     def load(self, key: str):
         assert key in self.objects.keys(), f"Invalid key: {key}"
@@ -217,6 +220,8 @@ class ObjectPackage:
         """
         sync all scenes and objects from the package to the current blend file.
         """
+        if self._whole_synced:
+            return self.objects
 
         # sync scenes
         with bpy.data.libraries.load(str(self.file)) as (data_from, data_to):
@@ -242,30 +247,6 @@ class ObjectPackage:
                     break  # Only take the first visible object per scene, then move on
 
         return objects_to_render
-
-
-def sync_objects():
-    # Load objects
-    scenes_to_link = []
-
-    with bpy.data.libraries.load(str(OBJECTS_FILE)) as (data_from, data_to):
-        scenes_to_link = [scene for scene in data_from.scenes]
-        data_to.scenes = scenes_to_link
-
-    # Now, go through each linked scene to identify the object you want
-    objects_to_render = {}
-
-    for scene in bpy.data.scenes:
-        for obj in scene.objects:
-            # Exclude objects if they contain any of the exclude patterns
-            if any([pattern in scene.name for pattern in OBJECT_SCENE_EXCLUDE_PATTERNS]):
-                continue
-            # If the object is visible (enabled)
-            if obj.hide_viewport == False:
-                objects_to_render[scene.name] = obj
-                break  # Only take the first visible object per scene, then move on
-
-    return objects_to_render
 
 
 def outname(object_name, rotation, material_name=None, res=512, quality=100, samples=128):
@@ -383,7 +364,7 @@ def render(filepath, samples=128, res=512, resolution_percentage=100):
     ...
 
 
-def render_by_material(name, material_file, material_name):
+def render_by_material(name, material_file, material_name, objpack: ObjectPackage):
 
     m_samples = int(
         samples * optimzied_samples_scale_by_material(name)
@@ -391,7 +372,7 @@ def render_by_material(name, material_file, material_name):
 
     out = OUTDIR / name
 
-    objects_to_render = sync_objects()
+    objects_to_render = objpack.sync()
 
     # Initialize the progress bar (tracks each render)
     pbar = tqdm(
@@ -520,8 +501,8 @@ def main():
 
     matpack = MaterialPackage(__DIR / 'materials' /
                               'community-material-pack' / 'package.json')
-    # objpack = ObjectPackage(
-    #     OBJECTS_FILE, exclude_patterns=OBJECT_SCENE_EXCLUDE_PATTERNS)
+    objpack = ObjectPackage(
+        OBJECTS_FILE, exclude_patterns=OBJECT_SCENE_EXCLUDE_PATTERNS)
 
     # # print(objpack.objects)
     # # key = list(objpack.objects.keys())[0]
@@ -550,7 +531,9 @@ def main():
         matpack.load(name)
 
         render_by_material(name=name, material_file=file,
-                           material_name=name)
+                           material_name=name,
+                           objpack=objpack
+                           )
 
         # material_name = matname(material_file)
         # render_by_material(name=material_name, material_file=material_file,
