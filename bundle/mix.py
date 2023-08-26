@@ -175,7 +175,7 @@ class ObjectPackage:
 
     # list of names of the scenes that contain the objects
     object_scenes: [str] = []
-    # dict of objects by scene name, following the format of { 'key': { 'file': <file path>,  'scene': <scene name>, 'name': <object name> } }
+    # dict of objects by scene name, following the format of { 'key': { 'file': <file path>,  'scene': <scene name>, 'name': <object name>, 'object': <bpy.types.Object | None> } }
     objects: dict[str, dict] = {}
     exclude_patterns: list[str] = []
 
@@ -197,12 +197,11 @@ class ObjectPackage:
         for key, obj in __objects.items():
             self.object_scenes.append(key)
             self.objects[key] = {
-                'file': self.file,
-                'scene': key,
-                'name': obj.name
+                **obj,
+                'object': None
             }
             # remove
-            bpy.data.objects.remove(obj)
+            bpy.data.objects.remove(obj['object'])
             bpy.data.scenes.remove(bpy.data.scenes.get(key))
         self._whole_synced = False
 
@@ -246,7 +245,15 @@ class ObjectPackage:
                     objects_to_render[scene.name] = obj
                     break  # Only take the first visible object per scene, then move on
 
-        return objects_to_render
+        for key, obj in objects_to_render.items():
+            self.objects[key] = {
+                'file': self.file,
+                'scene': key,
+                'name': obj.name,
+                'object': obj
+            }
+
+        return self.objects
 
 
 def outname(object_name, rotation, material_name=None, res=512, quality=100, samples=128):
@@ -372,11 +379,11 @@ def render_by_material(name, material_file, material_name, objpack: ObjectPackag
 
     out = OUTDIR / name
 
-    objects_to_render = objpack.sync()
+    objects = objpack.sync()
 
     # Initialize the progress bar (tracks each render)
     pbar = tqdm(
-        total=(len(objects_to_render.items()) * len(rotations)), desc=name, leave=True
+        total=(len(objects.items()) * len(rotations)), desc=name, leave=True
     )
 
     # Assuming you want to do the work in the current blend file.
@@ -403,7 +410,13 @@ def render_by_material(name, material_file, material_name, objpack: ObjectPackag
         logging.error(f"Error: Could not find '{material_name}'")
         return
 
-    for scene_name, obj in objects_to_render.items():
+    for key, data in objects.items():
+        obj = data.get('object')
+
+        if obj is None:
+            logging.error(f"Error: Could not find '{key}'")
+            continue
+
         # Link object to the scene
         scene.collection.objects.link(obj)
 
@@ -439,13 +452,13 @@ def render_by_material(name, material_file, material_name, objpack: ObjectPackag
         # Ensure the object is visible on render
         obj.hide_render = False
 
-        logging.info(f"Rendering {scene_name} in {name}...")
+        logging.info(f"Rendering {key} in {name}...")
 
         # Render with different rotations
         for rotation in rotations:
             # Use the scene_name for filename instead of obj.name
             id = outname(
-                object_name=scene_name,
+                object_name=key,
                 material_name=name,
                 rotation=rotation,
                 res=res,
