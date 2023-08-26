@@ -431,7 +431,10 @@ def render_by_material(name, material_file, material_name):
             pbar.update(1)
 
         # After rendering, unlink the object from the scene
-        scene.collection.objects.unlink(obj)
+        try:
+            scene.collection.objects.unlink(obj)
+        except Exception as e:
+            logging.error(f"Error: {e}")
 
     # clean up
     pbar.desc = name
