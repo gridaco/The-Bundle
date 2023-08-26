@@ -11,7 +11,7 @@ api_client = ApiClient(configuration)
 shared_drive = "/Volumes/the-bundle"
 
 
-def post_job(blendfile, frames, render_output_path, priority=50):
+def post_job(blendfile, frames, render_output_path, priority=50, chunk_size=3):
     return api_client.call_api("/api/v3/jobs", "POST", body={
         "metadata": {
             "project": "The Bundle",
@@ -28,7 +28,7 @@ def post_job(blendfile, frames, render_output_path, priority=50):
             # "extract_audio": True,
             # "fps": 24,
             # "render_output_root": "",
-            "chunk_size": 3,
+            "chunk_size": chunk_size,
             "blendfile": blendfile,
             "has_previews": False,
             "format": "PNG",
@@ -58,7 +58,8 @@ def main(queue, max):
         post_job(
             blendfile=str(job),
             # TODO: make this dynamic
-            frames='0-7',
+            frames='0-7',  # this
+            chunk_size=8,  # and this
             render_output_path=render_output_path
         )
     ...
