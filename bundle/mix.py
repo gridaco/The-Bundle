@@ -45,6 +45,7 @@ material_classes: dict = json.load(open(__DIR / 'materials' / 'config.json'))
 rotation_profiles = {
     'DEBUG': [[0, 0, 0]],
     'xz45-3': [
+        [0, 0, 0],
         [0, 30, 0],
         [0, 30, 15],
         [0, 30, 30],
@@ -174,7 +175,7 @@ class MaterialPackage:
 class ObjectPackage:
 
     # list of names of the scenes that contain the objects
-    object_scenes: [str] = []
+    object_keys: [str] = []
     # dict of objects by scene name, following the format of { 'key': { 'file': <file path>,  'scene': <scene name>, 'name': <object name>, 'object': <bpy.types.Object | None> } }
     objects: dict[str, dict] = {}
     exclude_patterns: list[str] = []
@@ -189,13 +190,13 @@ class ObjectPackage:
         # Index objects
         # first, sync the objects to the current blend file, after indexing is done, delete the scenes and objects
         # so that the current blend file is clean
-        self.object_scenes = []
+        self.object_keys = []
         __objects = self.sync()
         # create empty scene for to be the last scene
         bpy.ops.scene.new(type='EMPTY')
         # clean
         for key, obj in __objects.items():
-            self.object_scenes.append(key)
+            self.object_keys.append(key)
             self.objects[key] = {
                 **obj,
                 'object': None
@@ -205,7 +206,7 @@ class ObjectPackage:
             bpy.data.scenes.remove(bpy.data.scenes.get(key))
         self._whole_synced = False
 
-    def load(self, key: str):
+    def load(self, key: str) -> bpy.types.Object | None:
         assert key in self.objects.keys(), f"Invalid key: {key}"
         objdata = self.objects.get(key)
         objname = objdata.get('name')
@@ -228,10 +229,8 @@ class ObjectPackage:
 
             for scene in data_from.scenes:
                 # Exclude objects if they contain any of the exclude patterns
-                if any([pattern in scene for pattern in self.exclude_patterns]):
-                    continue
-
-                scenes_to_link.append(scene)
+                if not any([pattern in scene for pattern in self.exclude_patterns]):
+                    scenes_to_link.append(scene)
 
             data_to.scenes = scenes_to_link
 
@@ -254,6 +253,196 @@ class ObjectPackage:
             }
 
         return self.objects
+
+
+class RenderJobFile:
+    """
+    Job file - material:object paired file
+    """
+    scene: bpy.types.Scene
+    boundingbox: bpy.types.Object
+    material: bpy.types.Material
+    model: bpy.types.Object
+    object_key: str
+    material_key: str
+    rotations: list[(int, int, int)]
+    render_out: Path | str
+    # frame: rotation, E.g. { 1: '0°0°0°', 2: '0°0°15°', ... }
+    rotation_frame_map: dict[int, str] = {}
+    use_animation: bool = False
+
+    def __init__(
+        self,
+        # base_scene_file: Path | str,
+        # scene_name: str = RENDER_SCENE_NAME,
+        material_pack: MaterialPackage,
+        material_key: str,
+        object_pack: ObjectPackage,
+        object_key: str,
+        rotations: list[(int, int, int)] = [(0, 0, 0)],
+        use_animation: bool = False,
+        render_out: Path | str = None,
+    ):
+        self.object_key = object_key
+        self.material_key = material_key
+        self.rotations = rotations
+        self.use_animation = use_animation
+        self.render_out = Path(render_out)
+
+        # reset the vm to work with a clean slate
+        bpy.ops.wm.read_homefile(use_empty=True)
+        # (TODO:) load the render scene
+        # Assuming you want to do the work in the current blend file.
+        # Check if the "render" scene exists, if not, link it from the material_file
+        if RENDER_SCENE_NAME not in bpy.data.scenes:
+            material_file = material_pack.materials.get(material_key)['file']
+            with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
+                data_to.scenes = [RENDER_SCENE_NAME]
+
+        scene = bpy.data.scenes[RENDER_SCENE_NAME]
+        bpy.context.window.scene = scene  # Set current scene
+        self.scene = scene
+
+        # get the bounding box
+        self.boundingbox = self.__get_bounding_box()
+        assert self.boundingbox, f"Invalid bounding box: {self.boundingbox}"
+
+        # load the material
+        self.material = material_pack.load(material_key)
+        assert self.material, f"Invalid material: {material_key}"
+
+        # load the object (model)
+        self.model = object_pack.load(object_key)
+        assert self.model, f"Invalid model: {object_key}"
+
+        # link the model to the scene
+        self.scene.collection.objects.link(self.model)
+
+        # Convert the object to mesh if not. (E.g. matball, etc.)
+        convert_to_mesh(self.model)
+
+        # Assign the material to the object
+        assign_material(self.model, self.material)
+
+        # Scale and position the object to fit within bounding_box
+        place_object(self.model, self.boundingbox)
+
+        # Insert keyframes for the rotations
+        if self.use_animation:
+            self.__insert_keyframes()
+
+    def save(self, path):
+        """
+        Saves the render scene file as a new blend file.
+        """
+        # === redirect output to log file
+        logfile = 'blender_render.log'
+        open(logfile, 'a').close()
+        old = os.dup(sys.stdout.fileno())
+        sys.stdout.flush()
+        os.close(sys.stdout.fileno())
+        fd = os.open(logfile, os.O_WRONLY)
+        # ===
+
+        # clean
+        remove_unused_scenes()
+        remove_unused_objects()
+        remove_unused_materials()
+        remove_unused_textures()
+
+        # Save the current blend file to the specified path
+        bpy.ops.wm.save_as_mainfile(filepath=path)
+
+        # === disable output redirection
+        os.close(fd)
+        os.dup(old)
+        os.close(old)
+        # ===
+
+    def __insert_keyframes(self):
+        """
+        Inserts keyframes for the provided rotations.
+        """
+        total_rotations = len(self.rotations)
+        for idx, rotation in enumerate(self.rotations):
+            # Set rotation
+            self.rotate(rotation)
+
+            # Insert keyframe for the rotation. We'll place each rotation at its own frame.
+            self.model.keyframe_insert(
+                data_path="rotation_euler", frame=idx)
+
+            # Update the rotation_frame_map
+            self.rotation_frame_map[idx]\
+                = f"{rotation[0]}°{rotation[1]}°{rotation[2]}°"
+
+        # Set the end frame to be equal to the total number of rotations
+        self.scene.frame_end = total_rotations - 1
+        # Set start frame to 0
+        self.scene.frame_start = 0
+
+    def render_all(self):
+        """
+        Renders the scene with all rotations.
+        """
+        if self.use_animation:
+            raise NotImplementedError("Animation not supported yet.")
+
+        for rotation in self.rotations:
+            yield self.render_one(rotation)
+
+    def render_one(self, rotation: (int, int, int), skip_existing: bool = True):
+        """
+        Renders the scene with one rotation.
+        """
+        if self.use_animation:
+            raise NotImplementedError("Animation not supported yet.")
+
+        m_samples = int(
+            samples * optimzied_samples_scale_by_material(self.material_key)
+        )
+        self.rotate(rotation)
+
+        id = outname(
+            object_name=self.object_key,
+            material_name=self.material_key,
+            rotation=rotation,
+            res=res,
+            samples=m_samples,
+            quality=resolution_percentage
+        )
+
+        filepath = str(self.render_out / f"{id}.png")
+
+        if skip_existing and os.path.exists(filepath):
+            logging.info(f"Skipping {filepath}")
+            return
+
+        render(
+            filepath=filepath,
+            samples=m_samples,
+            res=res,
+            resolution_percentage=resolution_percentage,
+        )
+
+    def rotate(self, rotation: (int, int, int), force: bool = False):
+        """
+        Rotates the model to the provided rotation.
+        """
+        obj = self.model
+
+        if obj.rotation_mode == 'QUATERNION' and force:
+            # Convert quaternion to euler - consider not changing the rotation mode.
+            obj.rotation_mode = 'XYZ'
+            logging.info(f"Converting quaternion to euler for {obj.name}")
+
+        obj.lock_rotation = [False, False, False]
+        obj.rotation_euler = [radians(angle) for angle in rotation]
+
+        return self.model
+
+    def __get_bounding_box(self):
+        return self.scene.objects.get("boundingbox")
 
 
 def outname(object_name, rotation, material_name=None, res=512, quality=100, samples=128):
@@ -309,19 +498,35 @@ def boundingbox_dimension(obj):
             "Object is neither an acceptable Empty nor a cube Mesh.")
 
 
-def save_blend(name):
-    """
-    Save the current in-mem working file as .blend file in the ./blends directory.
-    """
-    # Create directory if it doesn't exist
-    output_dir = os.path.join(__DIR, "blends")
-    # Sanitize the scene name to remove problematic characters
-    safe_filename = "".join([c if c.isalnum() or c in (
-        ' ', '.', '-', '_') else '_' for c in name])
-    filepath = os.path.join(output_dir, f"{safe_filename}.blend")
+def remove_unused_scenes():
+    for scene in bpy.data.scenes:
+        if scene.name != RENDER_SCENE_NAME:
+            bpy.data.scenes.remove(scene)
 
-    # Save the blend file
-    bpy.ops.wm.save_as_mainfile(filepath=filepath)
+
+def remove_unused_objects():
+    for obj in bpy.data.objects:
+
+        # - if the object has no users in any scenes
+        # - if the object does not impact the render (Disable in Renders)
+        if not obj.users_scene or obj.hide_render:
+            bpy.data.objects.remove(obj)
+
+
+def remove_unused_materials():
+    for mat in bpy.data.materials:
+        if not mat.users:  # if the material has no users
+            bpy.data.materials.remove(mat)
+
+
+def remove_unused_textures():
+    for tex in bpy.data.textures:
+        if not tex.users:  # if the texture has no users
+            bpy.data.textures.remove(tex)
+
+    for img in bpy.data.images:
+        if not img.users:  # if the image has no users
+            bpy.data.images.remove(img)
 
 
 def fit_scale(obj, box):
@@ -334,6 +539,44 @@ def fit_scale(obj, box):
     )
 
     return scale_factor
+
+
+def place_object(obj, box):
+    """
+    Positions the object at the center of the bounding box.
+    """
+    # Scale and position the object to fit within bounding_box
+    scale_factor = fit_scale(obj, box)
+    obj.scale = (scale_factor, scale_factor, scale_factor)
+
+    # Position the object at the center of the bounding box
+    obj.location = box.location
+
+    # Ensure the object is visible on render
+    obj.hide_render = False
+
+
+def assign_material(obj, material):
+    if obj.data is None:
+        logging.error(f"Error: {obj.name} has no mesh data")
+        return
+    if obj.data.materials:
+        obj.data.materials[0] = material
+    else:
+        obj.data.materials.append(material)
+
+
+def convert_to_mesh(obj):
+    if obj.type != 'MESH':
+        try:
+            bpy.ops.object.select_all(
+                action='DESELECT')  # Deselect all objects
+            obj.select_set(True)  # Assuming meta_obj is your Meta object
+            bpy.context.view_layer.objects.active = obj
+            bpy.ops.object.convert(target='MESH')
+        except Exception as e:
+            logging.error(
+                f"Error: Could not convert {obj.name} to mesh: {e}")
 
 
 def render(filepath, samples=128, res=512, resolution_percentage=100):
@@ -371,143 +614,6 @@ def render(filepath, samples=128, res=512, resolution_percentage=100):
     ...
 
 
-def render_by_material(name, material_file, material_name, objpack: ObjectPackage):
-
-    m_samples = int(
-        samples * optimzied_samples_scale_by_material(name)
-    )
-
-    out = OUTDIR / name
-
-    objects = objpack.sync()
-
-    # Initialize the progress bar (tracks each render)
-    pbar = tqdm(
-        total=(len(objects.items()) * len(rotations)), desc=name, leave=True
-    )
-
-    # Assuming you want to do the work in the current blend file.
-    # Check if the "render" scene exists, if not, link it from the material_file
-    if RENDER_SCENE_NAME not in bpy.data.scenes:
-        with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
-            data_to.scenes = [RENDER_SCENE_NAME]
-
-    scene = bpy.data.scenes[RENDER_SCENE_NAME]
-    bpy.context.window.scene = scene  # Set current scene
-
-    # Fetch the bounding box
-    bounding_box = scene.objects.get("boundingbox")
-    if not bounding_box:
-        logging.error(
-            f"Error: Could not find boundingbox in {RENDER_SCENE_NAME}"
-        )
-
-        return
-
-    # Fetch the material
-    material = bpy.data.materials.get(material_name)
-    if not material:
-        logging.error(f"Error: Could not find '{material_name}'")
-        return
-
-    for key, data in objects.items():
-        obj = data.get('object')
-
-        if obj is None:
-            logging.error(f"Error: Could not find '{key}'")
-            continue
-
-        # Link object to the scene
-        scene.collection.objects.link(obj)
-
-        # Convert the object to mesh if not. (E.g. matball, etc.)
-        if obj.type != 'MESH':
-            try:
-                bpy.ops.object.select_all(
-                    action='DESELECT')  # Deselect all objects
-                obj.select_set(True)  # Assuming meta_obj is your Meta object
-                bpy.context.view_layer.objects.active = obj
-                bpy.ops.object.convert(target='MESH')
-            except Exception as e:
-                logging.error(
-                    f"Error: Could not convert {obj.name} to mesh: {e}")
-                continue
-
-        # Assign the material to the object
-        if obj.data is None:
-            logging.error(f"Error: {obj.name} has no mesh data")
-            continue
-        if obj.data.materials:
-            obj.data.materials[0] = material
-        else:
-            obj.data.materials.append(material)
-
-        # Scale and position the object to fit within bounding_box
-        scale_factor = fit_scale(obj, bounding_box)
-        obj.scale = (scale_factor, scale_factor, scale_factor)
-
-        # Position the object at the center of the bounding box
-        obj.location = bounding_box.location
-
-        # Ensure the object is visible on render
-        obj.hide_render = False
-
-        logging.info(f"Rendering {key} in {name}...")
-
-        # Render with different rotations
-        for rotation in rotations:
-            # Use the scene_name for filename instead of obj.name
-            id = outname(
-                object_name=key,
-                material_name=name,
-                rotation=rotation,
-                res=res,
-                samples=m_samples,
-                quality=resolution_percentage
-            )
-
-            # Update the progress bar description
-            pbar.set_description(f"{name} → <{id}>")
-
-            filepath = str(out / f"{id}.png")
-
-            # check if image exists
-            if os.path.exists(filepath):
-                logging.info(f"Skipping {filepath}")
-                pbar.update(1)
-                continue
-
-            # Rotate the object
-            if obj.rotation_mode == 'QUATERNION':
-                # Convert quaternion to euler - consider not changing the rotation mode.
-                obj.rotation_mode = 'XYZ'
-                logging.info(f"Converting quaternion to euler for {obj.name}")
-
-            obj.lock_rotation = [False, False, False]
-            obj.rotation_euler = [radians(angle) for angle in rotation]
-
-            # Render
-            render(
-                filepath=filepath,
-                samples=m_samples,
-                res=res,
-                resolution_percentage=resolution_percentage,
-            )
-
-            # Update the progress bar
-            pbar.update(1)
-
-        # After rendering, unlink the object from the scene
-        try:
-            scene.collection.objects.unlink(obj)
-        except Exception as e:
-            logging.error(f"Error: {e}")
-
-    # clean up
-    pbar.desc = name
-    pbar.close()
-
-
 def main():
     # ensure the dist directory exists before proceeding
     assert DIST.exists(), f"Invalid dist: {DIST}"
@@ -540,24 +646,47 @@ def main():
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
 
-        # load the material
-        matpack.load(name)
+        out = OUTDIR / name
+        jobs = DIST / 'jobs' / name
+        jobs.mkdir(parents=True, exist_ok=True)
 
-        render_by_material(name=name, material_file=file,
-                           material_name=name,
-                           objpack=objpack
-                           )
+        tasksize = len(objpack.object_keys) * len(rotations)
 
-        # material_name = matname(material_file)
-        # render_by_material(name=material_name, material_file=material_file,
-        #                    material_name=DEFAULT_MATERIAL_NAME)
+        # Initialize the progress bar (tracks each render)
+        pbar = tqdm(total=(tasksize), desc=name, leave=True)
 
-        # Remove the "render" scene
-        bpy.data.scenes.remove(bpy.data.scenes.get(RENDER_SCENE_NAME))
+        for key in objpack.object_keys:
+            try:
+                key = key.replace('/', ':')
+                filepath = jobs / f"{key}.blend"
+                if filepath.exists():
+                    pbar.update(len(rotations))
+                    continue
+                jobfile = RenderJobFile(
+                    material_pack=matpack,
+                    material_key=k,
+                    object_pack=objpack,
+                    object_key=key,
+                    rotations=rotations,
+                    use_animation=True,
+                    render_out=out,
+                )
 
-        # # Clear the material
-        # bpy.data.materials.remove(
-        #     bpy.data.materials.get(DEFAULT_MATERIAL_NAME))
+                # for result in jobfile.render_all():
+                #     pbar.update(1)
+
+                jobfile.save(str(filepath))
+                pbar.update(len(rotations))
+            except Exception as e:
+                logging.error(f"Error: {e}")
+                continue
+
+        # clean up (TODO: NOT WORKING)
+        for b1 in Path(jobs).glob('*.blend1'):
+            b1.unlink()
+
+        pbar.desc = name
+        pbar.close()
 
 
 if __name__ == "__main__":
