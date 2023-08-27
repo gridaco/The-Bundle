@@ -1,5 +1,8 @@
+import sys
 import click
 import os
+import bpy
+from tqdm import tqdm
 from pathlib import Path
 from flamenco.manager import ApiClient, Configuration
 from flamenco.manager.apis import MetaApi
@@ -10,15 +13,54 @@ api_client = ApiClient(configuration)
 
 shared_drive = "/Volumes/the-bundle"
 
+MAX_CHUNK_PER_FILE = 32
 
-def post_job(blendfile, frames, render_output_path, priority=50, chunk_size=3):
+
+def frames_from_blendfile(blendfile):
+    # === redirect output to log file
+    logfile = 'blender_render.log'
+    open(logfile, 'a').close()
+    old = os.dup(sys.stdout.fileno())
+    sys.stdout.flush()
+    os.close(sys.stdout.fileno())
+    fd = os.open(logfile, os.O_WRONLY)
+    # ===
+
+    bpy.ops.wm.open_mainfile(filepath=str(blendfile))
+
+    # === disable output redirection
+    os.close(fd)
+    os.dup(old)
+    os.close(old)
+    # ===
+
+    return (bpy.context.scene.frame_start, bpy.context.scene.frame_end)
+
+
+def chunksize(frames: (int, int)):
+    size = frames[1] - frames[0] + 1
+    return min(MAX_CHUNK_PER_FILE, size)
+
+
+def frames_str(frames: (int, int)) -> str:
+    return f"{frames[0]}-{frames[1]}"
+
+
+def pre():
+    """
+    TODO: loop trhough rendered outputs, create a queue for only required jobs
+    """
+    ...
+
+
+def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_size=3):
     return api_client.call_api("/api/v3/jobs", "POST", body={
         "metadata": {
             "project": "The Bundle",
             "user.email": "ci-bot@bundle.grida.co",
             "user.name": "The Bundle by Grida CI Bot"
         },
-        "name": "test",
+        "name": name,
         "type": "simple-blender-render",
         "priority": priority,
         "submitter_platform": "manager",
@@ -43,25 +85,33 @@ def post_job(blendfile, frames, render_output_path, priority=50, chunk_size=3):
 @click.command()
 @click.argument('queue', type=click.Path(exists=True))
 @click.option('--max', default=None, help='Max number of jobs to submit', type=int)
-def main(queue, max):
+@click.option("--dry-run", is_flag=True, help="Don't actually submit jobs")
+def main(queue, max, dry_run):
     queue = Path(queue)
     assert queue.exists()
 
-    for i, job in enumerate(queue.glob('**/*.blend')):
+    for i, job in tqdm(enumerate(queue.glob('**/*.blend'))):
         if max is not None and i >= max:
             break
 
+        _frames = frames_from_blendfile(job)
+        chunk_size = chunksize(_frames)
+        frames = frames_str(_frames)
+
+        obj = Path(job).stem
+        mat = Path(job).parent.name
         # following the mat / obj.blend -> renders/mat/obj-######.png
         render_output_path = os.path.join(
-            shared_drive, 'renders', str(job.parent.relative_to(queue)), f'{job.stem}-######.png')
-        print(f'Posting job {job}, output to {render_output_path}')
-        post_job(
-            blendfile=str(job),
-            # TODO: make this dynamic
-            frames='0-7',  # this
-            chunk_size=8,  # and this
-            render_output_path=render_output_path
-        )
+            shared_drive, 'renders', str(mat), f'{obj}-######.png')
+        tqdm.write(f'☑️ {job} → {render_output_path} ({frames} {chunk_size})')
+        if not dry_run:
+            post_job(
+                name=f"{mat}/{obj}",
+                blendfile=str(job),
+                frames=frames,
+                chunk_size=chunk_size,
+                render_output_path=render_output_path
+            )
     ...
 
 
