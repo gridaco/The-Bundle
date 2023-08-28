@@ -16,9 +16,14 @@ def create_blank_canvas(columns, rows, resolution_x, resolution_y, background_co
     return Image.new("RGB", (total_width, total_height), background_color)
 
 
-def process_image(img_path, x, y, resolution_x, resolution_y, draw, border_width, border_color):
+def process_image(img_path, x, y, resolution_x, resolution_y, draw, border_width, border_color, background_color):
     """Open, resize, and draw the border for each image."""
     with Image.open(img_path) as img:
+        # If the image has transparency, composite it over a solid background
+        if img.mode == "RGBA":
+            img_alpha = Image.new("RGBA", img.size, (255, 255, 255, 0))
+            img = Image.alpha_composite(img_alpha, img).convert("RGB")
+
         img = img.resize((resolution_x, resolution_y), Image.LANCZOS)
 
         # Draw the border (by drawing a larger rect behind the image)
@@ -33,9 +38,8 @@ def process_image(img_path, x, y, resolution_x, resolution_y, draw, border_width
         return img
 
 
-def save_canvas(canvas):
+def save_canvas(canvas, output_path="tiled_image.jpg"):
     """Save the final tiled image to a file."""
-    output_path = "tiled_image.jpg"
     canvas.save(output_path)
     print(f"Image saved to {output_path}")
 
@@ -49,7 +53,8 @@ def save_canvas(canvas):
 @click.option("--background-color", default="white", help="Background color of the tiled image.")
 @click.option("--border-width", default=2, help="Width of the border around each image cell.", type=int)
 @click.option("--border-color", default="black", help="Color of the border around each image cell.")
-def make_tile_image(image_folder, columns, rows, resolution_x, resolution_y, background_color, border_width, border_color):
+@click.option("--out", default="tiled_image.jpg", help="Path to save the tiled image.")
+def make_tile_image(image_folder, columns, rows, resolution_x, resolution_y, background_color, border_width, border_color, out):
     """Create a tiled image from a list of image files in the specified folder."""
 
     image_files = get_image_files_from_directory(image_folder)
@@ -68,11 +73,12 @@ def make_tile_image(image_folder, columns, rows, resolution_x, resolution_y, bac
         x = col * (resolution_x + border_width)
         y = row * (resolution_y + border_width)
 
-        img = process_image(img_path, x, y, resolution_x,
-                            resolution_y, draw, border_width, border_color)
+        img = process_image(img_path, x, y, resolution_x, resolution_y,
+                            draw, border_width, border_color, background_color)
+
         canvas.paste(img, (x, y))
 
-    save_canvas(canvas)
+    save_canvas(canvas, output_path=out)
 
 
 if __name__ == "__main__":
