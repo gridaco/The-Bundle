@@ -3,6 +3,7 @@
   "private": true,
   "workspaces": [
     "web",
+    "lsd",
     "templates/*"
   ]
 }
