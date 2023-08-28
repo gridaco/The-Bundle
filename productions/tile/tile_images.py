@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 from tqdm import tqdm
 import os
 from pathlib import Path
+import random
 
 
 def get_image_files_from_directory(image_folder):
@@ -55,12 +56,16 @@ def save_canvas(canvas, output_path="tiled.png"):
 @click.option("--border-width", default=2, help="Width of the border around each image cell.", type=int)
 @click.option("--border-color", default="black", help="Color of the border around each image cell.")
 @click.option("--out", help="Path to save the tiled image.")
-def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out):
+@click.option("--randomize", is_flag=True, help="Randomize image selection")
+def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize):
     """Create a tiled image from a list of image files in the specified folder."""
 
     out = out or f"examples/tiled-{Path(image_folder).name}.png"
 
     image_files = get_image_files_from_directory(image_folder)
+    if randomize:
+        random.shuffle(image_files)
+
     canvas = create_blank_canvas(
         columns, rows, item_width, item_height, background_color, border_width)
     draw = ImageDraw.Draw(canvas)
