@@ -57,6 +57,7 @@ def save_canvas(canvas, output_path="tiled.png"):
 @click.option("--border-color", default="black", help="Color of the border around each image cell.")
 @click.option("--out", help="Path to save the tiled image.")
 @click.option("--randomize", is_flag=True, help="Randomize image selection")
+# @click.option("--mondrian", is_flag=True, help="Make the layout look like a Mondrian")
 def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize):
     """Create a tiled image from a list of image files in the specified folder."""
 
