@@ -1,8 +1,8 @@
 <p align="center">
   <a href="https://html2.io">
-    <img src="./artworks/readme-cover.jpg" alt="LSD github cover graphic" height="240" />
+    <img src="./artworks/readme-cover.jpg" alt="The Bundle github cover graphic"/>
   </a>
-  <h1 align="center"><a href="https://grida.co/lsd">The Bundle</a></h1>
+  <h1 align="center"><a href="https://grida.co/bundle">The Bundle</a></h1>
   <p align="center">The Bundle by Grida - Ultimated 3D rendered graphics resources pack</p>
 </p>
 
