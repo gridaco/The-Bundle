@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Dela_Gothic_One } from "next/font/google";
-import { Slides } from "@/home/slider";
+import ImageColumn from "@/home/image-column";
+import DisolveSlider from "@/home/desolve-slider";
 import Link from "next/link";
 
 const delta_gothic_one = Dela_Gothic_One({
@@ -8,6 +9,13 @@ const delta_gothic_one = Dela_Gothic_One({
   display: "swap",
   weight: "400",
 });
+
+const images = [
+  "/home/slides/1.png",
+  "/home/slides/2.png",
+  "/home/slides/3.png",
+  "/home/slides/4.png",
+];
 
 export default function Home() {
   return (
@@ -22,19 +30,41 @@ export default function Home() {
             Get The Bundle
           </button>
         </div>
-        <Slides />
+        <div className="flex flex-grow h-max">
+          <DisolveSlider
+            images={images}
+            interval={6}
+            delay={0.2}
+            duration={0.5}
+            style={{
+              width: "100%",
+              height: "100vh",
+            }}
+          />
+        </div>
       </section>
       <section
-        className="flex min-w-max p-20 gap-2"
+        className="flex min-w-max pl-32 pr-32 gap-2 justify-center"
         style={{
-          height: 900,
+          height: 540,
         }}
       >
-        <div className="bg-neutral-900 flex-1 rounded-sm" />
-        <div className="bg-neutral-700 flex-1 rounded-sm" />
-        <div className="bg-neutral-900 flex-1 rounded-sm" />
-        <div className="bg-neutral-700 flex-1 rounded-sm" />
-        <div className="bg-neutral-900 flex-1 rounded-sm" />
+        {[
+          "/home/columns/1.png",
+          "/home/columns/2.png",
+          "/home/columns/3.png",
+          "/home/columns/4.png",
+          "/home/columns/5.png",
+        ].map((src, i) => (
+          <ImageColumn
+            key={i}
+            src={src}
+            alt={i.toString()}
+            objectFit="cover"
+            width={256}
+            height={512}
+          />
+        ))}
       </section>
       <section className="flex pl-48 justify-between items-center">
         <div className="flex flex-col justify-between h-[500px]">
@@ -62,9 +92,9 @@ export default function Home() {
             </div>
           </div>
           <footer>
-            <span className="opacity-50">
-              The Bundle by Grida - © {new Date().getFullYear()} Grida, Inc. All
-              Rights Reserved.
+            <span className="opacity-50 text-xs">
+              The Bundle by Grida -<br />© {new Date().getFullYear()} Grida,
+              Inc. All Rights Reserved.
             </span>
           </footer>
         </div>
