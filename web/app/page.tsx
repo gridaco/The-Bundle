@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Dela_Gothic_One } from "next/font/google";
 
-export const delta_gothic_one = Dela_Gothic_One({
+const delta_gothic_one = Dela_Gothic_One({
   subsets: ["latin"],
   display: "swap",
   weight: "400",
