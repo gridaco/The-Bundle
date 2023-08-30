@@ -54,7 +54,7 @@ export default function Home() {
                   Get The Bundle
                 </button>
               </Link>
-              <Link href="/signin">
+              <Link href="/demo.zip" target="_blank" download>
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Download Free Demo File
                 </button>
