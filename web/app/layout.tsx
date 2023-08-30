@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "The Bundle",
   description: "The Bundle by Grida",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({

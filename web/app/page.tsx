@@ -92,10 +92,20 @@ export default function Home() {
             </div>
           </div>
           <footer>
-            <span className="opacity-50 text-xs">
+            <p className="opacity-50 text-xs leading-tight">
               The Bundle by Grida -<br />© {new Date().getFullYear()} Grida,
               Inc. All Rights Reserved.
-            </span>
+            </p>
+            <Link href="https://instagram.com/grida.co">
+              <div className="mt-4">
+                <Image
+                  src="/grida.svg"
+                  alt="Grida Logo"
+                  width={20}
+                  height={20}
+                />
+              </div>
+            </Link>
           </footer>
         </div>
         <Image
