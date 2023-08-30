@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import NextImage from "next/image";
 
 type DissolveSliderProps = {
   interval: number;
@@ -78,33 +79,35 @@ const DissolveSlider: React.FC<DissolveSliderProps> = ({
       }}
     >
       <AnimatePresence>
-        <motion.img
+        <motion.div
           key={activeIndex}
-          src={images[activeIndex]}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: duration }}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-          }}
-        />
+          // style={{
+          //   position: "absolute",
+          //   top: 0,
+          //   left: 0,
+          // }}
+        >
+          <NextImage src={images[activeIndex]} fill alt="hero slide" />
+        </motion.div>
         {nextIndex !== null && (
-          <motion.img
+          <motion.div
             key={nextIndex}
-            src={images[nextIndex]}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: duration }}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-            }}
-          />
+            // style={{
+            //   position: "absolute",
+            //   top: 0,
+            //   left: 0,
+            // }}
+          >
+            <NextImage src={images[nextIndex]} fill alt="hero slide" />
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

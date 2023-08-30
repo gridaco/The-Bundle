@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  basePath: "/bundle",
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

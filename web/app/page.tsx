@@ -11,10 +11,10 @@ const delta_gothic_one = Dela_Gothic_One({
 });
 
 const images = [
-  "/home/slides/1.png",
-  "/home/slides/2.png",
-  "/home/slides/3.png",
-  "/home/slides/4.png",
+  "/bundle/home/slides/1.png",
+  "/bundle/home/slides/2.png",
+  "/bundle/home/slides/3.png",
+  "/bundle/home/slides/4.png",
 ];
 
 export default function Home() {
@@ -50,11 +50,11 @@ export default function Home() {
         }}
       >
         {[
-          "/home/columns/1.png",
-          "/home/columns/2.png",
-          "/home/columns/3.png",
-          "/home/columns/4.png",
-          "/home/columns/5.png",
+          "/bundle/home/columns/1.png",
+          "/bundle/home/columns/2.png",
+          "/bundle/home/columns/3.png",
+          "/bundle/home/columns/4.png",
+          "/bundle/home/columns/5.png",
         ].map((src, i) => (
           <ImageColumn
             key={i}
@@ -99,7 +99,7 @@ export default function Home() {
             <Link href="https://instagram.com/grida.co">
               <div className="mt-4">
                 <Image
-                  src="/grida.svg"
+                  src="/bundle/grida.svg"
                   alt="Grida Logo"
                   width={20}
                   height={20}
@@ -109,7 +109,7 @@ export default function Home() {
           </footer>
         </div>
         <Image
-          src="/home/cta-bg-4k-example.png"
+          src="/bundle/home/cta-bg-4k-example.png"
           className="select-none"
           alt={"cta-bg-4k-example"}
           width={950}
