@@ -3,14 +3,22 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col justify-between p-24">
-      <section>
-        <h1 className="text-9xl">The Bundle</h1>
-        <button>Get The Bundle</button>
+      <section className="flex flex-row items-center">
+        <div className="flex flex-col items-start">
+          <h1 className="text-9xl">The Bundle</h1>
+          <button>Get The Bundle</button>
+        </div>
+        <Image
+          src="/home/slides/slide-1.png"
+          alt={"slide 1"}
+          width={950}
+          height={750}
+        />
       </section>
       <section
         className="flex"
         style={{
-          width: 1200,
+          width: 1500,
           height: 500,
         }}
       >
@@ -36,7 +44,7 @@ export default function Home() {
           </div>
         </div>
         <Image
-          src="/cta-bg-4k-example.png"
+          src="/home/cta-bg-4k-example.png"
           alt={"cta-bg-4k-example"}
           width={950}
           height={750}
