@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "The Bundle",
   description: "The Bundle by Grida",
   colorScheme: "dark",
+  openGraph: {
+    images: "https://grida.co/bundle/og-image.jpg",
+  },
 };
 
 export default function RootLayout({
