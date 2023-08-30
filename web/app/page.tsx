@@ -15,7 +15,10 @@ export default function Home() {
           <h1 className="text-8xl">
             <span className={delta_gothic_one.className}>The Bundle</span>
           </h1>
-          <button>Get The Bundle</button>
+          <div className="h-4" />
+          <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
+            Get The Bundle
+          </button>
         </div>
         <Image
           src="/home/slides/slide-1.png"
@@ -49,8 +52,12 @@ export default function Home() {
           <span className="opacity-50 text-sm">*Starting from $499 / Mo</span>
           <div className="h-10" />
           <div className="flex gap-4">
-            <button>Get The Bundle</button>
-            <button>Download Free Demo File</button>
+            <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
+              Get The Bundle
+            </button>
+            <button className="border-white hover:bg-gray-900 text-white font-bold py-2 px-4 rounded">
+              Download Free Demo File
+            </button>
           </div>
         </div>
         <Image
