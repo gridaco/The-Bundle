@@ -70,6 +70,8 @@ print(f"- #ROTATIONS: {len(rotations)}")
 
 RENDER_SCENE_NAME = "render"
 OBJECTS_FILE = __DIR / "objects" / "objects.blend"
+# "doodle_99_abstract_art_kitbash"
+
 OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
 DEFAULT_MATERIAL_NAME = 'material'
 DIST = __DIR / 'dist' \
@@ -104,7 +106,7 @@ def matname(filepath: Path):
 # ))
 
 # # sort by config.materials_priority
-# MATERIALS_RENDER_QUEUE_PRIORITY = config.get('materials_render_queue_priority')
+# MATERIALS_RENDER_QUEUE_PRIORITY = config.get('materials_priority')
 # MATERIAL_FILES = sorted(
 #     MATERIAL_FILES,
 #     key=lambda p:
@@ -671,8 +673,10 @@ def main():
         out = OUTDIR / name
         jobs = DIST / 'jobs' / name
         jobs.mkdir(parents=True, exist_ok=True)
+        use_animation = True
 
-        tasksize = len(objpack.object_keys) * len(rotations)
+        tasksize = len(objpack.object_keys) if use_animation else len(
+            objpack.object_keys) * len(rotations)
 
         # Initialize the progress bar (tracks each render)
         pbar = tqdm(total=(tasksize), desc=name, leave=True)
@@ -691,7 +695,7 @@ def main():
                     object_pack=objpack,
                     object_key=key,
                     rotations=rotations,
-                    use_animation=True,
+                    use_animation=use_animation,
                     render_out=out,
                 )
 
@@ -705,7 +709,7 @@ def main():
                     resolution_percentage=resolution_percentage,
                     samples=samples
                 )
-                pbar.update(len(rotations))
+                pbar.update()
             except Exception as e:
                 logging.error(f"Error: {e}")
                 continue

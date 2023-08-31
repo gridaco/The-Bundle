@@ -1,7 +1,7 @@
 {
   "target": "2K",
-  "materials": ["materials/*.blend"],
-  "materials_render_queue_priority": [
+  "materials": ["materials/foundation", "materials/community-material-pack"],
+  "materials_priority": [
     "p.rough",
     "m.copper",
     "sss",
@@ -11,5 +11,6 @@
     "m.cloudy",
     "m.hologram"
   ],
+  "objects": ["objects/foundation", "objects/doodle_99_abstract_art_kitbash"],
   "dist": "/Volumes/WDB2TB/The-Bundle"
 }
