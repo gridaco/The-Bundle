@@ -53,12 +53,16 @@ def pre():
     ...
 
 
-def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_size=3):
+def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_size=3, metadata={}):
     return api_client.call_api("/api/v3/jobs", "POST", body={
         "metadata": {
             "project": "The Bundle",
             "user.email": "ci-bot@bundle.grida.co",
-            "user.name": "The Bundle by Grida CI Bot"
+            "user.name": "The Bundle by Grida CI Bot",
+            # used for query
+            "name": name,
+            "priority": priority,
+            **metadata
         },
         "name": name,
         "type": "simple-blender-render",
@@ -115,7 +119,13 @@ def main(queue, priority, chunk_size, name, max, render_output_path, dry_run):
                 frames=frames,
                 chunk_size=chunk_size,
                 priority=priority,
-                render_output_path=render_output_path
+                render_output_path=render_output_path,
+                metadata={
+                    'material': mat,
+                    'object': obj,
+                    'version': '1',
+                    'batch': '1'
+                }
             )
     ...
 
