@@ -49,58 +49,34 @@ def sync_symlinks(src_dir: Path, dst_dir: Path, pattern: str, renamer, absolute=
             dst_path.symlink_to(target_path)
 
 
-def symlink_to_actual_safe(symlink_path: Path):
+def symlink_to_actual(symlink_path: Path, output_dir: Path = None, relative_to: Path = None):
     """
-    Safely replace a symlink with the actual file it points to.
+    Replace a symlink with the actual file it points to or copy it to output_dir.
 
     :param symlink_path: Path to the symlink.
+    :param output_dir: Optional output directory.
     """
     if not symlink_path.is_symlink():
         raise ValueError(f"{symlink_path} is not a symlink.")
 
-    # Get the actual file path that the symlink points to
-    target_path = Path(symlink_path.resolve())
+    target_path = symlink_path.resolve()
 
-    # Rename the symlink to {original-name}.tmp
-    tmp_path = symlink_path.with_suffix('.tmp')
-    symlink_path.rename(tmp_path)
+    if output_dir:
+        relative_path = symlink_path.relative_to(relative_to)
+        actual_output_dir = output_dir / relative_path.parent
+        actual_output_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(target_path, actual_output_dir / symlink_path.name)
+    else:
+        tmp_path = symlink_path.with_suffix('.tmp')
+        symlink_path.rename(tmp_path)
 
-    try:
-        # Copy the actual file to the symlink's location
-        shutil.copy2(target_path, symlink_path)
-    except Exception as e:
-        # If there's an error, revert the symlink name
-        tmp_path.rename(symlink_path)
-        raise e
+        try:
+            shutil.copy2(target_path, symlink_path)
+        except Exception as e:
+            tmp_path.rename(symlink_path)
+            raise e
 
-    # After successful copy, remove the temporary symlink
-    tmp_path.unlink()
-
-
-def render_symlinks(dir: Path):
-    """
-    Replace all symlinks in a directory and its subdirectories with the actual files they point to.
-
-    :param dir: Path to the directory.
-    """
-    if not dir.exists():
-        raise ValueError(f"{dir} does not exist.")
-
-    # List all items in directory recursively
-    all_files = list(dir.rglob('*'))
-
-    # Ensure all files are symlinks
-    if not all(file.is_symlink() for file in all_files):
-        raise ValueError(f"{dir} contains non-symlink files.")
-
-    # Process each symlink file
-    for symlink_path in tqdm(all_files, desc="Rendering symlinks"):
-        symlink_to_actual_safe(symlink_path)
-
-
-# # Usage example for render_symlinks
-# dir_path = Path('/path/to/directory')
-# render_symlinks(dir_path)
+        tmp_path.unlink()
 
 
 @click.command()
@@ -109,7 +85,7 @@ def render_symlinks(dir: Path):
 @click.option('--pattern', default='*', help='Glob pattern to filter files.')
 @click.option('--renamer-script', type=click.Path(exists=True), help='Path to Python script containing renamer function, called "def rename(...)".')
 @click.option('--frames-profile', type=click.Path(exists=True), help='Path to frames profile json file, where it is used to reference the frame number to the frame data, used when renaming the files.')
-def main(src_dir, dst_dir, pattern, renamer_script, frames_profile):
+def stage(src_dir, dst_dir, pattern, renamer_script, frames_profile):
     """
     Create symlinks in DST_DIR to items in SRC_DIR, renaming them using the provided renamer function.
     """
@@ -139,8 +115,40 @@ def main(src_dir, dst_dir, pattern, renamer_script, frames_profile):
     sync_symlinks(src_dir, dst_dir, pattern, renamer)
 
 
+@click.command()
+@click.argument('dir', type=Path)
+@click.option('--output', '-o', type=Path, help='Optional output directory.')
+def render(dir: Path, output: Path):
+    """
+    Replace all symlinks in a directory and its subdirectories with the actual files they point to.
+
+    :param dir: Path to the directory.
+    :param output: Optional output directory.
+    """
+    if not dir.exists():
+        raise ValueError(f"{dir} does not exist.")
+
+    all_files = list(dir.rglob('*'))
+
+    if output and not output.exists():
+        output.mkdir(parents=True, exist_ok=True)
+
+    for symlink_path in tqdm(all_files, desc="Rendering symlinks"):
+        if symlink_path.is_symlink():
+            symlink_to_actual(symlink_path, output, dir)
+
+
+@click.group()
+def cli():
+    pass
+
+
+cli.add_command(stage)
+cli.add_command(render)
+
 if __name__ == '__main__':
     # Example usage.
-    # python archiver.py ./a ./b --pattern "*.png" --renamer-script renamers/frame_to_angle.py
+    # python archiver.py stage ./a ./b --pattern "*.png" --renamer-script renamers/frame_to_angle.py
+    # python archiver.py render ./b --output ./c
 
-    main()
+    cli()
