@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import shutil
 from tqdm import tqdm
@@ -106,23 +107,31 @@ def render_symlinks(dir: Path):
 @click.argument('src_dir', type=click.Path(exists=True))
 @click.argument('dst_dir', type=click.Path())
 @click.option('--pattern', default='*', help='Glob pattern to filter files.')
-@click.option('--renamer-script', default='renamers/default.py', type=click.Path(exists=True), help='Path to Python script containing renamer function, called "def rename(...)".')
+@click.option('--renamer-script', type=click.Path(exists=True), help='Path to Python script containing renamer function, called "def rename(...)".')
 @click.option('--frames-profile', type=click.Path(exists=True), help='Path to frames profile json file, where it is used to reference the frame number to the frame data, used when renaming the files.')
-def main(src_dir, dst_dir, pattern, renamer_script):
-    """Create symlinks in DST_DIR to items in SRC_DIR, renaming them using the provided renamer function."""
+def main(src_dir, dst_dir, pattern, renamer_script, frames_profile):
+    """
+    Create symlinks in DST_DIR to items in SRC_DIR, renaming them using the provided renamer function.
+    """
 
-    # Dynamically import the renamer function
-    spec = importlib.util.spec_from_file_location(
-        'renamer_module', renamer_script)
-    renamer_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(renamer_module)
+    frames_profile = json.load(
+        open(frames_profile)) if frames_profile else None
 
-    # Check if the function 'rename' exists in the imported module
-    if not hasattr(renamer_module, 'rename'):
-        raise ValueError(
-            f"The script {renamer_script} must contain a function named 'rename'.")
+    if renamer_script is None:
+        def renamer(x): return x
+    else:
+        # Dynamically import the renamer function
+        spec = importlib.util.spec_from_file_location(
+            'renamer_module', renamer_script)
+        renamer_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(renamer_module)
 
-    renamer = renamer_module.rename
+        # Check if the function 'rename' exists in the imported module
+        if not hasattr(renamer_module, 'rename'):
+            raise ValueError(
+                f"The script {renamer_script} must contain a function named 'rename'.")
+
+        def renamer(x): return renamer_module.rename(x, frames_profile)
 
     # Execute the symlink_with_rename function
     src_dir = Path(src_dir)
@@ -131,4 +140,7 @@ def main(src_dir, dst_dir, pattern, renamer_script):
 
 
 if __name__ == '__main__':
+    # Example usage.
+    # python archiver.py ./a ./b --pattern "*.png" --renamer-script renamers/frame_to_angle.py
+
     main()
