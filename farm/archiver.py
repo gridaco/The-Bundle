@@ -22,14 +22,14 @@ def sync_symlinks(src_dir: Path, dst_dir: Path, pattern: str, renamer, absolute=
     dst_dir.mkdir(parents=True, exist_ok=True)
 
     # List all items in source directory recursively and filter them by pattern
-    for item in src_dir.rglob(pattern):
+    for item in tqdm(src_dir.rglob(pattern), desc='Syncing symlinks'):
         if item.is_file():
 
             # Determine the nested structure within src_dir
             relative_path = item.relative_to(src_dir)
 
             # Rename using the renamer function
-            renamed_item = renamer(item.name)
+            renamed_item = renamer(item)
 
             # Create the nested directory structure within dst_dir
             nested_dst_dir = dst_dir / relative_path.parent

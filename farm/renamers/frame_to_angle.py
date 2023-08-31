@@ -11,9 +11,13 @@ def rename(filename, data=None):
         ext = __f.suffix
         name = __f.stem
 
+        # parse the object name
         pattern = r'(.*)-[0-9]{1,6}'
         match = re.match(pattern, name)
         object_name = match.group(1)
+
+        # get the material name - it's the parent directory
+        material_name = __f.parent.name
 
         # parse frame number from last 6 characters of filename (######.)
         frame_str = name[-6:]
@@ -33,7 +37,7 @@ def rename(filename, data=None):
         res = f'{resolution_x}x{resolution_y}'
         qua = f'{resolution_percentage}%'
         samples = f'#{samples}'
-        seq = [object_name, rot, samples, res, qua]
+        seq = [object_name, material_name, rot, samples, res, qua]
         # filter out empty strings, None, etc.
         seq = [s for s in seq if s]
 
