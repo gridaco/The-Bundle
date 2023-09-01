@@ -90,11 +90,12 @@ def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_siz
 @click.argument('queue', type=click.Path(exists=True))
 @click.option('--priority', default=50, help='Job priority', type=int)
 @click.option('--chunk-size', default=None, help='Chunk size', type=int)
+@click.option('--batch', default=1, help='Batch number', type=int)
 @click.option('--name', default=None)
 @click.option('--max', default=None, help='Max number of jobs to submit', type=int)
 @click.option("--render-output-path", default=None, help="Render output path")
 @click.option("--dry-run", is_flag=True, help="Don't actually submit jobs")
-def main(queue, priority, chunk_size, name, max, render_output_path, dry_run):
+def main(queue, priority, chunk_size, name, batch, max, render_output_path, dry_run):
     queue = Path(queue)
     assert queue.exists()
 
@@ -108,10 +109,14 @@ def main(queue, priority, chunk_size, name, max, render_output_path, dry_run):
 
         obj = Path(job).stem
         mat = Path(job).parent.name
+        # print(f'{mat}/{obj}', render_output_path)
         # following the mat / obj.blend -> renders/mat/obj-######.png
-        render_output_path = render_output_path or os.path.join(
+        # be careful not to overwrite the output path name - we made this mistake before, it was painful.
+        __render_output_path = render_output_path or os.path.join(
             shared_drive, 'renders', str(mat), f'{obj}-######.png')
-        tqdm.write(f'☑️ {job} → {render_output_path} ({frames} {chunk_size})')
+
+        tqdm.write(
+            f'☑️ {job} → {__render_output_path} ({frames} {chunk_size})')
         if not dry_run:
             post_job(
                 name=name or f"{mat}/{obj}",
@@ -119,12 +124,12 @@ def main(queue, priority, chunk_size, name, max, render_output_path, dry_run):
                 frames=frames,
                 chunk_size=chunk_size,
                 priority=priority,
-                render_output_path=render_output_path,
+                render_output_path=__render_output_path,
                 metadata={
                     'material': mat,
                     'object': obj,
                     'version': '1',
-                    'batch': '1'
+                    'batch': str(batch)
                 }
             )
     ...
