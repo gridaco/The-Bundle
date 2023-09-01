@@ -45,8 +45,11 @@ def sync_symlinks(src_dir: Path, dst_dir: Path, pattern: str, renamer, absolute=
                 target_path = Path(item.resolve()).relative_to(
                     relative_to.resolve())
 
-            # Create a symlink in the destination directory
-            dst_path.symlink_to(target_path)
+            # Create a symlink in the destination directory, if it doesn't already exist
+            if not dst_path.exists():
+                dst_path.symlink_to(target_path)
+
+            tqdm.write(f"☑️ {dst_path} → {target_path}")
 
 
 def symlink_to_actual(symlink_path: Path, output_dir: Path = None, relative_to: Path = None):
@@ -65,7 +68,15 @@ def symlink_to_actual(symlink_path: Path, output_dir: Path = None, relative_to: 
         relative_path = symlink_path.relative_to(relative_to)
         actual_output_dir = output_dir / relative_path.parent
         actual_output_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(target_path, actual_output_dir / symlink_path.name)
+        output_file_path = actual_output_dir / symlink_path.name
+
+        # Skip if the file already exists
+        if output_file_path.exists():
+            return
+
+        shutil.copy2(target_path, output_file_path)
+        return output_file_path
+
     else:
         tmp_path = symlink_path.with_suffix('.tmp')
         symlink_path.rename(tmp_path)
@@ -77,6 +88,7 @@ def symlink_to_actual(symlink_path: Path, output_dir: Path = None, relative_to: 
             raise e
 
         tmp_path.unlink()
+        return symlink_path
 
 
 @click.command()
@@ -135,7 +147,13 @@ def render(dir: Path, output: Path):
 
     for symlink_path in tqdm(all_files, desc="Rendering symlinks"):
         if symlink_path.is_symlink():
-            symlink_to_actual(symlink_path, output, dir)
+            res = symlink_to_actual(symlink_path, output, dir)
+            if res:
+                tqdm.write(f"☑️ {symlink_path} → {res}")
+            else:
+                tqdm.write(f"☐ {symlink_path}")
+        else:
+            tqdm.write(f"☒ {symlink_path}")
 
 
 @click.group()
