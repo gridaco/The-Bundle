@@ -61,7 +61,7 @@ def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_siz
             "user.name": "The Bundle by Grida CI Bot",
             # used for query
             "name": name,
-            "priority": priority,
+            "priority": str(priority),
             **metadata
         },
         "name": name,
