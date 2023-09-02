@@ -47,3 +47,7 @@ This Agreement is governed by the laws of the jurisdiction from which Licensor o
 ### 7. Entire Agreement
 
 This Agreement constitutes the entire understanding between the parties and supersedes all prior oral agreements relating to the subject matter hereof.
+
+**Licensor:**
+
+Grida, Inc.
