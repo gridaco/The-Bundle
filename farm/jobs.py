@@ -104,25 +104,34 @@ def main(queue, priority, chunk_size, name, batch, max, render_output_path, dry_
             break
 
         _frames = frames_from_blendfile(job)
-        chunk_size = chunk_size or chunksize(_frames)
+        __chunk_size = chunk_size or chunksize(_frames)
         frames = frames_str(_frames)
 
         obj = Path(job).stem
         mat = Path(job).parent.name
+        jobname = name or f"{mat}/{obj}"
+
         # print(f'{mat}/{obj}', render_output_path)
         # following the mat / obj.blend -> renders/mat/obj-######.png
         # be careful not to overwrite the output path name - we made this mistake before, it was painful.
-        __render_output_path = render_output_path or os.path.join(
-            shared_drive, 'renders', str(mat), f'{obj}-######.png')
+        __render_output_path =\
+            render_output_path.format(
+                shared_drive=shared_drive,
+                object=obj
+            )\
+            if render_output_path\
+            else \
+            os.path.join(shared_drive, 'renders',
+                         str(mat), f'{obj}-######.png')
 
         tqdm.write(
-            f'☑️ {job} → {__render_output_path} ({frames} {chunk_size})')
+            f'☑️ {job} → {__render_output_path} ({frames} {chunk_size} {obj} {mat})')
         if not dry_run:
             post_job(
-                name=name or f"{mat}/{obj}",
+                name=jobname,
                 blendfile=str(job),
                 frames=frames,
-                chunk_size=chunk_size,
+                chunk_size=__chunk_size,
                 priority=priority,
                 render_output_path=__render_output_path,
                 metadata={
