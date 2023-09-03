@@ -45,6 +45,13 @@ def main(target_directory, output, pattern, quality, recursive, overwrite):
         raise click.UsageError(
             'Output directory is the same as target directory. Use --overwrite to allow.')
 
+    if overwrite:
+        if click.confirm(
+                "The --overwrite flag is set. This will overwrite files in the target directory. Once continuing with overwrite, you should not kill the process, otherwise it will result a truncated images. Continue?", abort=True):
+            click.echo('Continuing...')
+        else:
+            return
+
     if recursive:
         matching_files = list(target_path.rglob(pattern))
     else:
