@@ -2,6 +2,16 @@ from pathlib import Path
 import click
 from PIL import Image
 from tqdm import tqdm
+import logging
+
+# configure logging
+logging.basicConfig(
+    level=logging.ERROR,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("optimize_images.log"),
+    ]
+)
 
 
 def optimize_image(image_path, output_path, quality=95):
@@ -56,13 +66,18 @@ def main(target_directory, output, pattern, quality, recursive, overwrite):
             # create parent directories if they don't exist
             save_to.parent.mkdir(parents=True, exist_ok=True)
             size_a = img_file.stat().st_size
-            optimize_image(img_file, save_to, quality)
-            size_b = img_file.stat().st_size
-            size_c = size_a - size_b
-            size_c_kb = size_c / 1024
-            tqdm.write(
-                f'☑ Saved: {size_c_kb}kb | {rel_path} | {size_a} >> {size_b}')
-            pbar.update(1)
+            try:
+                optimize_image(img_file, save_to, quality)
+                size_b = img_file.stat().st_size
+                size_c = size_a - size_b
+                size_c_kb = size_c / 1024
+                tqdm.write(
+                    f'☑ Saved: {size_c_kb}kb | {rel_path} | {size_a} >> {size_b}')
+                pbar.update(1)
+            except OSError as e:
+                tqdm.write(f'☒ Failed: {rel_path} | {e}')
+                logging.error(f'Failed: {rel_path} >> Image trucated.')
+                pbar.update(1)
 
 
 if __name__ == '__main__':
