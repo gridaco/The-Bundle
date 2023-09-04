@@ -1,0 +1,67 @@
+{
+  "pattern": "{material}/{object},{material},{rotation},{samples},{resolution},{resolution_percentage}.png",
+  "mapping": {
+    "objects": {
+      "a.*": "a",
+      "b.*": "b",
+      "c.*": "c",
+      "d.*": "d",
+      "e.*": "e",
+      "f.*": "f",
+      "x.*": "x",
+      "z.*": "z",
+      "*": "99"
+    },
+    "materials": {
+      "Aluminium Foil": "cmp.aluminium-foil",
+      "Battered": "cmp.battered",
+      "Brushed": "cmp.brushed",
+      "Bubble": "cmp.bubble",
+      "Clay": "cmp.clay",
+      "Dispersion Glass": "cmp.dispersion-glass",
+      "Frosted Dispersion Glass": "cmp.frosted-dispersion-glass",
+      "Frosted Glass": "cmp.frosted-glass",
+      "Glass": "cmp.glass",
+      "Gold Foil": "cmp.gold-foil",
+      "Marble": "cmp.marble",
+      "Plastic": "cmp.plastic",
+      "Subtle Imperfections": "cmp.subtle-imperfections",
+      "*": "{name}"
+    }
+  },
+  "packaging": {
+    "objects": ["99", "a", "b", "c", "d", "e", "f", "x", "z"],
+    "materials": [
+      "cmp.aluminium-foil",
+      "cmp.battered",
+      "cmp.brushed",
+      "cmp.bubble",
+      "cmp.clay",
+      "cmp.dispersion-glass",
+      "cmp.frosted-dispersion-glass",
+      "cmp.frosted-glass",
+      "cmp.glass",
+      "cmp.gold-foil",
+      "cmp.marble",
+      "cmp.plastic",
+      "cmp.subtle-imperfections",
+      "m.blobs",
+      "m.chrome",
+      "m.cloudy",
+      "m.copper",
+      "m.gold",
+      "m.hologram",
+      "m.silver",
+      "p.reflective",
+      "p.rough",
+      "sss.1"
+    ]
+  },
+  "targets": ["pro", "demo"],
+  "files": [
+    "attatchments/LICENSE",
+    "attatchments/README",
+    "attatchments/GUIDE",
+    "CHANGELOG"
+  ]
+}
