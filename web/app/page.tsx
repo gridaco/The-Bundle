@@ -18,19 +18,43 @@ const images = [
 ];
 
 export default function Home() {
+  // const cta_link = "/signin";
+  const cta_link = "https://cal.com/han-from-grida/15min";
+  // const cta_txt = "Get The Bundle";
+  const cta_txt = "Book a Demo";
+  const demo_link = "/demo.zip";
+
   return (
     <main className="relative flex min-h-screen flex-col justify-between gap-40">
       <section className="flex flex-row items-center justify-between pl-48 pb-24 min-h-screen">
         <div className="flex flex-col items-start">
-          <h1 className="text-8xl">
+          <h1 className="text-7xl">
             <span className={delta_gothic_one.className}>The Bundle</span>
           </h1>
           <div className="h-4" />
-          <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
-            Get The Bundle
-          </button>
+          <Link href={cta_link} target="_blank">
+            <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
+              {cta_txt}
+            </button>
+          </Link>
         </div>
-        <div className="flex flex-grow h-max">
+        <div className="flex h-max items-center justify-center flex-1 relative">
+          {/* <div
+            style={{
+              position: "relative",
+              top: 80,
+              width: 860,
+              height: 860,
+            }}
+          >
+            <video
+              muted
+              autoPlay
+              loop
+              src="/bundle/tmp/001.mp4"
+              // https://player.vimeo.com/progressive_redirect/playback/860123788/rendition/1080p/file.mp4?loc=external&log_user=0&signature=ac9c2e0d2e367d8a31af6490edad8c1f7bae87d085c4f3909773a7ca5a129cb6
+            />
+          </div> */}
           <DisolveSlider
             images={images}
             interval={6}
@@ -79,12 +103,12 @@ export default function Home() {
             <span className="opacity-50 text-sm">*Starting from $499 / Mo</span>
             <div className="h-10" />
             <div className="flex gap-4">
-              <Link href="/signin">
+              <Link href={cta_link} target="_blank">
                 <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
-                  Get The Bundle
+                  {cta_txt}
                 </button>
               </Link>
-              <Link href="/demo.zip" target="_blank" download>
+              <Link href={demo_link} target="_blank" download>
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Download Free Demo File
                 </button>
