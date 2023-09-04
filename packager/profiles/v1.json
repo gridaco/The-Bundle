@@ -1,5 +1,10 @@
 {
-  "pattern": "{material}/{object},{material},{rotation},{samples},{resolution},{resolution_percentage}.png",
+  "name": "bundle",
+  "version": "0.0.1",
+  "pattern": {
+    "i": "{material}/{ns}.{object},{material},{rotation},{samples},{resolution},{resolution_percentage}.png",
+    "o": "{name}-{material}-{ns}/{object}-{rotation}.png"
+  },
   "mapping": {
     "objects": {
       "a.*": "a",
