@@ -65,8 +65,8 @@
   "targets": ["pro", "demo"],
   "files": [
     "attatchments/LICENSE",
-    "attatchments/README",
-    "attatchments/GUIDE",
+    // "attatchments/README",
+    // "attatchments/GUIDE",
     "CHANGELOG"
   ]
 }
