@@ -16,14 +16,16 @@ export function HeroVideo() {
         muted
         autoPlay
         loop
-        src="/bundle/tmp/seqs.mp4"
-        // src="https://player.vimeo.com/progressive_redirect/playback/860123788/rendition/1080p/file.mp4?loc=external&log_user=0&signature=ac9c2e0d2e367d8a31af6490edad8c1f7bae87d085c4f3909773a7ca5a129cb6"
+        // src="/bundle/tmp/seqs.mp4"
+        src="https://player.vimeo.com/progressive_redirect/playback/860123788/rendition/1080p/file.mp4?loc=external&log_user=0&signature=ac9c2e0d2e367d8a31af6490edad8c1f7bae87d085c4f3909773a7ca5a129cb6"
       />
     </VideoContainer>
   );
 }
 
 const VideoContainer = styled.div`
+  user-select: none;
+  pointer-events: none;
   /* add gradient on the bottom */
   &:after {
     content: "";
