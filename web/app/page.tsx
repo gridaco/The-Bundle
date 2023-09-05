@@ -18,11 +18,9 @@ const images = [
 ];
 
 export default function Home() {
-  // const cta_link = "/signin";
-  const cta_link = "https://cal.com/han-from-grida/15min";
-  // const cta_txt = "Get The Bundle";
-  const cta_txt = "Book a Demo";
-  const demo_link = "/demo.zip";
+  const cta_link = "/signin";
+  const cta_txt = "Get The Bundle";
+  // const demo_link = "/demo.zip";
 
   return (
     <main className="relative flex min-h-screen flex-col justify-between gap-40">
@@ -39,7 +37,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="flex h-max items-center justify-center flex-1 relative">
-          {/* <div
+          <div
             style={{
               position: "relative",
               top: 80,
@@ -51,11 +49,11 @@ export default function Home() {
               muted
               autoPlay
               loop
-              src="/bundle/tmp/001.mp4"
+              src="/bundle/tmp/seqs.mp4"
               // https://player.vimeo.com/progressive_redirect/playback/860123788/rendition/1080p/file.mp4?loc=external&log_user=0&signature=ac9c2e0d2e367d8a31af6490edad8c1f7bae87d085c4f3909773a7ca5a129cb6
             />
-          </div> */}
-          <DisolveSlider
+          </div>
+          {/* <DisolveSlider
             images={images}
             interval={6}
             delay={0.2}
@@ -64,7 +62,7 @@ export default function Home() {
               width: "100%",
               height: "100vh",
             }}
-          />
+          /> */}
         </div>
       </section>
       <section
@@ -100,7 +98,7 @@ export default function Home() {
               <br />
               50 Materials <span className="opacity-50">20 Scenes</span>
             </h2>
-            <span className="opacity-50 text-sm">*Starting from $499 / Mo</span>
+            <span className="opacity-50 text-sm">*Starting from $19 / Mo</span>
             <div className="h-10" />
             <div className="flex gap-4">
               <Link href={cta_link} target="_blank">
@@ -108,7 +106,7 @@ export default function Home() {
                   {cta_txt}
                 </button>
               </Link>
-              <Link href={demo_link} target="_blank" download>
+              <Link href={cta_link} target="_blank">
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Download Free Demo File
                 </button>
