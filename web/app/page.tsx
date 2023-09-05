@@ -3,6 +3,7 @@ import { Dela_Gothic_One } from "next/font/google";
 import ImageColumn from "@/home/image-column";
 import DisolveSlider from "@/home/desolve-slider";
 import Link from "next/link";
+import { HeroVideo } from "@/home/hero-video";
 
 const delta_gothic_one = Dela_Gothic_One({
   subsets: ["latin"],
@@ -37,22 +38,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="flex h-max items-center justify-center flex-1 relative">
-          <div
-            style={{
-              position: "relative",
-              top: 80,
-              width: 860,
-              height: 860,
-            }}
-          >
-            <video
-              muted
-              autoPlay
-              loop
-              src="/bundle/tmp/seqs.mp4"
-              // https://player.vimeo.com/progressive_redirect/playback/860123788/rendition/1080p/file.mp4?loc=external&log_user=0&signature=ac9c2e0d2e367d8a31af6490edad8c1f7bae87d085c4f3909773a7ca5a129cb6
-            />
-          </div>
+          <HeroVideo />
           {/* <DisolveSlider
             images={images}
             interval={6}
