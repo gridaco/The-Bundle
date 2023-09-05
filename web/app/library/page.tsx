@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import list from "@/k/bundle.json";
 
+export const dynamic = "force-dynamic";
+
 export default async function LibraryPage() {
   const supabase = createServerComponentClient({ cookies });
 
