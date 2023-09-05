@@ -3,7 +3,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { app_metadata_subscription_id } from "@/k/userkey.json";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
+import list from "@/k/bundle.json";
 export default async function LibraryPage() {
   const supabase = createServerComponentClient({ cookies });
 
@@ -15,14 +15,17 @@ export default async function LibraryPage() {
   }
 
   return (
-    <>
-      <Link
-        href="/library/download?item=m.copper-a.zip"
-        download
-        target="_blank"
-      >
-        <button>Download Copper-A</button>
-      </Link>
-    </>
+    <div className="max-w-xl flex flex-col gap-4 p-24">
+      {list.map((item, i) => (
+        <Link
+          key={i}
+          href={`/library/download?item=${item}`}
+          download
+          target="_blank"
+        >
+          <button>{item}</button>
+        </Link>
+      ))}
+    </div>
   );
 }
