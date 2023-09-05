@@ -42,15 +42,13 @@ export async function GET(request: NextRequest) {
   // once updated, refresh session
   await supabase.auth.refreshSession();
 
-  const host = request.headers.get("host");
-  const protocol = request.headers.get("x-forwarded-proto");
   const baseurl =
     process.env.NODE_ENV === "production"
-      ? "https://grida.co/lsd"
-      : `${protocol}://${host}/lsd`;
+      ? "https://grida.co/bundle"
+      : `${request.nextUrl.protocol}//${request.nextUrl.host}/bundle`;
 
   //
-  const redirect = `${baseurl}/?return-reason=pro-activated`;
+  const redirect = `${baseurl}/library?return-reason=pro-activated`;
 
   return NextResponse.redirect(redirect);
 }

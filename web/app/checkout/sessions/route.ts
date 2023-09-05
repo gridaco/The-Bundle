@@ -43,8 +43,6 @@ export async function GET(request: NextRequest) {
   }
 
   const price = request.nextUrl.searchParams.get("price");
-  const host = request.headers.get("host");
-  const protocol = request.headers.get("x-forwarded-proto");
 
   if (!price) {
     return NextResponse.json({ error: "price is required" }, { status: 400 });
@@ -52,8 +50,8 @@ export async function GET(request: NextRequest) {
 
   const baseurl =
     process.env.NODE_ENV === "production"
-      ? "https://grida.co/lsd"
-      : `${protocol}://${host}/lsd`;
+      ? "https://grida.co/bundle"
+      : `${request.nextUrl.protocol}//${request.nextUrl.host}/bundle`;
 
   try {
     // Create Checkout Sessions from body params.
@@ -70,12 +68,8 @@ export async function GET(request: NextRequest) {
       ],
       // enable promotion codes
       allow_promotion_codes: true,
-      // 3 day trial
-      subscription_data: {
-        trial_period_days: 3,
-      },
       mode: "subscription",
-      success_url: `${baseurl}/api/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${baseurl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseurl}/`,
     });
 
