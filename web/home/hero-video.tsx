@@ -4,14 +4,7 @@ import styled from "@emotion/styled";
 
 export function HeroVideo() {
   return (
-    <VideoContainer
-      style={{
-        position: "relative",
-        top: 80,
-        width: 860,
-        height: 860,
-      }}
-    >
+    <VideoContainer>
       <video
         muted
         autoPlay
@@ -26,6 +19,8 @@ export function HeroVideo() {
 const VideoContainer = styled.div`
   user-select: none;
   pointer-events: none;
+  width: 100%;
+  height: 100%;
   /* add gradient on the bottom */
   &:after {
     content: "";
@@ -33,11 +28,18 @@ const VideoContainer = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 120px;
+    height: 40vh;
     background: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0) 0%,
       rgba(0, 0, 0, 1) 100%
     );
+  }
+
+  video {
+    height: fit-content;
+    width: 100%;
+    max-width: 800px;
+    max-height: 800px;
   }
 `;
