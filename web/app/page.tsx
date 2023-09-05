@@ -4,6 +4,7 @@ import ImageColumn from "@/home/image-column";
 import DisolveSlider from "@/home/desolve-slider";
 import Link from "next/link";
 import { HeroVideo } from "@/home/hero-video";
+import contacts from "@/k/contacts.json";
 
 const delta_gothic_one = Dela_Gothic_One({
   subsets: ["latin"],
@@ -92,11 +93,16 @@ export default function Home() {
                   {cta_txt}
                 </button>
               </Link>
-              <Link href={cta_link} target="_blank">
+              <Link href={contacts.demo} target="_blank">
+                <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
+                  Book a Demo
+                </button>
+              </Link>
+              {/* <Link href={cta_link} target="_blank">
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Download Free Demo File
                 </button>
-              </Link>
+              </Link> */}
             </div>
           </div>
           <footer>
