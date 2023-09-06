@@ -2,6 +2,10 @@
 import React from "react";
 import { Tabs } from "@radix-ui/themes";
 
+function capitalizeFirstLetter(txt: string) {
+  return txt.charAt(0).toUpperCase() + txt.slice(1);
+}
+
 export function LibraryTab({
   defaultValue,
   tabs,
@@ -17,8 +21,8 @@ export function LibraryTab({
       <Tabs.List className="justify-center">
         {tabs.map((tab, i) => (
           // @ts-ignore
-          <Tabs.Trigger key={i} value={tab} className="capitalize">
-            {tab}
+          <Tabs.Trigger key={i} value={tab}>
+            {capitalizeFirstLetter(tab)}
           </Tabs.Trigger>
         ))}
       </Tabs.List>
