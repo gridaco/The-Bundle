@@ -30,6 +30,8 @@ fallbacks = {
 materials = {
     "cmp.aluminium-foil": "Aluminium Foil",
     "cmp.battered": "Battered",
+    "cmp.bubble": "Bubble",
+    "cmp.brushed": "Brushed",
     "cmp.clay": "Clay",
     "cmp.frosted-dispersion-glass": "Frosted Dispersion Glass",
     "cmp.frosted-glass": "Frosted Glass",

@@ -23,7 +23,10 @@ export function Packs() {
                 target="_blank"
               >
                 <button>
-                  <PackItem item={`${name} ${item.toUpperCase()}`} />
+                  <PackItem
+                    src={`/bundle/thumbnails/${k}/${item}.png`}
+                    name={`${name} ${item.toUpperCase()}`}
+                  />
                 </button>
               </Link>
             ))}
@@ -34,10 +37,10 @@ export function Packs() {
   );
 }
 
-function PackItem({ item }: { item: string }) {
+function PackItem({ name, src }: { src: string; name: string }) {
   return (
     <div className="w-90 h-90">
-      <Image src={"/bundle/gallery/01.png"} width={340} height={340} alt="" />
+      <Image src={src} width={340} height={340} alt="" />
       <div className="flex opacity-80 flex-col items-start">
         <div className="flex flex-row justify-stretch w-full">
           <h4
@@ -46,7 +49,7 @@ function PackItem({ item }: { item: string }) {
               textAlign: "left",
             }}
           >
-            {item}
+            {name}
           </h4>
           <span>·</span>
         </div>

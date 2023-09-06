@@ -20,10 +20,6 @@
       "name": "Clay",
       "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
     },
-    "cmp.dispersion-glass": {
-      "name": "Dispersion Glass",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x"]
-    },
     "cmp.frosted-dispersion-glass": {
       "name": "Frosted Dispersion Glass",
       "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
@@ -52,17 +48,13 @@
       "name": "Subtle Imperfections",
       "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
     },
-    "m.blobs": {
-      "name": "Blobs",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
-    },
     "m.chrome": {
       "name": "Chrome",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
+      "packs": ["a", "b", "c", "d", "e", "f", "x", "z"]
     },
     "m.cloudy": {
       "name": "Cloudy",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
+      "packs": ["a", "b", "c", "d", "e", "f", "x", "z"]
     },
     "m.copper": {
       "name": "Copper",
@@ -70,15 +62,15 @@
     },
     "m.gold": {
       "name": "Gold",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
+      "packs": ["a", "b", "c", "d", "e", "f", "x", "z"]
     },
     "m.hologram": {
       "name": "Hologram",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
+      "packs": ["a", "b", "c", "d", "e", "f", "x", "z"]
     },
     "m.silver": {
       "name": "Silver",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
+      "packs": ["a", "b", "c", "d", "e", "f", "x", "z"]
     },
     "p.reflective": {
       "name": "Reflective",
@@ -86,11 +78,11 @@
     },
     "p.rough": {
       "name": "Rough",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
+      "packs": ["a", "b", "c", "d", "e", "f", "x", "z"]
     },
     "sss": {
       "name": "SSS",
-      "packs": ["99", "a", "b", "c", "d", "e", "f", "x", "z"]
+      "packs": ["a", "b", "c", "d", "e", "f", "x", "z"]
     }
   },
   "files": [
