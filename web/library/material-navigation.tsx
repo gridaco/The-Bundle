@@ -1,9 +1,11 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function MaterialsNav() {
   return (
-    <div className="flex flex-row gap-4 w-fit">
+    <div className="flex flex-row gap-8 w-fit">
       {[
         "cmp.aluminium-foil",
         "cmp.battered",
@@ -27,14 +29,19 @@ export function MaterialsNav() {
         "sss",
       ].map((m, i) => (
         <Link href={`/library/#${m}`} key={i}>
-          <div className="select-none w-20 h-20">
+          <motion.div
+            className="select-none w-24 h-24"
+            whileHover={{
+              scale: 1.1,
+            }}
+          >
             <Image
               src={`/bundle/icons/${m}.png`}
               width={100}
               height={100}
               alt={m}
             />
-          </div>
+          </motion.div>
         </Link>
       ))}
     </div>
