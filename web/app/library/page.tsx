@@ -34,10 +34,10 @@ export default async function LibraryPage() {
       </header>
       <div className="sticky top-0 bg-transparent bg-opacity-5 backdrop-blur-xl z-10">
         <div className="flex flex-col items-center mt-10">
-          <LibraryTab
+          {/* <LibraryTab
             tabs={["materials", "gallary"]}
             defaultValue="materials"
-          ></LibraryTab>
+          ></LibraryTab> */}
           <div className="max-w-screen-md overflow-x-scroll overflow-y-hidden no-scrollbar">
             <MaterialsNav />
           </div>
