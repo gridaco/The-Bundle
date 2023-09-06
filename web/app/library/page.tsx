@@ -1,13 +1,11 @@
-import Link from "next/link";
 import { Dela_Gothic_One } from "next/font/google";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { app_metadata_subscription_id } from "@/k/userkey.json";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import list from "@/k/bundle.json";
-import Image from "next/image";
 import { Content, LibraryTab } from "@/library/tab";
 import { Tabs } from "@radix-ui/themes";
+import { Gallery, Packs, MaterialsNav } from "@/library";
 
 export const dynamic = "force-dynamic";
 
@@ -40,62 +38,18 @@ export default async function LibraryPage() {
             tabs={["materials", "gallary"]}
             defaultValue="materials"
           ></LibraryTab>
-          <div className="max-w-screen-lg overflow-x-scroll no-scrollbar">
+          <div className="max-w-screen-md overflow-x-scroll no-scrollbar">
             <MaterialsNav />
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-4 mt-10">
-        {list.map((item, i) => (
-          <Link
-            key={i}
-            href={`/library/download?item=${item}`}
-            download
-            target="_blank"
-          >
-            <button>{item}</button>
-          </Link>
-        ))}
+      <div className="max-w-screen-md m-auto flex flex-col gap-4 mt-24">
+        {/* <Gallery /> */}
+        <Packs />
       </div>
       <footer></footer>
     </main>
   );
 }
 
-function MaterialsNav() {
-  return (
-    <div className="flex flex-row gap-4 w-fit">
-      {[
-        "cmp.aluminium-foil",
-        "cmp.battered",
-        "cmp.clay",
-        "cmp.frosted-dispersion-glass",
-        "cmp.frosted-glass",
-        "cmp.glass",
-        "cmp.gold-foil",
-        "cmp.marble",
-        "cmp.plastic",
-        "cmp.subtle-imperfections",
-        "m.blob",
-        "m.chrome",
-        "m.cloudy",
-        "m.copper",
-        "m.gold",
-        "m.hologram",
-        "m.silver",
-        "p.reflective",
-        "p.rough",
-        "sss",
-      ].map((m, i) => (
-        <div key={i} className="select-none w-20 h-20">
-          <Image
-            src={`/bundle/icons/${m}.png`}
-            width={100}
-            height={100}
-            alt={m}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
+// function
