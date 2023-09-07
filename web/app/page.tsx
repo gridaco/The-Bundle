@@ -96,16 +96,16 @@ export default function Home() {
                   {cta_txt}
                 </button>
               </Link>
-              <Link href={contacts.demo} target="_blank">
+              {/* <Link href={contacts.demo} target="_blank">
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Book a Demo
                 </button>
-              </Link>
-              {/* <Link href={cta_link} target="_blank">
+              </Link> */}
+              <Link href={cta_link} target="_blank">
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Download Free Demo File
                 </button>
-              </Link> */}
+              </Link>
             </div>
           </div>
           <footer>
