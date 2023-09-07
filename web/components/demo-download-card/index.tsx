@@ -9,8 +9,8 @@ export function DemoDownloadCard() {
         <div className="flex flex-col">
           <h3 className="text-2xl font-bold text-start">Try our Demo file</h3>
           <p className="text-sm opacity-80">
-            Having trouble to decide? Try our demo file and see what you can do
-            with The Bundle yourself
+            Having trouble to decide? Try our demo file, see what you can do for
+            yourself.
           </p>
         </div>
         <div className="flex flex-col">
