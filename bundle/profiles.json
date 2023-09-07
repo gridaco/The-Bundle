@@ -1,37 +1,52 @@
 {
-  "8K": {
-    "res": 8192,
-    "samples": 1024,
-    "resolution_percentage": 100
+  "quality": {
+    "8K": {
+      "res": 8192,
+      "samples": 1024,
+      "resolution_percentage": 100
+    },
+    "4K": {
+      "res": 4096,
+      "samples": 256,
+      "resolution_percentage": 100
+    },
+    "2K": {
+      "res": 2048,
+      "samples": 64,
+      "resolution_percentage": 100
+    },
+    "1K": {
+      "res": 1024,
+      "samples": 32,
+      "resolution_percentage": 100
+    },
+    "512": {
+      "res": 512,
+      "samples": 16,
+      "resolution_percentage": 100
+    },
+    "PREVIEW": {
+      "res": 512,
+      "samples": 8,
+      "resolution_percentage": 50
+    },
+    "DEBUG": {
+      "res": 512,
+      "samples": 1,
+      "resolution_percentage": 10
+    }
   },
-  "4K": {
-    "res": 4096,
-    "samples": 256,
-    "resolution_percentage": 100
-  },
-  "2K": {
-    "res": 2048,
-    "samples": 64,
-    "resolution_percentage": 100
-  },
-  "1K": {
-    "res": 1024,
-    "samples": 32,
-    "resolution_percentage": 100
-  },
-  "512": {
-    "res": 512,
-    "samples": 16,
-    "resolution_percentage": 100
-  },
-  "PREVIEW": {
-    "res": 512,
-    "samples": 8,
-    "resolution_percentage": 50
-  },
-  "DEBUG": {
-    "res": 512,
-    "samples": 1,
-    "resolution_percentage": 10
+  "rotation": {
+    "DEBUG": [[0, 0, 0]],
+    "8__X45_3__Z45_3": [
+      [0, 0, 0],
+      [0, 30, 0],
+      [0, 30, 15],
+      [0, 30, 30],
+      [0, 30, 45],
+      [15, 30, 0],
+      [30, 30, 0],
+      [45, 30, 0]
+    ]
   }
 }

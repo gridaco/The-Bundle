@@ -1,5 +1,5 @@
 {
-  "target": "2K",
+  "target_quality": "2K",
   "materials": ["materials/foundation", "materials/community-material-pack"],
   "materials_priority": [
     "p.rough",
@@ -12,5 +12,5 @@
     "m.hologram"
   ],
   "objects": ["objects/foundation", "objects/doodle_99_abstract_art_kitbash"],
-  "dist": "/Volumes/WDB2TB/The-Bundle"
+  "dist": "./dist"
 }

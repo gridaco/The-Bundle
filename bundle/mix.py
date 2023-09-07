@@ -6,8 +6,7 @@ import os
 from pathlib import Path
 import logging
 from tqdm import tqdm
-from functools import reduce
-
+import click
 
 __DIR = Path(os.path.dirname(bpy.data.filepath))
 
@@ -34,42 +33,33 @@ if task_file.exists():
 # - PREVIEW
 # - 512
 # - 1K
-target = (task.get('target') if task else None) or 'PREVIEW'
+target_quality = (task.get('target_quality') if task else None) or 'PREVIEW'
+IS_DEBUG = target_quality == 'DEBUG'
+target_rotation = 'DEBUG' if IS_DEBUG else '8__X45_3__Z45_3'
 
 profiles: dict = json.load(open(__DIR / 'profiles.json'))
 
-assert target in profiles.keys(), f"Invalid target: {target}"
+assert target_quality in profiles.get(
+    "quality").keys(), f"Invalid target: {target_quality}"
 
 material_classes: dict = json.load(open(__DIR / 'materials' / 'config.json'))
 
-rotation_profiles = {
-    'DEBUG': [[0, 0, 0]],
-    'xz45-3': [
-        [0, 0, 0],
-        [0, 30, 0],
-        [0, 30, 15],
-        [0, 30, 30],
-        [0, 30, 45],
-        [15, 30, 0],
-        [30, 30, 0],
-        [45, 30, 0],
-    ]
-}
 
-IS_DEBUG = target == 'DEBUG'
-profile: dict = profiles[target]
-resolution_percentage = profile.get('resolution_percentage', 100)
-res = profile['res']
-samples = profile['samples']
-rotations = rotation_profiles['DEBUG' if IS_DEBUG else 'xz45-3']
+quality_profile: dict = profiles.get("quality").get(target_quality)
+resolution_percentage = quality_profile.get('resolution_percentage', 100)
+res = quality_profile['res']
+samples = quality_profile['samples']
 
-print(f"- TARGET {target}...")
-print(f"- PROFILE: {json.dumps(profile, indent=2)}")
+rotations = profiles.get("rotation").get(target_rotation)
+
+print(f"- TARGET {target_quality}...")
+print(f"- PROFILE: {json.dumps(quality_profile, indent=2)}")
 print(f"- #ROTATIONS: {len(rotations)}")
 
 
 RENDER_SCENE_NAME = "render"
-OBJECTS_FILE = __DIR / "objects" / "objects.blend"
+OBJECTS_DIR = __DIR / "objects"
+OBJECTS_FILE = OBJECTS_DIR / "foundation" / "objects.blend"
 # "doodle_99_abstract_art_kitbash"
 
 OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
@@ -77,7 +67,7 @@ DEFAULT_MATERIAL_NAME = 'material'
 DIST = __DIR / 'dist' \
     if task.get('dist') is None \
     else Path(task.get('dist'))
-OUTDIR = DIST / target
+OUTDIR = DIST / target_quality
 
 
 def matname(filepath: Path):
@@ -152,20 +142,25 @@ class MaterialPackage:
             # inspect material files without loading them into the current blend file
             with bpy.data.libraries.load(str(material_file), link=False) as (data_from, _):
                 for m in data_from.materials:
-                    if m in materials:
-                        self.materials[m] = {
-                            'file': material_file,
-                            'name': m
-                        }
+                    # find the material entry with 'name' == m
+                    for k, v in materials.items():
+                        if v['name'] == m:
+                            self.materials[k] = {
+                                'file': material_file,
+                                'name': m
+                            }
+                            break
 
             ...
 
-    def load(self, material_name: str) -> bpy.types.Material | None:
+    def load(self, material_key: str) -> bpy.types.Material | None:
         """
         Loads the material to the current blend file.
         """
-        material = self.materials.get(material_name)
+        material = self.materials.get(material_key)
+
         if material:
+            material_name = material.get('name')
             with bpy.data.libraries.load(str(material['file'])) as (data_from, data_to):
                 data_to.materials = [material_name]
 
@@ -626,7 +621,7 @@ def render(filepath, samples=128, res=512, resolution_percentage=100):
     ...
 
 
-def xp_path(path: str):
+def safepath(path: str):
     """
     Make the path acceptable for Linux, Mac, and Windows.
     """
@@ -657,21 +652,21 @@ def main():
 
     print(f"- {OBJECTS_FILE}")
     for k, v in matpack.materials.items():
-        print(f"- {k}")
+        print(f"- {k}: {v['file']}")
     # for mf in MATERIAL_FILES:
     #     print(f"- materials/{mf.name}")
     print("\n\n")
 
+    print(f"=== RENDERING {len(matpack.materials)} MATERIALS ===")
     for k, v in matpack.materials.items():
         file = v['file']
-        name = v['name']
         logging.info(f"Rendering {file}...")
 
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
 
-        out = OUTDIR / name
-        jobs = DIST / 'jobs' / name
+        out = OUTDIR / k
+        jobs = DIST / 'jobs' / k / target_rotation
         jobs.mkdir(parents=True, exist_ok=True)
         use_animation = True
 
@@ -679,13 +674,13 @@ def main():
             objpack.object_keys) * len(rotations)
 
         # Initialize the progress bar (tracks each render)
-        pbar = tqdm(total=(tasksize), desc=name, leave=True)
+        pbar = tqdm(total=(tasksize), desc=k, leave=True)
 
-        for key in objpack.object_keys:
+        for object_key in objpack.object_keys:
             try:
-                key = key.replace('/', ':')
-                key = xp_path(key)
-                filepath = jobs / f"{key}.blend"
+                object_key = object_key.replace('/', ':')
+                object_key = safepath(object_key)
+                filepath = jobs / f"{object_key}.blend"
                 if filepath.exists():
                     pbar.update(len(rotations))
                     continue
@@ -693,7 +688,7 @@ def main():
                     material_pack=matpack,
                     material_key=k,
                     object_pack=objpack,
-                    object_key=key,
+                    object_key=object_key,
                     rotations=rotations,
                     use_animation=use_animation,
                     render_out=out,
@@ -718,7 +713,6 @@ def main():
         for b1 in Path(jobs).glob('*.blend1'):
             b1.unlink()
 
-        pbar.desc = name
         pbar.close()
 
 

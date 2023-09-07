@@ -1,28 +1,220 @@
 {
-  "name": "@the-bundle-materials/community-material-pack",
+  "name": "cmp",
   "version": "3.0",
   "authors": [
     "Curtis Holt",
     "Grida, Inc."
   ],
   "license": "CC-BY-SA-4.0",
-  "homepage": "https://grida.co/bundle/materials/community-material-pack",
+  "homepage": "https://grida.co/bundle/materials/cmp",
   "files": [
     "Community Material Pack v3.blend"
   ],
-  "materials": [
-    "Aluminium Foil",
-    "Battered",
-    "Brushed",
-    "Bubble",
-    "Clay",
-    "Dispersion Glass",
-    "Frosted Dispersion Glass",
-    "Frosted Glass",
-    "Glass",
-    "Gold Foil",
-    "Marble",
-    "Plastic",
-    "Subtle Imperfections"
-  ]
+  "materials": {
+    "cmp.alien-ruin-blackish": {
+      "name": "Alien Ruin Blackish",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.alien-ruin-bluish": {
+      "name": "Alien Ruin Bluish",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.alien-ruin-redish": {
+      "name": "Alien Ruin Redish",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.aluminium-foil": {
+      "name": "Aluminium Foil",
+      "class": "*",
+      "score": 80
+    },
+    "cmp.basic-ao": {
+      "name": "Basic AO",
+      "class": "*",
+      "score": 65
+    },
+    "cmp.basic-ao-and-edges-blend": {
+      "name": "Basic AO and Edges Blend",
+      "class": "*",
+      "score": 65
+    },
+    "cmp.basic-edges": {
+      "name": "Basic Edges",
+      "class": "*",
+      "score": 65
+    },
+    "cmp.basic-emission": {
+      "name": "Basic Emission",
+      "class": "*",
+      "score": 0
+    },
+    "cmp.basic-subsurface-and-ao": {
+      "name": "Basic Subsurface and AO",
+      "class": "*",
+      "score": 40
+    },
+    "cmp.basic-subsurface-balanced-color": {
+      "name": "Basic Subsurface Balanced Color",
+      "class": "*",
+      "score": 40
+    },
+    "cmp.battered": {
+      "name": "Battered",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.brushed": {
+      "name": "Brushed",
+      "class": "*",
+      "score": 80
+    },
+    "cmp.bubble": {
+      "name": "Bubble",
+      "class": "*",
+      "score": 85
+    },
+    "cmp.candy-subsurface": {
+      "name": "Candy Subsurface",
+      "class": "*",
+      "score": 65
+    },
+    "cmp.carbon-fiber": {
+      "name": "Carbon Fiber",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.clay": {
+      "name": "Clay",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.complex-imperfections": {
+      "name": "Complex Imperfections",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.corroded-copper": {
+      "name": "Corroded Copper",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.cracked-metal-tiles": {
+      "name": "Cracked Metal Tiles",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.crt": {
+      "name": "CRT",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.cyber-glitch": {
+      "name": "Cyber Glitch",
+      "class": "*",
+      "score": 60
+    },
+    "cmp.dispersion-glass": {
+      "name": "Dispersion Glass",
+      "class": "*",
+      "score": 80
+    },
+    "cmp.emission-ao-and-edge": {
+      "name": "Emission AO and Edge",
+      "class": "*",
+      "score": 10
+    },
+    "cmp.emissive-gradient": {
+      "name": "Emissive Gradient",
+      "class": "*",
+      "score": 10
+    },
+    "cmp.frosted-dispersion-glass": {
+      "name": "Frosted Dispersion Glass",
+      "class": "*",
+      "score": 80
+    },
+    "cmp.frosted-glass": {
+      "name": "Frosted Glass",
+      "class": "*",
+      "score": 80
+    },
+    "cmp.glass": {
+      "name": "Glass",
+      "class": "*",
+      "score": 80
+    },
+    "cmp.gold-foil": {
+      "name": "Gold Foil",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.jadeite": {
+      "name": "Jadeite",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.knitted-pattern": {
+      "name": "Knitted Pattern",
+      "class": "*",
+      "score": 50
+    },
+    "cmp.marble": {
+      "name": "Marble",
+      "class": "*",
+      "score": 75
+    },
+    "cmp.matcap": {
+      "name": "Matcap",
+      "class": "*",
+      "score": 10
+    },
+    "cmp.meat": {
+      "name": "Meat",
+      "class": "*",
+      "score": 50
+    },
+    "cmp.plastic": {
+      "name": "Plastic",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.plastic-wall": {
+      "name": "Plastic Wall",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.rainbow-metal": {
+      "name": "Rainbow Metal",
+      "class": "*",
+      "score": 65
+    },
+    "cmp.rubber-curtain": {
+      "name": "Rubber Curtain",
+      "class": "*",
+      "score": 65
+    },
+    "cmp.sci-fi-truchet": {
+      "name": "Sci-Fi Truchet",
+      "class": "*",
+      "score": 70
+    },
+    "cmp.simple-grunge": {
+      "name": "Simple Grunge",
+      "class": "*",
+      "score": 50
+    },
+    "cmp.snow": {
+      "name": "Snow",
+      "class": "*",
+      "score": 50
+    },
+    "cmp.subtle-imperfections": {
+      "name": "Subtle Imperfections",
+      "class": "*",
+      "score": 75
+    }
+  }
 }

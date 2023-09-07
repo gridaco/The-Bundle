@@ -1,5 +1,5 @@
 {
-  "name": "@the-bundle-materials/foundation",
+  "name": "foundation",
   "version": "0.0.0",
   "files": [
     "m.blobs.blend",
@@ -15,16 +15,71 @@
     "sss.blend"
   ],
   "materials": {
-    "m.blobs": "material",
-    "m.chrome": "material",
-    "m.cloudy": "material",
-    "m.copper": "material",
-    "m.gold": "material",
-    "m.hologram": "material",
-    "m.rusty": "material",
-    "m.silver": "material",
-    "p.reflective": "material",
-    "p.rough": "material",
-    "sss": "material"
+    "f0.m.blobs": {
+      "name": "m.blobs",
+      "class": "m",
+      "score": 10,
+      "file": "m.blobs.blend"
+    },
+    "f0.m.chrome": {
+      "name": "m.chrome",
+      "class": "m",
+      "score": 40,
+      "file": "m.chrome.blend"
+    },
+    "f0.m.cloudy": {
+      "name": "m.cloudy",
+      "class": "m",
+      "score": 40,
+      "file": "m.cloudy.blend"
+    },
+    "f0.m.copper": {
+      "name": "m.copper",
+      "class": "m",
+      "score": 40,
+      "file": "m.copper.blend"
+    },
+    "f0.m.gold": {
+      "name": "m.gold",
+      "class": "m",
+      "score": 40,
+      "file": "m.gold.blend"
+    },
+    "f0.m.hologram": {
+      "name": "m.hologram",
+      "class": "m",
+      "score": 40,
+      "file": "m.hologram.blend"
+    },
+    "f0.m.rusty": {
+      "name": "m.rusty",
+      "class": "m",
+      "score": 40,
+      "file": "m.rusty.blend"
+    },
+    "f0.m.silver": {
+      "name": "m.silver",
+      "class": "m",
+      "score": 40,
+      "file": "m.silver.blend"
+    },
+    "f0.p.reflective": {
+      "name": "p.reflective",
+      "class": "m",
+      "score": 40,
+      "file": "p.reflective.blend"
+    },
+    "f0.p.rough": {
+      "name": "p.rough",
+      "class": "m",
+      "score": 40,
+      "file": "p.rough.blend"
+    },
+    "f0.sss": {
+      "name": "sss",
+      "class": "m",
+      "score": 40,
+      "file": "sss.blend"
+    }
   }
 }
