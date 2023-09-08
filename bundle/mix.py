@@ -9,7 +9,10 @@ from tqdm import tqdm
 import click
 
 __DIR = Path(os.path.dirname(bpy.data.filepath))
-
+OBJECTS_DIR = __DIR / "objects"
+MATERIALS_DIR = __DIR / "materials"
+RENDER_SCENE_NAME = "render"
+material_classes: dict = json.load(open(MATERIALS_DIR / 'config.json'))
 
 # config logging
 logging.basicConfig(
@@ -20,54 +23,6 @@ logging.basicConfig(
         # logging.StreamHandler()
     ]
 )
-
-
-# read the config file if available
-task_file = __DIR / 'task.json'
-if task_file.exists():
-    with open(task_file) as f:
-        task = json.load(f)
-
-# Update the target here
-# - DEBUG
-# - PREVIEW
-# - 512
-# - 1K
-target_quality = (task.get('target_quality') if task else None) or 'PREVIEW'
-IS_DEBUG = target_quality == 'DEBUG'
-target_rotation = 'DEBUG' if IS_DEBUG else '8__X45_3__Z45_3'
-
-profiles: dict = json.load(open(__DIR / 'profiles.json'))
-
-assert target_quality in profiles.get(
-    "quality").keys(), f"Invalid target: {target_quality}"
-
-material_classes: dict = json.load(open(__DIR / 'materials' / 'config.json'))
-
-
-quality_profile: dict = profiles.get("quality").get(target_quality)
-resolution_percentage = quality_profile.get('resolution_percentage', 100)
-res = quality_profile['res']
-samples = quality_profile['samples']
-
-rotations = profiles.get("rotation").get(target_rotation)
-
-print(f"- TARGET {target_quality}...")
-print(f"- PROFILE: {json.dumps(quality_profile, indent=2)}")
-print(f"- #ROTATIONS: {len(rotations)}")
-
-
-RENDER_SCENE_NAME = "render"
-OBJECTS_DIR = __DIR / "objects"
-OBJECTS_FILE = OBJECTS_DIR / "foundation" / "objects.blend"
-# "doodle_99_abstract_art_kitbash"
-
-OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else ['0.demo', '(wd)', 'z999']
-DEFAULT_MATERIAL_NAME = 'material'
-DIST = __DIR / 'dist' \
-    if task.get('dist') is None \
-    else Path(task.get('dist'))
-OUTDIR = DIST / target_quality
 
 
 def matname(filepath: Path):
@@ -112,6 +67,7 @@ class MaterialPackage:
     """
 
     # materials by name: file, material name -> E.g. { 'm.al.oxidized.001': { 'file': 'm.al.blend', 'name': 'm.al.oxidized.001' } }
+    name = None
     base_dir = None
     materials = {}
 
@@ -124,10 +80,12 @@ class MaterialPackage:
 
         self.base_dir = package_dot_json.parent
 
-        materials = package_data['materials']
-        files = package_data['files']
+        self.name = package_data['name']
 
-        is_multiple_files = len(files) > 1
+        __materials = package_data['materials']
+        __files = package_data['files']
+
+        is_multiple_files = len(__files) > 1
 
         if is_multiple_files:
             # resolve files
@@ -135,7 +93,7 @@ class MaterialPackage:
                 'multiple material files package not supported atm.')
         else:
             # map materials by reading the material file
-            material_file = self.base_dir / files[0]
+            material_file = self.base_dir / __files[0]
             assert material_file.exists(
             ), f"Invalid material file: {material_file}"
 
@@ -143,7 +101,7 @@ class MaterialPackage:
             with bpy.data.libraries.load(str(material_file), link=False) as (data_from, _):
                 for m in data_from.materials:
                     # find the material entry with 'name' == m
-                    for k, v in materials.items():
+                    for k, v in __materials.items():
                         if v['name'] == m:
                             self.materials[k] = {
                                 'file': material_file,
@@ -388,7 +346,14 @@ class RenderJobFile:
         # Set start frame to 0
         self.scene.frame_start = 0
 
-    def render_all(self):
+    def render_all(
+        self,
+        rotation: (int, int, int),
+        samples: int,
+        resolution_x: int,
+        resolution_y: int,
+        resolution_percentage=100,
+    ):
         """
         Renders the scene with all rotations.
         """
@@ -396,9 +361,23 @@ class RenderJobFile:
             raise NotImplementedError("Animation not supported yet.")
 
         for rotation in self.rotations:
-            yield self.render_one(rotation)
+            yield self.render_one(
+                rotation,
+                samples=samples,
+                resolution_x=resolution_x,
+                resolution_y=resolution_y,
+                resolution_percentage=resolution_percentage
+            )
 
-    def render_one(self, rotation: (int, int, int), skip_existing: bool = True):
+    def render_one(
+        self,
+        rotation: (int, int, int),
+        samples: int,
+        resolution_x: int,
+        resolution_y: int,
+        resolution_percentage=100,
+        skip_existing: bool = True
+    ):
         """
         Renders the scene with one rotation.
         """
@@ -414,7 +393,8 @@ class RenderJobFile:
             object_name=self.object_key,
             material_name=self.material_key,
             rotation=rotation,
-            res=res,
+            resolution_x=resolution_x,
+            resolution_y=resolution_y,
             samples=m_samples,
             quality=resolution_percentage
         )
@@ -428,7 +408,8 @@ class RenderJobFile:
         render(
             filepath=filepath,
             samples=m_samples,
-            res=res,
+            resolution_x=resolution_x,
+            resolution_y=resolution_y,
             resolution_percentage=resolution_percentage,
         )
 
@@ -452,10 +433,10 @@ class RenderJobFile:
         return self.scene.objects.get("boundingbox")
 
 
-def outname(object_name, rotation, material_name=None, res=512, quality=100, samples=128):
+def outname(object_name, rotation, material_name=None, resolution_x=512, resolution_y=512, quality=100, samples=128):
     rot = "{rotation[0]}°{rotation[1]}°{rotation[2]}°"\
         .format(rotation=rotation)
-    res = f'{res}x{res}'
+    res = f'{resolution_x}x{resolution_y}'
     qua = f'{quality}%'
     samples = f'#{samples}'
     seq = [object_name, material_name, rot, samples, res, qua]
@@ -586,7 +567,7 @@ def convert_to_mesh(obj):
                 f"Error: Could not convert {obj.name} to mesh: {e}")
 
 
-def render(filepath, samples=128, res=512, resolution_percentage=100):
+def render(filepath, samples=128, resolution_x=512, resolution_y=512, resolution_percentage=100):
     assert filepath is not None, "filepath cannot be None"
 
     # Set the filepath
@@ -597,8 +578,8 @@ def render(filepath, samples=128, res=512, resolution_percentage=100):
     bpy.context.scene.cycles.device = 'GPU'
     bpy.context.scene.cycles.samples = samples
     # Resolution
-    bpy.context.scene.render.resolution_x = res
-    bpy.context.scene.render.resolution_y = res
+    bpy.context.scene.render.resolution_x = resolution_x
+    bpy.context.scene.render.resolution_y = resolution_y
     bpy.context.scene.render.resolution_percentage = resolution_percentage
 
     # === redirect output to log file
@@ -633,7 +614,69 @@ def safepath(path: str):
     return path
 
 
-def main():
+@click.command()
+@click.option('--task', '-t', default='./task.json', help='Task file', type=click.Path(exists=True),)
+@click.option('--dist', default='./dist', help='Dist directory', type=click.Path(exists=True),)
+def main(task, dist):
+
+    # read the config file if available
+    task_file = __DIR / task
+    if task_file.exists():
+        with open(task_file) as f:
+            task = json.load(f)
+
+    # Update the target here
+    # - DEBUG
+    # - PREVIEW
+    # - 512
+    # - 1K
+    target_quality = (task.get('target_quality')
+                      if task else None) or 'PREVIEW'
+
+    IS_DEBUG = target_quality == 'DEBUG'
+
+    target_rotation = 'DEBUG' if IS_DEBUG else '8__X45_3__Z45_3'
+
+    profiles: dict = json.load(open(__DIR / 'profiles.json'))
+
+    assert target_quality in profiles.get(
+        "quality").keys(), f"Invalid target: {target_quality}"
+
+    quality_profile: dict = profiles.get("quality").get(target_quality)
+    resolution_percentage = quality_profile.get('resolution_percentage', 100)
+    res = quality_profile['res']
+    samples = quality_profile['samples']
+
+    rotations = profiles.get("rotation").get(target_rotation)
+
+    # region resolve dist path
+    __task_defined_dist = task.get('dist')
+    __user_override_dist = dist
+
+    if __task_defined_dist and __user_override_dist and not __task_defined_dist == __user_override_dist:
+        click.confirm(
+            f"Task defined dist: {__task_defined_dist} is different from the user override dist: {__user_override_dist}. Continue?", abort=True
+        )
+        DIST = Path(__user_override_dist).resolve()
+    else:
+        DIST = Path(__user_override_dist).resolve() \
+            if __task_defined_dist is None \
+            else Path(__task_defined_dist).resolve()
+    # endregion
+
+    print(f"- DIST: {DIST}")
+    print(f"- TARGET {target_quality}...")
+    print(f"- PROFILE: {json.dumps(quality_profile, indent=2)}")
+    print(f"- #ROTATIONS: {len(rotations)}")
+
+    # OBJECTS_FILE = OBJECTS_DIR / "foundation" / "objects.blend"
+    OBJECTS_FILE = OBJECTS_DIR / "doodle_99_abstract_art_kitbash" / "objects.blend"
+
+    OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else [
+        '0.demo', '(wd)', 'z999']
+
+    RENDEROUTDIR = DIST / target_quality
+
     # ensure the dist directory exists before proceeding
     assert DIST.exists(), f"Invalid dist: {DIST}"
 
@@ -665,8 +708,8 @@ def main():
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
 
-        out = OUTDIR / k
-        jobs = DIST / 'jobs' / k / target_rotation
+        render_out = RENDEROUTDIR / k
+        jobs = DIST / 'jobs' / matpack.name / k / target_rotation
         jobs.mkdir(parents=True, exist_ok=True)
         use_animation = True
 
@@ -691,7 +734,7 @@ def main():
                     object_key=object_key,
                     rotations=rotations,
                     use_animation=use_animation,
-                    render_out=out,
+                    render_out=render_out,
                 )
 
                 # for result in jobfile.render_all():

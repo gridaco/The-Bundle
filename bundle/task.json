@@ -1,16 +1,18 @@
 {
+  "type": "build-queue-files",
   "target_quality": "2K",
-  "materials": ["materials/foundation", "materials/community-material-pack"],
-  "materials_priority": [
-    "p.rough",
-    "m.copper",
-    "sss",
-    "m.chrome",
-    "p.reflective",
-    "m.gold",
-    "m.cloudy",
-    "m.hologram"
-  ],
-  "objects": ["objects/foundation", "objects/doodle_99_abstract_art_kitbash"],
-  "dist": "./dist"
+  "materials": {
+    "packages": ["materials/foundation", "materials/community-material-pack"],
+    "exclude": []
+  },
+  "objects": {
+    "packages": [
+      "objects/foundation",
+      "objects/doodle_99_abstract_art_kitbash"
+    ],
+    "exclude": []
+  },
+  "priority": ["material.score", "object.score"],
+  "dist": "./dist",
+  "job_file_path": "{dist}/jobs/{material_package_name}/{material_key}/{target_rotation}/{object_key}.blend"
 }
