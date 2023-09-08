@@ -12,6 +12,14 @@ export async function GET(request: NextRequest) {
 
   const { user } = data;
 
+  if (!user) {
+    const host =
+      process.env.NODE_ENV === "production"
+        ? "https://grida.co/bundle"
+        : new URL(request.url).origin + "/bundle";
+    return NextResponse.redirect(host + "/signin");
+  }
+
   const { email, id, user_metadata } = user!;
 
   const stripe_customer_id = user_metadata[user_metadata_stripe_customer_id];
