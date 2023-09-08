@@ -85,47 +85,110 @@ def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_siz
         }
     })
 
+def is_excluded(filepath, includes, excludes):
+    return (excludes and any(e in filepath for e in excludes)) or \
+           (includes and not any(i in filepath for i in includes))
+
+
+def extract_segments(pattern, filepath):
+    pattern_segments = pattern.split('/')
+    file_segments = filepath.parts[-len(pattern_segments):]
+    
+    metadata = {}
+    for pattern_segment, file_segment in zip(pattern_segments, file_segments):
+        if pattern_segment.endswith('.blend'):
+            pattern_segment = pattern_segment.replace('.blend', '')
+            file_segment = Path(file_segment).stem
+        if '{' in pattern_segment and '}' in pattern_segment:
+            key = pattern_segment.strip('{}')
+            metadata[key] = file_segment
+    return metadata
+
 
 @click.command()
 @click.argument('queue', type=click.Path(exists=True))
+@click.option('--material-packages-include', '-mpi', default=None, help='Explicit package names to include. if not specified, includes all.', multiple=True, type=str)
+@click.option('--material-packages-exclude', '-mpe', default=None, help='Explicit package names to exclude. if not specified, excludes none.', multiple=True, type=str)
+@click.option('--material-include', '-mi', default=None, help='Explicit material names to include. if not specified, includes all.', multiple=True, type=str)
+@click.option('--material-exclude', '-me', default=None, help='Explicit material names to exclude. if not specified, excludes none.', multiple=True, type=str)
+@click.option('--object-packages-include', '-opi', default=None, help='Explicit package names to include. if not specified, includes all.', multiple=True, type=str)
+@click.option('--object-packages-exclude', '-ope', default=None, help='Explicit package names to exclude. if not specified, excludes none.', multiple=True, type=str)
+@click.option('--object-include', '-oi', default=None, help='Explicit object names to include. if not specified, includes all.', multiple=True, type=str)
+@click.option('--object-exclude', '-oe', default=None, help='Explicit object names to exclude. if not specified, excludes none.', multiple=True, type=str)
 @click.option('--priority', default=50, help='Job priority', type=int)
 @click.option('--chunk-size', default=None, help='Chunk size', type=int)
 @click.option('--batch', default=1, help='Batch number', type=int)
 @click.option('--name', default=None)
 @click.option('--max', default=None, help='Max number of jobs to submit', type=int)
-@click.option("--render-output-path", default=None, help="Render output path")
+@click.option('--job-file-pattern', default="{material_package}/{material_key}/{object_package}/{target_rotation}/{object_key}.blend", help='Job file pattern, relative to queue path', type=str)
+@click.option("--render-output-path", default="{shared_drive}/renders/{material_package}/{material_key}/{object_package}/{object_key}/{target_rotation}/######.png", help="Render output path")
 @click.option("--dry-run", is_flag=True, help="Don't actually submit jobs")
-def main(queue, priority, chunk_size, name, batch, max, render_output_path, dry_run):
+def regular(
+        queue, 
+        material_packages_include,
+        material_packages_exclude,
+        material_include,
+        material_exclude,
+        object_packages_include,
+        object_packages_exclude,
+        object_include,
+        object_exclude,
+        priority,
+        chunk_size,
+        name,
+        batch,
+        max,
+        job_file_pattern,
+        render_output_path,
+        dry_run
+    ):
     queue = Path(queue)
     assert queue.exists()
 
-    for i, job in tqdm(enumerate(queue.glob('**/*.blend'))):
+    pattern = job_file_pattern.replace("{", "**/{").format(
+        material_package="*",
+        material_key="*",
+        object_package="*",
+        target_rotation="*",
+        object_key="*"
+    )
+
+    jobs_map = []
+    for job in queue.glob(pattern):
+        metadata = extract_segments(job_file_pattern, job)
+
+        # Check exclusions/includes
+        if any(is_excluded(metadata[key], includes, excludes) for key, includes, excludes in [
+            ("material_package", material_packages_include, material_packages_exclude),
+            ("material_key", material_include, material_exclude),
+            ("object_package", object_packages_include, object_packages_exclude),
+            ("object_key", object_include, object_exclude)]):
+            continue
+
+        jobs_map.append({"path": job, "metadata": metadata})
+
+    for i, job_data in tqdm(enumerate(jobs_map)):
         if max is not None and i >= max:
             break
+
+        job = job_data["path"]
+        metadata = job_data["metadata"]
 
         _frames = frames_from_blendfile(job)
         __chunk_size = chunk_size or chunksize(_frames)
         frames = frames_str(_frames)
 
-        obj = Path(job).stem
-        mat = Path(job).parent.name
-        jobname = name or f"{mat}/{obj}"
+        # You can now access values like this: metadata["material_package"], metadata["material_key"], ...
+        jobname = name or f'{metadata["material_key"]}/{metadata["object_key"]}'
 
-        # print(f'{mat}/{obj}', render_output_path)
-        # following the mat / obj.blend -> renders/mat/obj-######.png
-        # be careful not to overwrite the output path name - we made this mistake before, it was painful.
-        __render_output_path =\
-            render_output_path.format(
+        __render_output_path = render_output_path.format(
                 shared_drive=shared_drive,
-                object=obj
-            )\
-            if render_output_path\
-            else \
-            os.path.join(shared_drive, 'renders',
-                         str(mat), f'{obj}-######.png')
+                **metadata
+        )
 
         tqdm.write(
-            f'☑️ {job} → {__render_output_path} ({frames} {chunk_size} {obj} {mat})')
+            f'☑️ {job.relative_to(queue)} → {__render_output_path} ({frames} {priority})')
+
         if not dry_run:
             post_job(
                 name=jobname,
@@ -135,14 +198,18 @@ def main(queue, priority, chunk_size, name, batch, max, render_output_path, dry_
                 priority=priority,
                 render_output_path=__render_output_path,
                 metadata={
-                    'material': mat,
-                    'object': obj,
+                    **metadata,
                     'version': '1',
                     'batch': str(batch)
                 }
             )
-    ...
 
+
+@click.group()
+def cli():
+    pass
+
+cli.add_command(regular)
 
 if __name__ == '__main__':
-    main()
+    cli()
