@@ -6,10 +6,12 @@ from tqdm import tqdm
 from pathlib import Path
 from flamenco.manager import ApiClient, Configuration
 from flamenco.manager.apis import MetaApi
+from flamenco.manager.apis import JobsApi
 from flamenco.manager.models import FlamencoVersion
 
 configuration = Configuration(host="http://192.168.0.6:8080")
 api_client = ApiClient(configuration)
+jobs_api = JobsApi(api_client)
 
 shared_drive = "/Volumes/the-bundle"
 
@@ -85,6 +87,7 @@ def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_siz
         }
     })
 
+
 def is_excluded(filepath, includes, excludes):
     return (excludes and any(e in filepath for e in excludes)) or \
            (includes and not any(i in filepath for i in includes))
@@ -93,7 +96,7 @@ def is_excluded(filepath, includes, excludes):
 def extract_segments(pattern, filepath):
     pattern_segments = pattern.split('/')
     file_segments = filepath.parts[-len(pattern_segments):]
-    
+
     metadata = {}
     for pattern_segment, file_segment in zip(pattern_segments, file_segments):
         if pattern_segment.endswith('.blend'):
@@ -107,6 +110,8 @@ def extract_segments(pattern, filepath):
 
 @click.command()
 @click.argument('queue', type=click.Path(exists=True))
+# @click.argument('jobs', type=click.Path(exists=True))
+# @click.option('--queue', default=None, help='root queue dir available to workers (under shared drive, relative to shared drive)', type=click.Path(exists=True))
 @click.option('--material-packages-include', '-mpi', default=None, help='Explicit package names to include. if not specified, includes all.', multiple=True, type=str)
 @click.option('--material-packages-exclude', '-mpe', default=None, help='Explicit package names to exclude. if not specified, excludes none.', multiple=True, type=str)
 @click.option('--material-include', '-mi', default=None, help='Explicit material names to include. if not specified, includes all.', multiple=True, type=str)
@@ -124,24 +129,24 @@ def extract_segments(pattern, filepath):
 @click.option("--render-output-path", default="{shared_drive}/renders/{material_package}/{material_key}/{object_package}/{object_key}/{target_rotation}/######.png", help="Render output path")
 @click.option("--dry-run", is_flag=True, help="Don't actually submit jobs")
 def regular(
-        queue, 
-        material_packages_include,
-        material_packages_exclude,
-        material_include,
-        material_exclude,
-        object_packages_include,
-        object_packages_exclude,
-        object_include,
-        object_exclude,
-        priority,
-        chunk_size,
-        name,
-        batch,
-        max,
-        job_file_pattern,
-        render_output_path,
-        dry_run
-    ):
+    queue,
+    material_packages_include,
+    material_packages_exclude,
+    material_include,
+    material_exclude,
+    object_packages_include,
+    object_packages_exclude,
+    object_include,
+    object_exclude,
+    priority,
+    chunk_size,
+    name,
+    batch,
+    max,
+    job_file_pattern,
+    render_output_path,
+    dry_run
+):
     queue = Path(queue)
     assert queue.exists()
 
@@ -162,7 +167,7 @@ def regular(
             ("material_package", material_packages_include, material_packages_exclude),
             ("material_key", material_include, material_exclude),
             ("object_package", object_packages_include, object_packages_exclude),
-            ("object_key", object_include, object_exclude)]):
+                ("object_key", object_include, object_exclude)]):
             continue
 
         jobs_map.append({"path": job, "metadata": metadata})
@@ -182,8 +187,8 @@ def regular(
         jobname = name or f'{metadata["material_key"]}/{metadata["object_key"]}'
 
         __render_output_path = render_output_path.format(
-                shared_drive=shared_drive,
-                **metadata
+            shared_drive=shared_drive,
+            **metadata
         )
 
         tqdm.write(
@@ -205,11 +210,60 @@ def regular(
             )
 
 
+@click.command()
+@click.argument('command', type=click.Choice(['list', 'delete']))
+@click.option('--project', default=None)
+@click.option('--status', default=None)
+@click.option('--material-package', default=None, type=str)
+@click.option('--material-key', default=None, type=str)
+@click.option('--object-package', default=None, type=str)
+@click.option('--object-key', default=None, type=str)
+@click.option('--limit', default=None, help='Max number of jobs to list/delete', type=int)
+def manage(
+    command,
+    project,
+    status,
+    material_package,
+    material_key,
+    object_package,
+    object_key,
+    limit
+):
+    q_metadata = {
+        "project": project,
+        "material_package": material_package,
+        "material_key": material_key,
+        "object_package": object_package,
+        "object_key": object_key,
+    }
+    q_metadata = {k: v for k, v in q_metadata.items() if v is not None}
+
+    res = jobs_api.query_jobs(
+        {
+            "limit": limit or 1,
+            "metadata": q_metadata,
+            "status_in": [
+                status
+            ],
+        }
+    )
+    jobs = res['jobs']
+
+    print(len(jobs))
+
+    if command == 'delete':
+        for job in jobs:
+            if click.confirm(f"Delete {job['name']} ({job['id']})?", abort=True):
+                jobs_api.delete_job(job["id"])
+
+
 @click.group()
 def cli():
     pass
 
+
 cli.add_command(regular)
+cli.add_command(manage)
 
 if __name__ == '__main__':
     cli()
