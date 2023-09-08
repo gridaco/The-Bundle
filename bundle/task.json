@@ -1,6 +1,7 @@
 {
   "type": "build-queue-files",
   "target_quality": "2K",
+  "target_rotation": "8__X45_3__Z45_3",
   "materials": {
     "packages": ["materials/foundation", "materials/community-material-pack"],
     "exclude": []

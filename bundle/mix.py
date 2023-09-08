@@ -103,7 +103,8 @@ class TaskConfig:
 
         self.IS_DEBUG = self.target_quality_key == 'DEBUG'
 
-        self.target_rotation_key = 'DEBUG' if self.IS_DEBUG else '8__X45_3__Z45_3'
+        self.target_rotation_key = 'DEBUG' if self.IS_DEBUG else (__data.get(
+            'target_rotation') if task else None) or 'DEFAULT'
 
         self.quality_profile: dict = profiles.get(
             "quality").get(self.target_quality_key)
