@@ -62,6 +62,85 @@ def matname(filepath: Path):
 # )
 
 
+class TaskConfig:
+    IS_DEBUG: bool
+
+    type: str
+    target_quality_key: str
+    target_rotation_key: str
+    objects: {
+        "packages": list[str],
+        "exclude": list[str]
+    }
+    materials: {
+        "packages": list[str],
+        "exclude": list[str]
+    }
+
+    rotations: list[(int, int, int)]
+    samples: int
+    resolution_percentage: int
+    resolution: int
+
+    priority: list[str]
+    dist: Path
+    job_file_path: str
+
+    def __init__(self, task: Path, profiles: dict, dist: str) -> None:
+        assert task.exists(), f"Invalid task: {task}"
+
+        __data = json.load(open(task))
+
+        self.type = __data.get('type')
+        self.objects = __data.get('objects')
+        self.materials = __data.get('materials')
+
+        self.target_quality_key = (__data.get('target_quality')
+                                   if task else None) or 'PREVIEW'
+
+        assert self.target_quality_key in profiles.get(
+            "quality").keys(), f"Invalid target: {self.target_quality_key}"
+
+        self.IS_DEBUG = self.target_quality_key == 'DEBUG'
+
+        self.target_rotation_key = 'DEBUG' if self.IS_DEBUG else '8__X45_3__Z45_3'
+
+        self.quality_profile: dict = profiles.get(
+            "quality").get(self.target_quality_key)
+
+        self.resolution_percentage = self.quality_profile.get(
+            'resolution_percentage', 100)
+
+        self.resolution = self.quality_profile['res']
+
+        self.samples = self.quality_profile['samples']
+
+        self.rotations = profiles.get("rotation").get(self.target_rotation_key)
+
+        self.objects = {
+            **self.objects,
+            'exclude': [] if self.IS_DEBUG else __data.get('objects').get('exclude', [])
+        }
+
+        # region resolve dist path
+        __task_defined_dist = __data.get('dist')
+        __user_override_dist = dist
+
+        if __task_defined_dist and __user_override_dist and not __task_defined_dist == __user_override_dist:
+            click.confirm(
+                f"Task defined dist: '{__task_defined_dist}' is different from the user override dist: '{__user_override_dist}'. Continue?", abort=True
+            )
+            self.dist = Path(__user_override_dist).resolve()
+        else:
+            self.dist = Path(__user_override_dist).resolve() \
+                if __task_defined_dist is None \
+                else Path(__task_defined_dist).resolve()
+        # endregion
+
+        # ensure the dist directory exists before proceeding
+        assert self.dist.exists(), f"Invalid dist: {self.dist}"
+
+
 class MaterialPackage:
     """
     Material Package directory and files.
@@ -633,63 +712,16 @@ def safepath(path: str):
 @click.option('--dist', default='./dist', help='Dist directory', type=click.Path(exists=True),)
 def main(task, dist):
 
-    # read the config file if available
-    task_file = __DIR / task
-    if task_file.exists():
-        with open(task_file) as f:
-            task = json.load(f)
-
-    # Update the target here
-    # - DEBUG
-    # - PREVIEW
-    # - 512
-    # - 1K
-    target_quality = (task.get('target_quality')
-                      if task else None) or 'PREVIEW'
-
-    IS_DEBUG = target_quality == 'DEBUG'
-
-    target_rotation = 'DEBUG' if IS_DEBUG else '8__X45_3__Z45_3'
-
     profiles: dict = json.load(open(__DIR / 'profiles.json'))
+    task = Path(task).resolve()
+    task = TaskConfig(task, profiles=profiles, dist=dist)
 
-    assert target_quality in profiles.get(
-        "quality").keys(), f"Invalid target: {target_quality}"
+    print(f"- DIST: {task.dist}")
+    print(f"- TARGET {task.target_quality_key}...")
+    print(f"- PROFILE: {json.dumps(task.quality_profile, indent=2)}")
+    print(f"- #ROTATIONS: {len(task.rotations)}")
 
-    quality_profile: dict = profiles.get("quality").get(target_quality)
-    resolution_percentage = quality_profile.get('resolution_percentage', 100)
-    res = quality_profile['res']
-    samples = quality_profile['samples']
-
-    rotations = profiles.get("rotation").get(target_rotation)
-
-    OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else task.get(
-        'objects').get('exclude', [])
-
-    # region resolve dist path
-    __task_defined_dist = task.get('dist')
-    __user_override_dist = dist
-
-    if __task_defined_dist and __user_override_dist and not __task_defined_dist == __user_override_dist:
-        click.confirm(
-            f"Task defined dist: '{__task_defined_dist}' is different from the user override dist: '{__user_override_dist}'. Continue?", abort=True
-        )
-        DIST = Path(__user_override_dist).resolve()
-    else:
-        DIST = Path(__user_override_dist).resolve() \
-            if __task_defined_dist is None \
-            else Path(__task_defined_dist).resolve()
-    # endregion
-
-    print(f"- DIST: {DIST}")
-    print(f"- TARGET {target_quality}...")
-    print(f"- PROFILE: {json.dumps(quality_profile, indent=2)}")
-    print(f"- #ROTATIONS: {len(rotations)}")
-
-    RENDEROUTDIR = DIST / target_quality
-
-    # ensure the dist directory exists before proceeding
-    assert DIST.exists(), f"Invalid dist: {DIST}"
+    RENDEROUTDIR = task.dist / task.target_quality_key
 
     matpack = MaterialPackage(
         __DIR / 'materials' / 'community-material-pack' / 'package.json'
@@ -697,7 +729,7 @@ def main(task, dist):
 
     objpack = ObjectPackage(
         __DIR / 'objects' / 'foundation' / 'package.json',
-        exclude_patterns=OBJECT_SCENE_EXCLUDE_PATTERNS
+        exclude_patterns=task.objects['exclude']
     )
 
     # # print(objpack.objects)
@@ -724,12 +756,13 @@ def main(task, dist):
         bpy.ops.wm.read_homefile(use_empty=True)
 
         render_out = RENDEROUTDIR / k
-        jobs = DIST / 'jobs' / matpack.name / k / objpack.name / target_rotation
+        jobs = task.dist / 'jobs' / matpack.name / k / \
+            objpack.name / task.target_rotation_key
         jobs.mkdir(parents=True, exist_ok=True)
         use_animation = True
 
         tasksize = len(objpack.object_keys) if use_animation else len(
-            objpack.object_keys) * len(rotations)
+            objpack.object_keys) * len(task.rotations)
 
         # Initialize the progress bar (tracks each render)
         pbar = tqdm(total=(tasksize), desc=k, leave=True)
@@ -740,14 +773,14 @@ def main(task, dist):
                 object_key = safepath(object_key)
                 filepath = jobs / f"{object_key}.blend"
                 if filepath.exists():
-                    pbar.update(len(rotations))
+                    pbar.update(len(task.rotations))
                     continue
                 jobfile = RenderJobFile(
                     material_pack=matpack,
                     material_key=k,
                     object_pack=objpack,
                     object_key=object_key,
-                    rotations=rotations,
+                    rotations=task.rotations,
                     use_animation=use_animation,
                     render_out=render_out,
                 )
@@ -757,10 +790,10 @@ def main(task, dist):
 
                 jobfile.save(
                     str(filepath),
-                    resolution_x=res,
-                    resolution_y=res,
-                    resolution_percentage=resolution_percentage,
-                    samples=samples
+                    resolution_x=task.resolution,
+                    resolution_y=task.resolution,
+                    resolution_percentage=task.resolution_percentage,
+                    samples=task.samples
                 )
                 pbar.update()
             except Exception as e:
