@@ -7,6 +7,7 @@ from pathlib import Path
 import logging
 from tqdm import tqdm
 import click
+import fnmatch
 
 __DIR = Path(os.path.dirname(bpy.data.filepath))
 OBJECTS_DIR = __DIR / "objects"
@@ -71,14 +72,14 @@ class MaterialPackage:
     base_dir = None
     materials = {}
 
-    def __init__(self, package_dot_json: Path | str) -> None:
-        package_dot_json = Path(package_dot_json)
-        assert package_dot_json.exists(
-        ), f"Invalid package: {package_dot_json}"
+    def __init__(self, package: Path | str) -> None:
+        package = Path(package)
+        assert package.exists(
+        ), f"Invalid package: {package}"
 
-        package_data = json.load(open(package_dot_json))
+        package_data = json.load(open(package))
 
-        self.base_dir = package_dot_json.parent
+        self.base_dir = package.parent
 
         self.name = package_data['name']
 
@@ -129,17 +130,30 @@ class MaterialPackage:
 
 class ObjectPackage:
 
+    name = None
     # list of names of the scenes that contain the objects
     object_keys: [str] = []
     # dict of objects by scene name, following the format of { 'key': { 'file': <file path>,  'scene': <scene name>, 'name': <object name>, 'object': <bpy.types.Object | None> } }
     objects: dict[str, dict] = {}
     exclude_patterns: list[str] = []
+    base_dir = None
 
     _whole_synced = False
 
-    def __init__(self, file: Path | str, exclude_patterns: list[str] = []) -> None:
-        ...
-        self.file = Path(file)
+    def __init__(self, package: Path | str, exclude_patterns: list[str] = []) -> None:
+        package = Path(package)
+        assert package.exists(
+        ), f"Invalid package: {package}"
+        self.base_dir = package.parent
+
+        package_data = json.load(open(package))
+
+        self.name = package_data.get('name')
+
+        __files = package_data.get('files')
+        assert len(__files) == 1, f"Invalid files: {__files}"
+        self.file = self.base_dir / __files[0]
+
         self.exclude_patterns = exclude_patterns
 
         # Index objects
@@ -184,7 +198,7 @@ class ObjectPackage:
 
             for scene in data_from.scenes:
                 # Exclude objects if they contain any of the exclude patterns
-                if not any([pattern in scene for pattern in self.exclude_patterns]):
+                if not any(fnmatch.fnmatch(scene, pattern) for pattern in self.exclude_patterns):
                     scenes_to_link.append(scene)
 
             data_to.scenes = scenes_to_link
@@ -649,13 +663,16 @@ def main(task, dist):
 
     rotations = profiles.get("rotation").get(target_rotation)
 
+    OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else task.get(
+        'objects').get('exclude', [])
+
     # region resolve dist path
     __task_defined_dist = task.get('dist')
     __user_override_dist = dist
 
     if __task_defined_dist and __user_override_dist and not __task_defined_dist == __user_override_dist:
         click.confirm(
-            f"Task defined dist: {__task_defined_dist} is different from the user override dist: {__user_override_dist}. Continue?", abort=True
+            f"Task defined dist: '{__task_defined_dist}' is different from the user override dist: '{__user_override_dist}'. Continue?", abort=True
         )
         DIST = Path(__user_override_dist).resolve()
     else:
@@ -669,21 +686,19 @@ def main(task, dist):
     print(f"- PROFILE: {json.dumps(quality_profile, indent=2)}")
     print(f"- #ROTATIONS: {len(rotations)}")
 
-    # OBJECTS_FILE = OBJECTS_DIR / "foundation" / "objects.blend"
-    OBJECTS_FILE = OBJECTS_DIR / "doodle_99_abstract_art_kitbash" / "objects.blend"
-
-    OBJECT_SCENE_EXCLUDE_PATTERNS = [] if IS_DEBUG else [
-        '0.demo', '(wd)', 'z999']
-
     RENDEROUTDIR = DIST / target_quality
 
     # ensure the dist directory exists before proceeding
     assert DIST.exists(), f"Invalid dist: {DIST}"
 
-    matpack = MaterialPackage(__DIR / 'materials' /
-                              'community-material-pack' / 'package.json')
+    matpack = MaterialPackage(
+        __DIR / 'materials' / 'community-material-pack' / 'package.json'
+    )
+
     objpack = ObjectPackage(
-        OBJECTS_FILE, exclude_patterns=OBJECT_SCENE_EXCLUDE_PATTERNS)
+        __DIR / 'objects' / 'foundation' / 'package.json',
+        exclude_patterns=OBJECT_SCENE_EXCLUDE_PATTERNS
+    )
 
     # # print(objpack.objects)
     # # key = list(objpack.objects.keys())[0]
@@ -693,7 +708,7 @@ def main(task, dist):
     print("=== START ===")
     print(f"Note: Do not modify or change the name of the following files:\n")
 
-    print(f"- {OBJECTS_FILE}")
+    print(f"- {objpack.file}")
     for k, v in matpack.materials.items():
         print(f"- {k}: {v['file']}")
     # for mf in MATERIAL_FILES:
@@ -709,7 +724,7 @@ def main(task, dist):
         bpy.ops.wm.read_homefile(use_empty=True)
 
         render_out = RENDEROUTDIR / k
-        jobs = DIST / 'jobs' / matpack.name / k / target_rotation
+        jobs = DIST / 'jobs' / matpack.name / k / objpack.name / target_rotation
         jobs.mkdir(parents=True, exist_ok=True)
         use_animation = True
 

@@ -13,3 +13,5 @@
   - Version control of render scene
 - Benchmarking
   - Benchmarking of each material-scene, adjust the angles count, samples, and priority by the benchmarking result
+
+## Usage

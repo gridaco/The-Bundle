@@ -10,9 +10,9 @@
       "objects/foundation",
       "objects/doodle_99_abstract_art_kitbash"
     ],
-    "exclude": []
+    "exclude": ["0.demo*", "*(wd)*", "z999*"]
   },
   "priority": ["material.score", "object.score"],
   "dist": "./dist",
-  "job_file_path": "{dist}/jobs/{material_package_name}/{material_key}/{target_rotation}/{object_key}.blend"
+  "job_file_path": "{dist}/jobs/{material_package}/{material_key}/{object_package}/{target_rotation}/{object_key}.blend"
 }
