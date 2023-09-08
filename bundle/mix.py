@@ -149,6 +149,7 @@ class MaterialPackage:
 
     # materials by name: file, material name -> E.g. { 'm.al.oxidized.001': { 'file': 'm.al.blend', 'name': 'm.al.oxidized.001' } }
     name = None
+    files = []
     base_dir = None
     materials = {}
 
@@ -159,6 +160,7 @@ class MaterialPackage:
 
         package_data = json.load(open(package))
 
+        self.files = [Path(x) for x in package_data['files']]
         self.base_dir = package.parent
 
         self.name = package_data['name']
@@ -724,29 +726,52 @@ def main(task, dist):
 
     RENDEROUTDIR = task.dist / task.target_quality_key
 
+    # TODO: support multiple packages
+
+    # matpacks = [
+    #     MaterialPackage(
+    #         __DIR / matpack / 'package.json'
+    #     ) for matpack in __matpacks
+    # ]
+
+    # objpacks = [
+    #     ObjectPackage(
+    #         __DIR / objpack / 'package.json',
+    #         exclude_patterns=task.objects['exclude']
+    #     ) for objpack in __objpacks
+    # ]
+
+    __matpacks = task.materials['packages']
+    __objpacks = task.objects['packages']
     matpack = MaterialPackage(
-        __DIR / 'materials' / 'community-material-pack' / 'package.json'
+        __DIR / __matpacks[0] / 'package.json'
     )
 
     objpack = ObjectPackage(
-        __DIR / 'objects' / 'foundation' / 'package.json',
+        __DIR / __objpacks[0] / 'package.json',
         exclude_patterns=task.objects['exclude']
     )
+
+    matpacks = [matpack]
+    objpacks = [objpack]
 
     # # print(objpack.objects)
     # # key = list(objpack.objects.keys())[0]
     # # print(objpack.load(key))
 
-    print("\n\n")
-    print("=== START ===")
-    print(f"Note: Do not modify or change the name of the following files:\n")
+    click.echo("\n\n")
+    click.echo("=== START ===")
+    click.echo(f"Note: Do not modify or change the name of the following files:\n")
 
-    print(f"- {objpack.file}")
-    for k, v in matpack.materials.items():
-        print(f"- {k}: {v['file']}")
-    # for mf in MATERIAL_FILES:
-    #     print(f"- materials/{mf.name}")
-    print("\n\n")
+    all_locked_files = set()
+    for matpack in matpacks:
+        all_locked_files.update(matpack.files)
+    for objpack in objpacks:
+        all_locked_files.add(objpack.file)
+
+    for f in all_locked_files:
+        click.echo(f"- '{f.resolve()}'")
+    click.echo("\n\n")
 
     print(f"=== RENDERING {len(matpack.materials)} MATERIALS ===")
     for k, v in matpack.materials.items():

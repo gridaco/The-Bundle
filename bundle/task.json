@@ -3,13 +3,13 @@
   "target_quality": "2K",
   "target_rotation": "8__X45_3__Z45_3",
   "materials": {
-    "packages": ["materials/foundation", "materials/community-material-pack"],
+    "packages": ["materials/community-material-pack", "materials/foundation"],
     "exclude": []
   },
   "objects": {
     "packages": [
-      "objects/foundation",
-      "objects/doodle_99_abstract_art_kitbash"
+      "objects/doodle_99_abstract_art_kitbash",
+      "objects/foundation"
     ],
     "exclude": ["0.demo*", "*(wd)*", "z999*"]
   },
