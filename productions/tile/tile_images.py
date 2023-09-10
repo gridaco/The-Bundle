@@ -47,21 +47,7 @@ def save_canvas(canvas, output_path="tiled.png"):
     print(f"Image saved to {output_path}")
 
 
-@click.command()
-@click.argument("image_folder", type=click.Path(exists=True, file_okay=False, dir_okay=True))
-@click.option("--columns", "--col", default=10, help="Number of columns in the tiled image.", type=int)
-@click.option("--rows", "--row", default=10, help="Number of rows in the tiled image.", type=int)
-@click.option("--item-width", default=512, help="Width of each image cell.", type=int)
-@click.option("--item-height", default=512, help="Height of each image cell.", type=int)
-@click.option("--background-color", "--background", default="white", help="Background color of the tiled image.")
-@click.option("--border-width", default=2, help="Width of the border around each image cell.", type=int)
-@click.option("--border-color", default="black", help="Color of the border around each image cell.")
-@click.option("--out", help="Path to save the tiled image.", default="examples/tiled-{name}-col_{columns}-row_{rows}-bg_{background_color}-bc_{border_color}-bw_{border_width}.png")
-@click.option("--randomize", is_flag=True, help="Randomize image selection")
-@click.option("--show", is_flag=True, help="Show the image after creating it")
-@click.option("--no-save", is_flag=True, help="Don't save the image after creating it")
-# @click.option("--mondrian", is_flag=True, help="Make the layout look like a Mondrian")
-def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize, show, no_save):
+def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize=True, show=False, no_save=False, verbose=False):
     """Create a tiled image from a list of image files in the specified folder."""
 
     out = out.format(
@@ -76,6 +62,8 @@ def make_tile_image(image_folder, columns, rows, item_width, item_height, backgr
     image_files = get_image_files_from_directory(image_folder)
     if randomize:
         random.shuffle(image_files)
+    else:
+        image_files.sort()
 
     canvas = create_blank_canvas(
         columns, rows, item_width, item_height, background_color, border_width)
@@ -104,7 +92,8 @@ def make_tile_image(image_folder, columns, rows, item_width, item_height, backgr
             pbar.update(1)
             i += 1
         except Exception as e:
-            tqdm.write(f"Error processing image {img_path}: {e}")
+            if verbose:
+                tqdm.write(f"Error processing image {img_path}: {e}")
 
     if show:
         canvas.show()
@@ -115,5 +104,37 @@ def make_tile_image(image_folder, columns, rows, item_width, item_height, backgr
         save_canvas(canvas, output_path=out)
 
 
+@click.command()
+@click.argument("image_folder", type=click.Path(exists=True, file_okay=False, dir_okay=True))
+@click.option("--columns", "--col", default=10, help="Number of columns in the tiled image.", type=int)
+@click.option("--rows", "--row", default=10, help="Number of rows in the tiled image.", type=int)
+@click.option("--item-width", default=512, help="Width of each image cell.", type=int)
+@click.option("--item-height", default=512, help="Height of each image cell.", type=int)
+@click.option("--background-color", "--background", default="white", help="Background color of the tiled image.")
+@click.option("--border-width", default=2, help="Width of the border around each image cell.", type=int)
+@click.option("--border-color", default="black", help="Color of the border around each image cell.")
+@click.option("--out", help="Path to save the tiled image.", default="examples/tiled-{name}-col_{columns}-row_{rows}-bg_{background_color}-bc_{border_color}-bw_{border_width}.png")
+@click.option("--randomize", is_flag=True, help="Randomize image selection")
+@click.option("--show", is_flag=True, help="Show the image after creating it")
+@click.option("--no-save", is_flag=True, help="Don't save the image after creating it")
+# @click.option("--mondrian", is_flag=True, help="Make the layout look like a Mondrian")
+def cli(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize, show, no_save):
+    make_tile_image(
+        image_folder=image_folder,
+        columns=columns,
+        rows=rows,
+        item_width=item_width,
+        item_height=item_height,
+        background_color=background_color,
+        border_width=border_width,
+        border_color=border_color,
+        out=out,
+        randomize=randomize,
+        show=show,
+        no_save=no_save,
+        verbose=True
+    )
+
+
 if __name__ == "__main__":
-    make_tile_image()
+    cli()
