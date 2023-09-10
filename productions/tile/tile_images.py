@@ -64,7 +64,7 @@ def save_canvas(canvas, output_path="tiled.png"):
 def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize, show, no_save):
     """Create a tiled image from a list of image files in the specified folder."""
 
-    out = out or f"examples/tiled-{Path(image_folder).name}-{background_color}.png"
+    out = out or f"examples/tiled-{Path(image_folder).name}-bg_{background_color}-bc_{border_color}-bw_{border_width}.png"
 
     image_files = get_image_files_from_directory(image_folder)
     if randomize:
