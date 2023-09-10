@@ -19,8 +19,8 @@ export function Packs() {
               <Link
                 key={i}
                 href={`/library/download?item=${`v1/bin/${k}/${item}.zip`}`}
-                download
                 target="_blank"
+                // href={`/library/${k}/${item}`}
               >
                 <button>
                   <PackItem

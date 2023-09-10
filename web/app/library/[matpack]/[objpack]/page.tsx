@@ -44,7 +44,6 @@ export default function PackDetailPage(props: { params: any }) {
         </h1>
         <Link
           href={`/library/download?item=${`v1/bin/${matPack}/${objPack}.zip`}`}
-          download
           target="_blank"
         >
           <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
