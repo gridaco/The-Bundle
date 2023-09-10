@@ -18,6 +18,7 @@ export function DemoDownloadCard() {
           <Link
             className="underline"
             href={"/library/download?item=v1/bin/The+Bundle+V1+Demo.zip"}
+            target="_blank"
           >
             Download Free Demo File
           </Link>
