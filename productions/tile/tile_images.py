@@ -1,5 +1,5 @@
 import click
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageColor
 from tqdm import tqdm
 import os
 from pathlib import Path
@@ -23,7 +23,8 @@ def process_image(img_path, x, y, resolution_x, resolution_y, draw, border_width
     with Image.open(img_path) as img:
         # If the image has transparency, composite it over a solid background
         if img.mode == "RGBA":
-            img_alpha = Image.new("RGBA", img.size, (255, 255, 255, 0))
+            img_alpha = Image.new(
+                "RGBA", img.size, (*ImageColor.getrgb(background_color), 255))
             img = Image.alpha_composite(img_alpha, img).convert("RGB")
 
         img = img.resize((resolution_x, resolution_y), Image.LANCZOS)
@@ -52,16 +53,18 @@ def save_canvas(canvas, output_path="tiled.png"):
 @click.option("--rows", default=10, help="Number of rows in the tiled image.", type=int)
 @click.option("--item-width", default=512, help="Width of each image cell.", type=int)
 @click.option("--item-height", default=512, help="Height of each image cell.", type=int)
-@click.option("--background-color", default="white", help="Background color of the tiled image.")
+@click.option("--background-color", "--background", default="white", help="Background color of the tiled image.")
 @click.option("--border-width", default=2, help="Width of the border around each image cell.", type=int)
 @click.option("--border-color", default="black", help="Color of the border around each image cell.")
 @click.option("--out", help="Path to save the tiled image.")
 @click.option("--randomize", is_flag=True, help="Randomize image selection")
+@click.option("--show", is_flag=True, help="Show the image after creating it")
+@click.option("--no-save", is_flag=True, help="Don't save the image after creating it")
 # @click.option("--mondrian", is_flag=True, help="Make the layout look like a Mondrian")
-def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize):
+def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize, show, no_save):
     """Create a tiled image from a list of image files in the specified folder."""
 
-    out = out or f"examples/tiled-{Path(image_folder).name}.png"
+    out = out or f"examples/tiled-{Path(image_folder).name}-{background_color}.png"
 
     image_files = get_image_files_from_directory(image_folder)
     if randomize:
@@ -87,7 +90,13 @@ def make_tile_image(image_folder, columns, rows, item_width, item_height, backgr
 
         canvas.paste(img, (x, y))
 
-    save_canvas(canvas, output_path=out)
+    if show:
+        canvas.show()
+
+    if no_save:
+        pass
+    else:
+        save_canvas(canvas, output_path=out)
 
 
 if __name__ == "__main__":
