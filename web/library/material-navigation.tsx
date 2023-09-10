@@ -17,7 +17,6 @@ export function MaterialsNav() {
         "cmp.marble",
         "cmp.plastic",
         "cmp.subtle-imperfections",
-        "m.blob",
         "m.chrome",
         "m.cloudy",
         "m.copper",
