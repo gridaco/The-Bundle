@@ -6,6 +6,7 @@ import { Gallery, Packs, MaterialsNav } from "@/library";
 import Link from "next/link";
 import Image from "next/image";
 import { isProUser } from "@/s/q-user";
+import { DemoDownloadCard } from "@/components/demo-download-card";
 export const dynamic = "force-dynamic";
 
 const delta_gothic_one = Dela_Gothic_One({
@@ -18,11 +19,12 @@ export default async function LibraryPage() {
   const supabase = createServerComponentClient({ cookies });
 
   const { data } = await supabase.auth.getUser();
-  const pro = data.user && isProUser(data.user);
 
-  if (!pro) {
+  if (!data.user) {
     redirect("/bundle/signin");
   }
+
+  const pro = data.user && isProUser(data.user);
 
   return (
     <main className="max-w-screen-xl content-center m-auto p-24 pt-64">
@@ -42,10 +44,20 @@ export default async function LibraryPage() {
           </div>
         </div>
       </div>
+      {!pro && (
+        <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
+          <DemoDownloadCard />
+        </div>
+      )}
       <div className="max-w-screen-md m-auto mt-24">
         {/* <Gallery /> */}
         <Packs />
       </div>
+      {!pro && (
+        <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
+          <DemoDownloadCard />
+        </div>
+      )}
       <footer className="p-4 pt-40 flex flex-col items-center justify-center text-center">
         <p className="opacity-50 text-xs leading-tight">
           The Bundle by Grida -<br />© {new Date().getFullYear()} Grida, Inc.
@@ -65,5 +77,3 @@ export default async function LibraryPage() {
     </main>
   );
 }
-
-// function
