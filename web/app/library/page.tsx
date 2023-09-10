@@ -1,13 +1,11 @@
 import { Dela_Gothic_One } from "next/font/google";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { app_metadata_subscription_id } from "@/k/userkey.json";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Content, LibraryTab } from "@/library/tab";
-import { Tabs } from "@radix-ui/themes";
 import { Gallery, Packs, MaterialsNav } from "@/library";
 import Link from "next/link";
 import Image from "next/image";
+import { isProUser } from "@/s/q-user";
 export const dynamic = "force-dynamic";
 
 const delta_gothic_one = Dela_Gothic_One({
@@ -20,7 +18,7 @@ export default async function LibraryPage() {
   const supabase = createServerComponentClient({ cookies });
 
   const { data } = await supabase.auth.getUser();
-  const pro = data.user?.app_metadata[app_metadata_subscription_id];
+  const pro = data.user && isProUser(data.user);
 
   if (!pro) {
     redirect("/bundle/signin");

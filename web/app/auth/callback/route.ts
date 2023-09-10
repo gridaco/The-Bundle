@@ -1,4 +1,4 @@
-import { app_metadata_subscription_id } from "@/k/userkey.json";
+import { isProUser } from "@/s/q-user";
 import getHost from "@/s/utils/get-host";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
@@ -15,14 +15,12 @@ export async function GET(request: NextRequest) {
   }
 
   // while on CBT session, check if user has a plan, if not, redirect to /beta/join
-  const { data: user } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getUser();
 
   const host = getHost(request);
 
-  if (user.user?.app_metadata) {
-    if (!user.user.app_metadata[app_metadata_subscription_id]) {
-      return NextResponse.redirect(host + "/pricing");
-    }
+  if (data.user && isProUser(data.user)) {
+    return NextResponse.redirect(host + "/pricing");
   }
 
   // URL to redirect to after sign in process completes
