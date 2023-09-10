@@ -36,7 +36,7 @@ def process_image(img_path, x, y, resolution_x, resolution_y, draw, border_width
             rect_x2 = x + resolution_x + border_width
             rect_y2 = y + resolution_y + border_width
             draw.rectangle([rect_x1, rect_y1, rect_x2,
-                           rect_y2], fill=border_color)
+                            rect_y2], fill=border_color)
 
         return img
 
@@ -49,14 +49,14 @@ def save_canvas(canvas, output_path="tiled.png"):
 
 @click.command()
 @click.argument("image_folder", type=click.Path(exists=True, file_okay=False, dir_okay=True))
-@click.option("--columns", default=10, help="Number of columns in the tiled image.", type=int)
-@click.option("--rows", default=10, help="Number of rows in the tiled image.", type=int)
+@click.option("--columns", "--col", default=10, help="Number of columns in the tiled image.", type=int)
+@click.option("--rows", "--row", default=10, help="Number of rows in the tiled image.", type=int)
 @click.option("--item-width", default=512, help="Width of each image cell.", type=int)
 @click.option("--item-height", default=512, help="Height of each image cell.", type=int)
 @click.option("--background-color", "--background", default="white", help="Background color of the tiled image.")
 @click.option("--border-width", default=2, help="Width of the border around each image cell.", type=int)
 @click.option("--border-color", default="black", help="Color of the border around each image cell.")
-@click.option("--out", help="Path to save the tiled image.")
+@click.option("--out", help="Path to save the tiled image.", default="examples/tiled-{name}-col_{columns}-row_{rows}-bg_{background_color}-bc_{border_color}-bw_{border_width}.png")
 @click.option("--randomize", is_flag=True, help="Randomize image selection")
 @click.option("--show", is_flag=True, help="Show the image after creating it")
 @click.option("--no-save", is_flag=True, help="Don't save the image after creating it")
@@ -64,7 +64,14 @@ def save_canvas(canvas, output_path="tiled.png"):
 def make_tile_image(image_folder, columns, rows, item_width, item_height, background_color, border_width, border_color, out, randomize, show, no_save):
     """Create a tiled image from a list of image files in the specified folder."""
 
-    out = out or f"examples/tiled-{Path(image_folder).name}-bg_{background_color}-bc_{border_color}-bw_{border_width}.png"
+    out = out.format(
+        name=Path(image_folder).name,
+        columns=columns,
+        rows=rows,
+        background_color=background_color,
+        border_color=border_color,
+        border_width=border_width
+    )
 
     image_files = get_image_files_from_directory(image_folder)
     if randomize:
@@ -74,7 +81,11 @@ def make_tile_image(image_folder, columns, rows, item_width, item_height, backgr
         columns, rows, item_width, item_height, background_color, border_width)
     draw = ImageDraw.Draw(canvas)
 
-    for i, img_path in enumerate(tqdm(image_files, desc="Processing images", total=min(len(image_files), columns*rows))):
+    i = 0
+    pbar = tqdm(image_files, desc="Processing images",
+                total=min(len(image_files), columns*rows))
+
+    for _, img_path in enumerate(image_files):
         if i >= columns * rows:
             break
 
@@ -85,10 +96,15 @@ def make_tile_image(image_folder, columns, rows, item_width, item_height, backgr
         x = col * (item_width + border_width)
         y = row * (item_height + border_width)
 
-        img = process_image(img_path, x, y, item_width, item_height,
-                            draw, border_width, border_color, background_color)
+        try:
+            img = process_image(img_path, x, y, item_width, item_height,
+                                draw, border_width, border_color, background_color)
 
-        canvas.paste(img, (x, y))
+            canvas.paste(img, (x, y))
+            pbar.update(1)
+            i += 1
+        except Exception as e:
+            tqdm.write(f"Error processing image {img_path}: {e}")
 
     if show:
         canvas.show()
