@@ -20,8 +20,11 @@ export default function PackDetailPage(props: { params: any }) {
     notFound();
   }
 
+  const downloadUrl = `/library/download?item=${`v1/bin/${matPack}/${objPack}.zip`}`;
+  const has_t2 = ["a", "b", "c", "f", "99"].includes(objPack);
+
   return (
-    <main className="max-w-screen-xl p-24 m-auto align-center text-center">
+    <main className="p-4 md:max-w-screen-xl md:p-24 m-auto align-center text-center">
       <header className="flex flex-col items-center">
         <div>
           <DissolveSlider
@@ -29,7 +32,12 @@ export default function PackDetailPage(props: { params: any }) {
               width: 600,
               height: 600,
             }}
-            images={["/bundle/tmp/p-01.png", "/bundle/tmp/p-02.png"]}
+            images={[
+              `/bundle/thumbnails/${matPack}/${objPack}.png`,
+              //
+              // "/bundle/tmp/p-01.png",
+              // "/bundle/tmp/p-02.png",
+            ]}
             interval={5}
             delay={0}
             duration={1}
@@ -42,10 +50,7 @@ export default function PackDetailPage(props: { params: any }) {
             {objPackName}
           </span>
         </h1>
-        <Link
-          href={`/library/download?item=${`v1/bin/${matPack}/${objPack}.zip`}`}
-          target="_blank"
-        >
+        <Link href={downloadUrl} target="_blank">
           <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
             Download {matPackName} {objPackName}
           </button>
@@ -53,14 +58,48 @@ export default function PackDetailPage(props: { params: any }) {
       </header>
       <div className="select-none pointer-events-none">
         <div className="flex flex-col items-center mt-40">
-          <Image src={"/bundle/tmp/01.png"} alt="." width={800} height={800} />
+          <Image
+            src={`/bundle/previews/${matPack}/${objPack}/t-0.png`}
+            alt={`The Bundle - ${matPack}/${objPack} tile image 1`}
+            width={800}
+            height={800}
+          />
         </div>
-        <div className="flex flex-col items-center mt-40">
-          <Image src={"/bundle/tmp/02.png"} alt="." width={800} height={800} />
-        </div>
+        {has_t2 && (
+          <div className="flex flex-col items-center mt-40">
+            <Image
+              src={`/bundle/previews/${matPack}/${objPack}/t-1.png`}
+              alt={`The Bundle - ${matPack}/${objPack} tile image 2`}
+              width={800}
+              height={800}
+            />
+          </div>
+        )}
+      </div>
+      <div className="p-24">
+        <Link href={downloadUrl} target="_blank">
+          <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
+            Download {matPackName} {objPackName}
+          </button>
+        </Link>
       </div>
       <div></div>
-      <footer></footer>
+      <footer className="p-4 pt-40 flex flex-col items-center justify-center text-center">
+        <p className="opacity-50 text-xs leading-tight">
+          The Bundle by Grida -<br />© {new Date().getFullYear()} Grida, Inc.
+          All Rights Reserved.
+        </p>
+        <Link href="https://instagram.com/grida.co">
+          <div className="mt-4">
+            <Image
+              src="/bundle/grida.svg"
+              alt="Grida Logo"
+              width={20}
+              height={20}
+            />
+          </div>
+        </Link>
+      </footer>
     </main>
   );
 }
