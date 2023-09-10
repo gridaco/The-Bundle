@@ -9,11 +9,54 @@ from flamenco.manager.apis import MetaApi
 from flamenco.manager.apis import JobsApi
 from flamenco.manager.models import FlamencoVersion
 
-configuration = Configuration(host="http://192.168.0.6:8080")
-api_client = ApiClient(configuration)
-jobs_api = JobsApi(api_client)
+DEFAULT_MANAGER_HOST = "http://192.168.0.6:8080"
+DEFAULT_SHARED_DRIVE = "/Volumes/the-bundle"
 
-shared_drive = "/Volumes/the-bundle"
+class FlamencoManager:
+    configuration: Configuration
+    client: ApiClient
+    jobs: JobsApi
+
+    def __init__(self, host, shared_drive) -> None:
+
+        self.configuration = Configuration(host=host)
+        self.api_client = ApiClient(self.configuration)
+        self.jobs_api = JobsApi(self.api_client)
+
+        self.shared_drive = shared_drive
+        pass
+
+    def post_job(self, name, blendfile, frames, render_output_path, priority=50, chunk_size=3, metadata={}):
+        return self.api_client.call_api("/api/v3/jobs", "POST", body={
+            "metadata": {
+                "project": "The Bundle",
+                "user.email": "ci-bot@bundle.grida.co",
+                "user.name": "The Bundle by Grida CI Bot",
+                # used for query
+                "name": name,
+                "priority": str(priority),
+                **metadata
+            },
+            "name": name,
+            "type": "simple-blender-render",
+            "priority": priority,
+            "submitter_platform": "manager",
+            # https://projects.blender.org/studio/flamenco/src/branch/main/internal/manager/job_compilers/scripts/simple_blender_render.js
+            "settings": {
+                # "blender_cmd": "{blender}",
+                # "extract_audio": True,
+                # "fps": 24,
+                # "render_output_root": "",
+                "chunk_size": chunk_size,
+                "blendfile": blendfile,
+                "has_previews": False,
+                "format": "PNG",
+                "frames": frames,
+                "images_or_video": "images",
+                "output_file_extension": ".png",
+                "render_output_path": render_output_path
+            }
+        })
 
 MAX_CHUNK_PER_FILE = 8
 
@@ -55,37 +98,6 @@ def pre():
     ...
 
 
-def post_job(name, blendfile, frames, render_output_path, priority=50, chunk_size=3, metadata={}):
-    return api_client.call_api("/api/v3/jobs", "POST", body={
-        "metadata": {
-            "project": "The Bundle",
-            "user.email": "ci-bot@bundle.grida.co",
-            "user.name": "The Bundle by Grida CI Bot",
-            # used for query
-            "name": name,
-            "priority": str(priority),
-            **metadata
-        },
-        "name": name,
-        "type": "simple-blender-render",
-        "priority": priority,
-        "submitter_platform": "manager",
-        # https://projects.blender.org/studio/flamenco/src/branch/main/internal/manager/job_compilers/scripts/simple_blender_render.js
-        "settings": {
-            # "blender_cmd": "{blender}",
-            # "extract_audio": True,
-            # "fps": 24,
-            # "render_output_root": "",
-            "chunk_size": chunk_size,
-            "blendfile": blendfile,
-            "has_previews": False,
-            "format": "PNG",
-            "frames": frames,
-            "images_or_video": "images",
-            "output_file_extension": ".png",
-            "render_output_path": render_output_path
-        }
-    })
 
 
 def is_excluded(filepath, includes, excludes):
@@ -128,6 +140,7 @@ def extract_segments(pattern, filepath):
 @click.option('--job-file-pattern', default="{material_package}/{material_key}/{object_package}/{target_rotation}/{object_key}.blend", help='Job file pattern, relative to queue path', type=str)
 @click.option("--render-output-path", default="{shared_drive}/renders/{material_package}/{material_key}/{object_package}/{object_key}/{target_rotation}/######.png", help="Render output path")
 @click.option("--dry-run", is_flag=True, help="Don't actually submit jobs")
+@click.option('--host', default=DEFAULT_MANAGER_HOST, help='Flamenco Manager host', type=str)
 def regular(
     queue,
     material_packages_include,
@@ -145,8 +158,10 @@ def regular(
     max,
     job_file_pattern,
     render_output_path,
-    dry_run
+    dry_run,
+    host
 ):
+    manager = FlamencoManager(host=host, shared_drive=DEFAULT_SHARED_DRIVE)
     queue = Path(queue)
     assert queue.exists()
 
@@ -187,7 +202,7 @@ def regular(
         jobname = name or f'{metadata["material_key"]}/{metadata["object_key"]}'
 
         __render_output_path = render_output_path.format(
-            shared_drive=shared_drive,
+            shared_drive=manager.shared_drive,
             **metadata
         )
 
@@ -195,7 +210,7 @@ def regular(
             f'☑️ {job.relative_to(queue)} → {__render_output_path} ({frames} {priority})')
 
         if not dry_run:
-            post_job(
+            manager.post_job(
                 name=jobname,
                 blendfile=str(job),
                 frames=frames,
@@ -219,6 +234,7 @@ def regular(
 @click.option('--object-package', default=None, type=str)
 @click.option('--object-key', default=None, type=str)
 @click.option('--limit', default=None, help='Max number of jobs to list/delete', type=int)
+@click.option('--host', default=DEFAULT_MANAGER_HOST, help='Flamenco Manager host', type=str)
 def manage(
     command,
     project,
@@ -227,8 +243,10 @@ def manage(
     material_key,
     object_package,
     object_key,
-    limit
+    limit,
+    host
 ):
+    manager = FlamencoManager(host=host, shared_drive=DEFAULT_SHARED_DRIVE)
     q_metadata = {
         "project": project,
         "material_package": material_package,
@@ -238,7 +256,7 @@ def manage(
     }
     q_metadata = {k: v for k, v in q_metadata.items() if v is not None}
 
-    res = jobs_api.query_jobs(
+    res = manager.jobs_api.query_jobs(
         {
             "limit": limit or 1,
             "metadata": q_metadata,
@@ -254,7 +272,7 @@ def manage(
     if command == 'delete':
         for job in jobs:
             if click.confirm(f"Delete {job['name']} ({job['id']})?", abort=True):
-                jobs_api.delete_job(job["id"])
+                manager.jobs_api.delete_job(job["id"])
 
 
 @click.group()
