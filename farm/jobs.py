@@ -12,6 +12,7 @@ from flamenco.manager.models import FlamencoVersion
 DEFAULT_MANAGER_HOST = "http://192.168.0.6:8080"
 DEFAULT_SHARED_DRIVE = "/Volumes/the-bundle"
 
+
 class FlamencoManager:
     configuration: Configuration
     client: ApiClient
@@ -58,6 +59,7 @@ class FlamencoManager:
             }
         })
 
+
 MAX_CHUNK_PER_FILE = 8
 
 
@@ -96,8 +98,6 @@ def pre():
     TODO: loop trhough rendered outputs, create a queue for only required jobs
     """
     ...
-
-
 
 
 def is_excluded(filepath, includes, excludes):
@@ -164,6 +164,15 @@ def regular(
     manager = FlamencoManager(host=host, shared_drive=DEFAULT_SHARED_DRIVE)
     queue = Path(queue)
     assert queue.exists()
+
+    # assert queue is part of the shared drive
+    try:
+        queue.relative_to(
+            manager.shared_drive)
+    except ValueError:
+        click.echo(
+            f"Queue must be under shared drive {manager.shared_drive}, got {queue}")
+        return
 
     pattern = job_file_pattern.replace("{", "**/{").format(
         material_package="*",
