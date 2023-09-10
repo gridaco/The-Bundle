@@ -22,6 +22,8 @@ export function Packs() {
                     src={`/bundle/thumbnails/${k}/${item}.png`}
                     n1={name}
                     n2={item.toUpperCase()}
+                    id1={k}
+                    id2={item}
                   />
                 </button>
               </Link>
@@ -33,7 +35,19 @@ export function Packs() {
   );
 }
 
-function PackItem({ n1, n2, src }: { src: string; n1: string; n2: string }) {
+function PackItem({
+  n1,
+  n2,
+  id1,
+  id2,
+  src,
+}: {
+  src: string;
+  n1: string;
+  n2: string;
+  id1: string;
+  id2: string;
+}) {
   return (
     <div className="w-90 h-90">
       <Image src={src} width={340} height={340} alt="" />
@@ -51,7 +65,10 @@ function PackItem({ n1, n2, src }: { src: string; n1: string; n2: string }) {
             {n2}
           </span>
         </div>
-        <p className="text-sm font-light">200 Objects · 8 Angles · 4K</p>
+        <p className="text-sm font-light">
+          {/* TODO: update this with informative properties */}
+          4K · {id1} · {id2}
+        </p>
       </div>
     </div>
   );
