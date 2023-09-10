@@ -3,6 +3,7 @@ import { user_metadata_stripe_customer_id } from "@/k/userkey.json";
 import { stripe } from "@/s/stripe";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import getHost from "@/s/utils/get-host";
 
 export async function GET(request: NextRequest) {
   // get supabase user
@@ -13,10 +14,7 @@ export async function GET(request: NextRequest) {
   const { user } = data;
 
   if (!user) {
-    const host =
-      process.env.NODE_ENV === "production"
-        ? "https://grida.co/bundle"
-        : new URL(request.url).origin + "/bundle";
+    const host = getHost(request);
     return NextResponse.redirect(host + "/signin");
   }
 
