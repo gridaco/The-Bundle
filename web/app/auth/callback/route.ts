@@ -14,14 +14,7 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // while on CBT session, check if user has a plan, if not, redirect to /beta/join
-  const { data } = await supabase.auth.getUser();
-
   const host = getHost(request);
-
-  if (data.user && isProUser(data.user)) {
-    return NextResponse.redirect(host + "/pricing");
-  }
 
   // URL to redirect to after sign in process completes
   return NextResponse.redirect(host + "/library");

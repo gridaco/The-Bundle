@@ -1,10 +1,8 @@
 import Image from "next/image";
 import { Dela_Gothic_One } from "next/font/google";
 import ImageColumn from "@/home/image-column";
-import DisolveSlider from "@/home/desolve-slider";
 import Link from "next/link";
 import { HeroVideo } from "@/home/hero-video";
-import contacts from "@/k/contacts.json";
 
 const delta_gothic_one = Dela_Gothic_One({
   subsets: ["latin"],
@@ -20,7 +18,7 @@ const images = [
 ];
 
 export default function Home() {
-  const cta_link = "/signin";
+  const cta_link = "/pricing";
   const cta_txt = "Get The Bundle";
   // const demo_link = "/demo.zip";
 
@@ -32,9 +30,9 @@ export default function Home() {
             <span className={delta_gothic_one.className}>The Bundle</span>
           </h1>
           <div className="h-4" />
-          <Link href={cta_link} target="_blank">
+          <Link href={"/library"} target="_blank">
             <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
-              {cta_txt}
+              Visit Library
             </button>
           </Link>
         </div>
