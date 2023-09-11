@@ -1,3 +1,4 @@
+import fnmatch
 import sys
 import click
 import os
@@ -7,7 +8,7 @@ from pathlib import Path
 from flamenco.manager import ApiClient, Configuration
 from flamenco.manager.apis import MetaApi
 from flamenco.manager.apis import JobsApi
-from flamenco.manager.models import FlamencoVersion
+from flamenco.manager.models import FlamencoVersion, JobStatusChange, JobStatus
 
 DEFAULT_MANAGER_HOST = "http://192.168.0.6:8080"
 DEFAULT_SHARED_DRIVE = "/Volumes/the-bundle"
@@ -107,7 +108,7 @@ def is_excluded(filepath, includes, excludes):
 
 def extract_segments(pattern, filepath):
     pattern_segments = pattern.split('/')
-    file_segments = filepath.parts[-len(pattern_segments):]
+    file_segments = Path(filepath).parts[-len(pattern_segments):]
 
     metadata = {}
     for pattern_segment, file_segment in zip(pattern_segments, file_segments):
@@ -118,6 +119,55 @@ def extract_segments(pattern, filepath):
             key = pattern_segment.strip('{}')
             metadata[key] = file_segment
     return metadata
+
+
+# TODO: the include / exclude filtering does not work properly. Yet it is much faster than glob, we're using it.
+def fast_list_files(start_path, pattern, includes: dict = None, excludes: dict = None, verbose=False):
+    """Faster listing of files using os.scandir, based on pattern, includes, and excludes."""
+
+    # Decompose the pattern into segments
+    segments = pattern.split("/")
+
+    # Define a recursive helper function to handle the directory diving
+    def recursive_scan(current_path, segment_idx):
+        if segment_idx >= len(segments):
+            return [current_path]
+
+        current_segment = segments[segment_idx]
+        results = []
+
+        for entry in os.scandir(current_path):
+            include_patterns = includes.get(current_segment, None)
+            exclude_patterns = excludes.get(current_segment, [])
+
+            # If includes are specified and the current entry doesn't match any, skip this entry
+            if include_patterns and not any(fnmatch.fnmatch(entry.name, pat) for pat in include_patterns):
+                continue
+
+            # If the current entry matches any of the exclude patterns, skip this entry
+            if any(fnmatch.fnmatch(entry.name, pat) for pat in exclude_patterns):
+                continue
+
+            # Proceed with the regular logic
+            if entry.is_dir():
+                results.extend(recursive_scan(
+                    Path(entry.path), segment_idx + 1))
+                if verbose:
+                    tqdm.write(f"📁 Scanned... '{entry.path}'")
+            elif segment_idx == len(segments) - 1:
+                results.append(entry.path)
+                if verbose:
+                    tqdm.write(f"📁 Scanned... '{entry.path}'")
+
+        return results
+
+    # Start the recursive scan from the initial path and segment
+    files = recursive_scan(Path(start_path), 0)
+
+    if verbose:
+        tqdm.write(f"📁 Scanning Complete... {len(files)} items found")
+
+    return files
 
 
 @click.command()
@@ -141,6 +191,7 @@ def extract_segments(pattern, filepath):
 @click.option("--render-output-path", default="{shared_drive}/renders/{material_package}/{material_key}/{object_package}/{object_key}/{target_rotation}/######.png", help="Render output path")
 @click.option("--dry-run", is_flag=True, help="Don't actually submit jobs")
 @click.option('--host', default=DEFAULT_MANAGER_HOST, help='Flamenco Manager host', type=str)
+@click.option('--verbose', is_flag=True, help='Verbose')
 def regular(
     queue,
     material_packages_include,
@@ -159,9 +210,14 @@ def regular(
     job_file_pattern,
     render_output_path,
     dry_run,
-    host
+    host,
+    verbose
 ):
     manager = FlamencoManager(host=host, shared_drive=DEFAULT_SHARED_DRIVE)
+    # ping the manager - check if it's up and running
+    manager.api_client.call_api(
+        "/api/v3/configuration", "GET")
+
     queue = Path(queue)
     assert queue.exists()
 
@@ -182,11 +238,36 @@ def regular(
         object_key="*"
     )
 
+    segments_map = {
+        "material_package": (material_packages_include, material_packages_exclude),
+        "material_key": (material_include, material_exclude),
+        "object_package": (object_packages_include, object_packages_exclude),
+        "object_key": (object_include, object_exclude),
+        # Assuming you don't have include/exclude for rotation
+        "target_rotation": (None, None)
+    }
+
+    includes = {k: v[0] for k, v in segments_map.items()}
+    excludes = {k: v[1] for k, v in segments_map.items()}
+
+    segments_map = {
+        "material_package": (material_packages_include, material_packages_exclude),
+        "material_key": (material_include, material_exclude),
+        "object_package": (object_packages_include, object_packages_exclude),
+        "object_key": (object_include, object_exclude),
+        # Assuming you don't have include/exclude for rotation
+        "target_rotation": (None, None)
+    }
+
+    includes = {k: v[0] for k, v in segments_map.items()}
+    excludes = {k: v[1] for k, v in segments_map.items()}
+
     jobs_map = []
-    for job in queue.glob(pattern):
+    for job in fast_list_files(queue, job_file_pattern, includes, excludes, verbose=verbose):
         metadata = extract_segments(job_file_pattern, job)
 
-        # Check exclusions/includes
+        # FIXME: this should be done in fast_list_files
+        # Double Check exclusions/includes
         if any(is_excluded(metadata[key], includes, excludes) for key, includes, excludes in [
             ("material_package", material_packages_include, material_packages_exclude),
             ("material_key", material_include, material_exclude),
@@ -194,13 +275,22 @@ def regular(
                 ("object_key", object_include, object_exclude)]):
             continue
 
+        # check if invalid file - if starts with .
+        if Path(job).name.startswith('.'):
+            continue
+
+        # Since we already used includes and excludes, we no longer need this check
+        # It's handled inside the fast_list_files function
         jobs_map.append({"path": job, "metadata": metadata})
 
-    for i, job_data in tqdm(enumerate(jobs_map)):
+    click.echo(f"📁 Found {len(jobs_map)} jobs")
+
+    i = 0
+    for job_data in tqdm(jobs_map):
         if max is not None and i >= max:
             break
 
-        job = job_data["path"]
+        job = Path(job_data["path"])
         metadata = job_data["metadata"]
 
         _frames = frames_from_blendfile(job)
@@ -214,9 +304,6 @@ def regular(
             shared_drive=manager.shared_drive,
             **metadata
         )
-
-        tqdm.write(
-            f'☑️ {job.relative_to(queue)} → {__render_output_path} ({frames} {priority})')
 
         if not dry_run:
             manager.post_job(
@@ -232,6 +319,11 @@ def regular(
                     'batch': str(batch)
                 }
             )
+
+        tqdm.write(
+            f'☑️ {job.relative_to(queue)} → {__render_output_path} ({frames} {priority})')
+
+        i += 1
 
 
 @click.command()
