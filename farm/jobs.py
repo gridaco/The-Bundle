@@ -235,15 +235,17 @@ def regular(
 
 
 @click.command()
-@click.argument('command', type=click.Choice(['list', 'delete']))
+@click.argument('command', type=click.Choice(['list', 'delete', 'cancel']))
 @click.option('--project', default=None)
-@click.option('--status', default=None)
+@click.option('--status', default=None, type=click.Choice(['active', 'canceled', 'completed', 'construction-failed', 'failed', 'paused', 'queued', 'archived', 'archiving', 'cancel-requested', 'requeueing', 'under-construction']))
 @click.option('--material-package', default=None, type=str)
 @click.option('--material-key', default=None, type=str)
 @click.option('--object-package', default=None, type=str)
 @click.option('--object-key', default=None, type=str)
 @click.option('--limit', default=None, help='Max number of jobs to list/delete', type=int)
 @click.option('--host', default=DEFAULT_MANAGER_HOST, help='Flamenco Manager host', type=str)
+@click.option('--dry-run', is_flag=True, help="Don't actually delete/cancel jobs")
+@click.option('-y', '--yes', is_flag=True, help="Yes to all")
 def manage(
     command,
     project,
@@ -253,9 +255,15 @@ def manage(
     object_package,
     object_key,
     limit,
-    host
+    host,
+    dry_run,
+    yes
 ):
     manager = FlamencoManager(host=host, shared_drive=DEFAULT_SHARED_DRIVE)
+    # ping the manager - check if it's up and running (timeout 5s)
+    manager.api_client.call_api(
+        "/api/v3/configuration", "GET", _request_timeout=3)
+
     q_metadata = {
         "project": project,
         "material_package": material_package,
@@ -265,22 +273,35 @@ def manage(
     }
     q_metadata = {k: v for k, v in q_metadata.items() if v is not None}
 
-    res = manager.jobs_api.query_jobs(
-        {
-            "limit": limit or 1,
-            "metadata": q_metadata,
-            "status_in": [
-                status
-            ],
-        }
-    )
+    q = {
+        "limit": limit,
+        "metadata": q_metadata,
+        "status_in": [
+            status
+        ],
+    }
+    q = {k: v for k, v in q.items() if v is not None}
+
+    res = manager.jobs_api.query_jobs(q)
     jobs = res['jobs']
 
     print(len(jobs))
 
+    if command == 'cancel':
+        for job in jobs:
+            click.echo(f"Cancel {job['name']} ({job['id']})")
+            if dry_run:
+                continue
+            if yes or click.confirm(f"Cancel {job['name']} ({job['id']})?", abort=True):
+                manager.jobs_api.set_job_status(
+                    job["id"], job_status_change=JobStatusChange(reason="requested by manager", status=JobStatus('canceled')))
+
     if command == 'delete':
         for job in jobs:
-            if click.confirm(f"Delete {job['name']} ({job['id']})?", abort=True):
+            click.echo(f"Delete {job['name']} ({job['id']})")
+            if dry_run:
+                continue
+            if yes or click.confirm(f"Delete {job['name']} ({job['id']})?", abort=True):
                 manager.jobs_api.delete_job(job["id"])
 
 
