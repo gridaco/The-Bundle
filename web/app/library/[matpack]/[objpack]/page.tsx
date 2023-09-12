@@ -1,11 +1,46 @@
 import DissolveSlider from "@/home/desolve-slider";
 import { materials } from "@/k/bundle.json";
 import assert from "assert";
+import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default function PackDetailPage(props: { params: any }) {
+type Props = {
+  params: { matpack: string; objpack: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const matPack = params.matpack;
+    const objPack = params.objpack;
+    const objPackName = objPack.toUpperCase();
+    const __mat = (materials as any)[matPack];
+    assert(__mat["packs"].includes(objPack));
+
+    const matPackName = __mat["name"];
+
+    const previousImages = (await parent).openGraph?.images || [];
+
+    return {
+      title: `${matPackName} ${objPackName} | The Bundle`,
+      openGraph: {
+        images: [
+          `/bundle/thumbnails/${matPack}/${objPack}.png`,
+          ...previousImages,
+        ],
+      },
+    };
+  } catch (e) {
+    return {};
+  }
+}
+
+export default function PackDetailPage(props: Props) {
   const matPack = props.params.matpack;
   const objPack = props.params.objpack;
   const objPackName = objPack.toUpperCase();

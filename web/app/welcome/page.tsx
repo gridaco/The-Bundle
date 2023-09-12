@@ -15,11 +15,6 @@ const delta_gothic_one = Dela_Gothic_One({
 
 export const metadata: Metadata = {
   title: "Welcome",
-  description: "The Bundle by Grida",
-  colorScheme: "dark",
-  openGraph: {
-    images: "https://grida.co/bundle/og-image.jpg",
-  },
 };
 
 export default async function WelcomePage() {
