@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { Dela_Gothic_One } from "next/font/google";
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 const delta_gothic_one = Dela_Gothic_One({
   subsets: ["latin"],
   display: "swap",

@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
+
 export const dynamic = "force-dynamic";
 
 const delta_gothic_one = Dela_Gothic_One({
