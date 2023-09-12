@@ -1,15 +1,19 @@
 {
-  "type": "build-queue-files",
+  "type": "build-job-files",
   "target_quality": "2K",
   "target_rotation": "8__X45_3__Z45_3",
   "materials": {
-    "packages": ["materials/community-material-pack", "materials/foundation"],
+    "packages": [
+      "materials/clay-doh-presets",
+      "materials/community-material-pack",
+      "materials/foundation"
+    ],
     "exclude": []
   },
   "objects": {
     "packages": [
-      "objects/doodle_99_abstract_art_kitbash",
-      "objects/foundation"
+      "objects/foundation",
+      "objects/doodle_99_abstract_art_kitbash"
     ],
     "exclude": ["0.demo*", "*(wd)*", "z999*"]
   },

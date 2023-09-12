@@ -321,6 +321,7 @@ class RenderJobFile:
     # frame: rotation, E.g. { 1: '0°0°0°', 2: '0°0°15°', ... }
     rotation_frame_map: dict[int, str] = {}
     use_animation: bool = False
+    use_transparent_background: bool = True
 
     def __init__(
         self,
@@ -332,12 +333,14 @@ class RenderJobFile:
         object_key: str,
         rotations: list[(int, int, int)] = [(0, 0, 0)],
         use_animation: bool = False,
+        use_transparent_background: bool = True,
         render_out: Path | str = None,
     ):
         self.object_key = object_key
         self.material_key = material_key
         self.rotations = rotations
         self.use_animation = use_animation
+        self.use_transparent_background = use_transparent_background
         self.render_out = Path(render_out)
 
         # reset the vm to work with a clean slate
@@ -381,6 +384,16 @@ class RenderJobFile:
         # Insert keyframes for the rotations
         if self.use_animation:
             self.__insert_keyframes()
+
+        # Set the background to transparent
+        if self.use_transparent_background:
+            bpy.context.scene.render.film_transparent = True
+            # output format as PNG, color as RGBA
+            bpy.context.scene.render.image_settings.file_format = 'PNG'
+            bpy.context.scene.render.image_settings.color_mode = 'RGBA'
+
+        # clear the output path
+        bpy.context.scene.render.filepath = ''
 
     def save(self, path, resolution_x, resolution_y, resolution_percentage=100, samples=128):
         """
@@ -808,6 +821,7 @@ def main(task, dist):
                     object_key=object_key,
                     rotations=task.rotations,
                     use_animation=use_animation,
+                    use_transparent_background=True,
                     render_out=render_out,
                 )
 
