@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
-
+import { ArrowUpIcon } from "@radix-ui/react-icons";
 export const dynamic = "force-dynamic";
 
 const delta_gothic_one = Dela_Gothic_One({
@@ -35,6 +35,7 @@ export default async function LibraryPage() {
         </h1>
       </header>
       <div className="sticky top-0 bg-transparent bg-opacity-5 backdrop-blur-xl z-10">
+        <div id="top" />
         <div className="flex flex-col items-center mt-10">
           {/* <LibraryTab
             tabs={["materials", "gallary"]}
@@ -59,6 +60,19 @@ export default async function LibraryPage() {
           <DemoDownloadCard />
         </div>
       )}
+      {/* scroll to top */}
+      <div className="m-auto w-fit mt-40">
+        <Link
+          href="#top"
+          about="scroll-to-top"
+          aria-label="scroll-to-top"
+          title="Scroll to Top"
+        >
+          <button className="w-[40px] h-[40px] rounded-full border flex items-center justify-center">
+            <ArrowUpIcon />
+          </button>
+        </Link>
+      </div>
       <footer className="p-4 pt-40 flex flex-col items-center justify-center text-center">
         <p className="opacity-50 text-xs leading-tight">
           The Bundle by Grida -<br />© {new Date().getFullYear()} Grida, Inc.
