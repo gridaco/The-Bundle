@@ -1,0 +1,80 @@
+{
+  "name": "cdp",
+  "version": "3.0",
+  "authors": [
+    "doublegum",
+    "Grida, Inc."
+  ],
+  "license": "CC-BY-SA-4.0",
+  "homepage": "https://grida.co/bundle/materials/cmp",
+  "files": [
+    "Community Material Pack v3.blend"
+  ],
+  "materials": {
+    "cdp.bubble-gum": {
+      "name": "Bubble Gum",
+      "class": "*",
+      "score": 60
+    },
+    "cdp.candlewax": {
+      "name": "Candlewax",
+      "class": "*",
+      "score": 65
+    },
+    "cdp.ceramic": {
+      "name": "Ceramic",
+      "class": "*",
+      "score": 55
+    },
+    "cdp.dirty-clay": {
+      "name": "Dirty Clay",
+      "class": "*",
+      "score": 60
+    },
+    "cdp.drought-soil": {
+      "name": "Drought Soil",
+      "class": "*",
+      "score": 50
+    },
+    "cdp.iridescence": {
+      "name": "Iridescence",
+      "class": "*",
+      "score": 55
+    },
+    "cdp.metalliclay": {
+      "name": "Metalliclay",
+      "class": "*",
+      "score": 70
+    },
+    "cdp.mixed-doh": {
+      "name": "Mixed Doh",
+      "class": "*",
+      "score": 60
+    },
+    "cdp.plasticine": {
+      "name": "Plasticine",
+      "class": "*",
+      "score": 55
+    },
+    "cdp.space-clay": {
+      "name": "Space Clay",
+      "class": "*",
+      "score": 55
+    },
+    "cdp.terracotta": {
+      "name": "Terracotta",
+      "class": "*",
+      "score": 50
+    },
+    "cdp.translucent": {
+      "name": "Translucent",
+      "class": "*",
+      "score": 70
+    },
+    "cdp.wet-clay": {
+      "name": "Wet Clay",
+      "class": "*",
+      "score": 70
+    }
+  }
+}
