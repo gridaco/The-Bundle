@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import getHost from "@/s/utils/get-host";
 
 export async function POST(request: NextRequest) {
+  const host = getHost(request);
+
   // get form data
   const body = await request.formData();
   const instagram = body.get("instagram") as string;
@@ -16,10 +18,11 @@ export async function POST(request: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
   const { data } = await supabase.auth.getUser();
 
-  const { user } = data;
-  console.log({ user });
+  if (!data.user) {
+    return NextResponse.redirect(host + "/signin");
+  }
 
-  await supabase.auth.updateUser({
+  const { data: updaed } = await supabase.auth.updateUser({
     data: {
       instagram_username,
       job_title,
@@ -27,9 +30,12 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  const host = getHost(request);
+  console.log("user metadata updated", updaed.user?.user_metadata);
 
-  return NextResponse.redirect(host + "/library");
+  return NextResponse.redirect(host + "/library", {
+    // Returning a 301 status redirects from a POST to a GET route
+    status: 301,
+  });
 }
 
 function parseInstagramUsername(txt: string) {

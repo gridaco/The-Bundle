@@ -1,4 +1,7 @@
 import React from "react";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { Dela_Gothic_One } from "next/font/google";
 import { Metadata } from "next";
 
@@ -17,7 +20,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function WelcomePage() {
+export default async function WelcomePage() {
+  const supabase = createServerComponentClient({ cookies });
+
+  const { data } = await supabase.auth.getUser();
+
+  if (!data.user) {
+    redirect("/bundle/signin");
+  }
+
   return (
     <main className="max-w-screen-lg m-auto p-8 pt-24 md:p-24">
       <h1 className="text-5xl lg:text-7xl text-center">
