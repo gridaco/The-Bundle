@@ -29,6 +29,8 @@ export default async function WelcomePage() {
     redirect("/bundle/signin");
   }
 
+  const metadata = data.user.user_metadata;
+
   return (
     <main className="max-w-screen-lg m-auto p-8 pt-24 md:p-24">
       <h1 className="text-5xl lg:text-7xl text-center">
@@ -54,6 +56,7 @@ export default async function WelcomePage() {
             placeholder="Graphics Designer"
             required
             autoComplete="off"
+            defaultValue={metadata?.job_title}
           />
         </div>
         <div>
@@ -70,6 +73,8 @@ export default async function WelcomePage() {
             className="bg-neutral-50 border border-neutral-300 text-neutral-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="1 ~ 3"
             required
+            autoComplete="off"
+            defaultValue={metadata?.team_size}
           />
         </div>
         <div>
@@ -86,6 +91,12 @@ export default async function WelcomePage() {
             className="bg-neutral-50 border border-neutral-300 text-neutral-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="@grida.co"
             required
+            autoComplete="off"
+            defaultValue={
+              metadata?.instagram_username
+                ? `@${metadata.instagram_username}`
+                : ""
+            }
           />
           <p className="block mt-2 text-sm opacity-60">
             Either your personal account or your company&apos;s account
