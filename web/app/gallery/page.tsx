@@ -1,12 +1,12 @@
 import { Dela_Gothic_One } from "next/font/google";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { Packs, MaterialsNav } from "@/library";
+import { Gallery } from "@/library";
 import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import Footer from "@/components/footer";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
@@ -16,14 +16,14 @@ const delta_gothic_one = Dela_Gothic_One({
   weight: "400",
 });
 
+export const metadata: Metadata = {
+  title: "Gallery | The Bundle",
+};
+
 export default async function LibraryPage() {
   const supabase = createServerComponentClient({ cookies });
 
   const { data } = await supabase.auth.getUser();
-
-  if (!data.user) {
-    redirect("/bundle/signin");
-  }
 
   const pro = data.user && isProUser(data.user);
 
@@ -40,9 +40,9 @@ export default async function LibraryPage() {
             tabs={["materials", "gallary"]}
             defaultValue="materials"
           ></LibraryTab> */}
-          <div className="max-w-screen-md">
+          {/* <div className="max-w-screen-md">
             <MaterialsNav />
-          </div>
+          </div> */}
         </div>
       </div>
       {!pro && (
@@ -51,8 +51,7 @@ export default async function LibraryPage() {
         </div>
       )}
       <div className="max-w-screen-md m-auto mt-24">
-        {/* <Gallery /> */}
-        <Packs />
+        <Gallery />
       </div>
       {!pro && (
         <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
