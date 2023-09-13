@@ -12,7 +12,7 @@ export function ScrollToTop() {
       about="scroll-to-top"
       aria-label="scroll-to-top"
       title="Scroll to Top"
-      className="w-[40px] h-[40px] rounded-full border flex items-center justify-center"
+      className="w-[40px] h-[40px] rounded-full bg-black border border-white flex items-center justify-center hover:border-none hover:invert transition-all"
       onClick={onclick}
     >
       <ArrowUpIcon />

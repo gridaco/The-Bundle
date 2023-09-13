@@ -63,7 +63,7 @@ export default function PackDetailPage(props: Props) {
     <main className="relative p-4 md:max-w-screen-xl md:p-24 m-auto align-center text-center">
       <div className="absolute p-4 md:pl-24 md:pr-24 top-4 right-4 left-4 md:max-w-screen-xl m-auto flex">
         <Link href="/library" className="opacity-80 hover:opacity-100">
-          <button className="flex flex-row items-center gap-2 p-3 bg-black rounded-full hover:invert">
+          <button className="flex flex-row items-center gap-2 p-3 bg-black rounded-full hover:invert transition-all">
             <ArrowLeftIcon />
           </button>
         </Link>
