@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -13,7 +14,7 @@ export function MaterialsNav() {
       <div className="overflow-x-scroll overflow-y-hidden no-scrollbar w-auto">
         <div className="flex flex-row gap-8 w-fit">
           {material_keys.map((m, i) => (
-            <Link href={`/library/#${m}`} key={i}>
+            <Link href={`#${m}`} key={i}>
               <motion.div
                 className="select-none w-24 h-24"
                 whileHover={{

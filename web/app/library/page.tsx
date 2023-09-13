@@ -8,6 +8,7 @@ import Image from "next/image";
 import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
+
 export const dynamic = "force-dynamic";
 
 const delta_gothic_one = Dela_Gothic_One({
