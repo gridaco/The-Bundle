@@ -41,7 +41,7 @@ export default async function WelcomePage() {
         <div>
           <label
             htmlFor="job-title"
-            className="block mb-2 text-sm font-medium text-neutral-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-white"
           >
             Job / Title
           </label>
@@ -59,7 +59,7 @@ export default async function WelcomePage() {
         <div>
           <label
             htmlFor="team-size"
-            className="block mb-2 text-sm font-medium text-neutral-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-white"
           >
             Team Size
           </label>
@@ -77,7 +77,7 @@ export default async function WelcomePage() {
         <div>
           <label
             htmlFor="instagram"
-            className="block mb-2 text-sm font-medium text-neutral-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-white"
           >
             Instagram Account
           </label>
