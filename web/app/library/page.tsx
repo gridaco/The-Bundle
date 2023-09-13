@@ -1,4 +1,3 @@
-import { Dela_Gothic_One } from "next/font/google";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -6,15 +5,11 @@ import { Packs, MaterialsNav } from "@/library";
 import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
 import { ScrollToTop } from "@/components/scroll-to-top";
-import Footer from "@/components/footer";
+import Header from "@/library/header";
+import Footer from "@/library/footer";
+import { LibraryTab } from "@/library/tab";
 
 export const dynamic = "force-dynamic";
-
-const delta_gothic_one = Dela_Gothic_One({
-  subsets: ["latin"],
-  display: "swap",
-  weight: "400",
-});
 
 export default async function LibraryPage() {
   const supabase = createServerComponentClient({ cookies });
@@ -28,18 +23,28 @@ export default async function LibraryPage() {
   const pro = data.user && isProUser(data.user);
 
   return (
-    <main className="max-w-screen-xl content-center m-auto p-24 pt-64">
-      <header className="flex flex-col items-center justify-center h-full mb-20">
-        <h1 className="text-5xl lg:text-7xl">
-          <span className={delta_gothic_one.className}>The Bundle</span>
-        </h1>
-      </header>
+    <main className="max-w-screen-xl content-center m-auto p-24 pt-40">
+      <Header />
+      <div
+        className="flex flex-col items-center mt-10"
+        style={{
+          // disabled for now
+          display: "none",
+        }}
+      >
+        <LibraryTab
+          tabs={[
+            { value: "materials", href: "/library" },
+            {
+              value: "gallery",
+              href: "/gallery",
+            },
+          ]}
+          defaultValue="materials"
+        />
+      </div>
       <div className="sticky top-0 bg-transparent bg-opacity-5 backdrop-blur-xl z-10">
         <div className="flex flex-col items-center mt-10">
-          {/* <LibraryTab
-            tabs={["materials", "gallary"]}
-            defaultValue="materials"
-          ></LibraryTab> */}
           <div className="max-w-screen-md">
             <MaterialsNav />
           </div>
