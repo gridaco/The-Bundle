@@ -41,7 +41,7 @@ export default async function LibraryPage() {
             tabs={["materials", "gallary"]}
             defaultValue="materials"
           ></LibraryTab> */}
-          <div className="max-w-screen-md overflow-x-scroll overflow-y-hidden no-scrollbar">
+          <div className="max-w-screen-md">
             <MaterialsNav />
           </div>
         </div>
