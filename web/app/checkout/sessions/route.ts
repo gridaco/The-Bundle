@@ -84,3 +84,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(err.message, { status: err.statusCode || 500 });
   }
 }
+
+// TODO: single product checkout - non subscription
+function checkout_signle_pack() {
+  //
+}
