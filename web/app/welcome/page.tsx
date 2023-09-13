@@ -49,7 +49,7 @@ export default async function WelcomePage() {
             id="job-title"
             name="job-title"
             type="text"
-            className="text-sm rounded-lg block w-full p-2.5 dark:bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
+            className="text-sm rounded-lg block w-full p-2.5 bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
             placeholder="Graphics Designer"
             required
             autoComplete="off"
@@ -67,7 +67,7 @@ export default async function WelcomePage() {
             id="team-size"
             name="team-size"
             type="text"
-            className="text-sm rounded-lg block w-full p-2.5 dark:bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
+            className="text-sm rounded-lg block w-full p-2.5 bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
             placeholder="1 ~ 3"
             required
             autoComplete="off"
@@ -85,7 +85,7 @@ export default async function WelcomePage() {
             id="instagram"
             name="instagram"
             type="text"
-            className="text-sm rounded-lg block w-full p-2.5 dark:bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
+            className="text-sm rounded-lg block w-full p-2.5 bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
             placeholder="@grida.co"
             required
             autoComplete="off"
