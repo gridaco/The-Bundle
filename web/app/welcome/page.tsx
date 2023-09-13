@@ -29,12 +29,13 @@ export default async function WelcomePage() {
   const metadata = data.user.user_metadata;
 
   return (
-    <main className="max-w-screen-lg m-auto p-8 pt-24 md:p-24">
-      <h1 className="text-5xl lg:text-7xl text-center">
+    <main className="max-w-screen-lg m-auto p-8 pt-24 md:p-24 md:pt-40">
+      <h1 className="text-5xl text-center">
         <span className={delta_gothic_one.className}>The Bundle</span>
       </h1>
+      <div className="h-10" />
       <form
-        className="flex flex-col gap-8 max-w-md m-auto mt-24 p-16"
+        className="flex flex-col gap-8 max-w-md m-auto p-2 sm:p-16"
         method="POST"
         action="/bundle/welcome/form"
       >
