@@ -1,6 +1,8 @@
-import { materials } from "@/k/bundle.json";
+import bundle from "@/k/bundle.json";
 import Image from "next/image";
 import Link from "next/link";
+
+const materials = bundle.materials;
 
 export function Packs() {
   return (

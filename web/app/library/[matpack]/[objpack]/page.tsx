@@ -1,11 +1,13 @@
 import DissolveSlider from "@/home/desolve-slider";
-import { materials } from "@/k/bundle.json";
+import bundle from "@/k/bundle.json";
 import assert from "assert";
 import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
+
+const materials = bundle.materials;
 
 type Props = {
   params: { matpack: string; objpack: string };
