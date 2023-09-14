@@ -4,6 +4,7 @@ import { stripe } from "@/s/stripe";
 import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import getHost from "@/s/utils/get-host";
 
 const supbaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -42,13 +43,10 @@ export async function GET(request: NextRequest) {
   // once updated, refresh session
   await supabase.auth.refreshSession();
 
-  const baseurl =
-    process.env.NODE_ENV === "production"
-      ? "https://grida.co/bundle"
-      : `${request.nextUrl.protocol}//${request.nextUrl.host}/bundle`;
+  const host = getHost(request);
 
-  //
-  const redirect = `${baseurl}/library?return-reason=pro-activated`;
+  // - TODO: the pro-activated is not being handled on the receiving page
+  const redirect = `${host}/library?return-reason=pro-activated`;
 
   return NextResponse.redirect(redirect);
 }

@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
 
   const supabase = createRouteHandlerClient({ cookies });
   const { data } = await supabase.auth.getUser();
+  const host = getHost(request);
 
   const { user } = data;
 
   if (!user) {
-    const host = getHost(request);
     return NextResponse.redirect(
       redirect_uri.make(host + "/signin", {
         redirect_uri: request.url,
@@ -59,11 +59,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "price is required" }, { status: 400 });
   }
 
-  const baseurl =
-    process.env.NODE_ENV === "production"
-      ? "https://grida.co/bundle"
-      : `${request.nextUrl.protocol}//${request.nextUrl.host}/bundle`;
-
   try {
     // Create Checkout Sessions from body params.
     // - enable promotion codes
@@ -80,17 +75,12 @@ export async function GET(request: NextRequest) {
       // enable promotion codes
       allow_promotion_codes: true,
       mode: "subscription",
-      success_url: `${baseurl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseurl}/`,
+      success_url: `${host}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${host}/`,
     });
 
     return NextResponse.redirect(session.url!);
   } catch (err: any) {
     return NextResponse.json(err.message, { status: err.statusCode || 500 });
   }
-}
-
-// TODO: single product checkout - non subscription
-function checkout_signle_pack() {
-  //
 }
