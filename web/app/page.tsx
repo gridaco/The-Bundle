@@ -99,7 +99,7 @@ export default function Home() {
                   Book a Demo
                 </button>
               </Link> */}
-              <Link href={cta_link} target="_blank">
+              <Link href={cta_link + "#demo"} target="_blank">
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Download Free Demo File
                 </button>
