@@ -22,7 +22,7 @@ export async function generateMetadata(
     return {
       title: `${label} | The Bundle`,
       openGraph: {
-        images: [images.thumbnail, ...previousImages],
+        images: [images.thumbnail.src, ...previousImages],
       },
     };
   } catch (e) {
@@ -50,7 +50,7 @@ export default function PackDetailPage(props: Props) {
               height: 600,
             }}
             images={[
-              images.thumbnail,
+              images.thumbnail.src,
               //
               // "/bundle/tmp/p-01.png",
               // "/bundle/tmp/p-02.png",

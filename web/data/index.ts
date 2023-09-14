@@ -31,7 +31,10 @@ export function packdata({
       name: objPackName,
     },
     images: {
-      thumbnail: `/bundle/thumbnails/${matPack}/${objPack}.png`,
+      thumbnail: {
+        src: `/bundle/thumbnails/${matPack}/${objPack}.png`,
+        srcabs: `https://grida.co/bundle/thumbnails/${matPack}/${objPack}.png`,
+      },
       previews: [
         {
           src: `/bundle/previews/${matpack}/${objpack}/t-0.png`,
@@ -47,5 +50,6 @@ export function packdata({
       }>,
     },
     download: `/library/download?item=${`v1/bin/${matPack}/${objPack}.zip`}`,
+    page: `/library/${matPack}/${objPack}`,
   };
 }
