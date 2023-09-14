@@ -37,14 +37,12 @@ export default function SigninPage() {
   };
 
   return (
-    <>
-      <div className="flex flex-col items-center justify-center w-screen h-screen gap-4">
-        <h1 className="text-6xl">
-          <span className={delta_gothic_one.className}>The Bundle</span>
-        </h1>
-        <p className="opacity-50">Make your next big Idea real</p>
-        <ContinueWithGoogleButton onClick={onsigninclick} />
-      </div>
-    </>
+    <main className="flex flex-col items-center justify-center w-screen h-screen gap-4">
+      <h1 className="text-6xl">
+        <span className={delta_gothic_one.className}>The Bundle</span>
+      </h1>
+      <p className="opacity-50">Make your next big Idea real</p>
+      <ContinueWithGoogleButton onClick={onsigninclick} />
+    </main>
   );
 }
