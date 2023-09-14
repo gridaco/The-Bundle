@@ -1,13 +1,9 @@
 import DissolveSlider from "@/home/desolve-slider";
-import bundle from "@/k/bundle.json";
-import assert from "assert";
 import { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-
-const materials = bundle.materials;
+import { packdata } from "@/data";
 
 type Props = {
   params: { matpack: string; objpack: string };
@@ -19,23 +15,14 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const matPack = params.matpack;
-    const objPack = params.objpack;
-    const objPackName = objPack.toUpperCase();
-    const __mat = (materials as any)[matPack];
-    assert(__mat["packs"].includes(objPack));
-
-    const matPackName = __mat["name"];
+    const { label, images } = packdata(params);
 
     const previousImages = (await parent).openGraph?.images || [];
 
     return {
-      title: `${matPackName} ${objPackName} | The Bundle`,
+      title: `${label} | The Bundle`,
       openGraph: {
-        images: [
-          `/bundle/thumbnails/${matPack}/${objPack}.png`,
-          ...previousImages,
-        ],
+        images: [images.thumbnail, ...previousImages],
       },
     };
   } catch (e) {
@@ -44,22 +31,7 @@ export async function generateMetadata(
 }
 
 export default function PackDetailPage(props: Props) {
-  const matPack = props.params.matpack;
-  const objPack = props.params.objpack;
-  const objPackName = objPack.toUpperCase();
-
-  let matPackName: string;
-  try {
-    const __mat = (materials as any)[matPack];
-    assert(__mat["packs"].includes(objPack));
-
-    matPackName = __mat["name"];
-  } catch (e) {
-    notFound();
-  }
-
-  const downloadUrl = `/library/download?item=${`v1/bin/${matPack}/${objPack}.zip`}`;
-  const has_t2 = ["a", "b", "c", "f", "99"].includes(objPack);
+  const { images, matpack, objpack, download, label } = packdata(props.params);
 
   return (
     <main className="relative p-4 md:max-w-screen-xl md:p-24 m-auto align-center text-center">
@@ -78,7 +50,7 @@ export default function PackDetailPage(props: Props) {
               height: 600,
             }}
             images={[
-              `/bundle/thumbnails/${matPack}/${objPack}.png`,
+              images.thumbnail,
               //
               // "/bundle/tmp/p-01.png",
               // "/bundle/tmp/p-02.png",
@@ -90,41 +62,28 @@ export default function PackDetailPage(props: Props) {
           {/* <Image src={} alt="." width={800} height={800} /> */}
         </div>
         <h1 className="flex gap-4 text-6xl font-bold p-24">
-          {matPackName}{" "}
+          {matpack.name}{" "}
           <span className="border p-1 text-2xl rounded-sm h-full min-w-[40px]">
-            {objPackName}
+            {objpack.name}
           </span>
         </h1>
-        <Link href={downloadUrl} target="_blank">
+        <Link href={download} target="_blank">
           <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
-            Download {matPackName} {objPackName}
+            Download {label}
           </button>
         </Link>
       </header>
       <div className="select-none pointer-events-none">
-        <div className="flex flex-col items-center mt-40">
-          <Image
-            src={`/bundle/previews/${matPack}/${objPack}/t-0.png`}
-            alt={`The Bundle - ${matPack}/${objPack} tile image 1`}
-            width={800}
-            height={800}
-          />
-        </div>
-        {has_t2 && (
-          <div className="flex flex-col items-center mt-40">
-            <Image
-              src={`/bundle/previews/${matPack}/${objPack}/t-1.png`}
-              alt={`The Bundle - ${matPack}/${objPack} tile image 2`}
-              width={800}
-              height={800}
-            />
+        {images.previews.map(({ src, alt }, i) => (
+          <div key={i} className="flex flex-col items-center mt-40">
+            <Image src={src} alt={alt} width={800} height={800} />
           </div>
-        )}
+        ))}
       </div>
       <div className="p-24">
-        <Link href={downloadUrl} target="_blank">
+        <Link href={download} target="_blank">
           <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
-            Download {matPackName} {objPackName}
+            Download {label}
           </button>
         </Link>
       </div>
