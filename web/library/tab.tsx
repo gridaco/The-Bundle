@@ -24,9 +24,7 @@ export function LibraryTab({
   tabs: TabData[];
 }>) {
   return (
-    // @ts-ignore
     <Tabs.Root defaultValue={defaultValue}>
-      {/* @ts-ignore */}
       <Tabs.List className="justify-center">
         {tabs.map((tab, i) => {
           const label = capitalizeFirstLetter(
@@ -34,7 +32,6 @@ export function LibraryTab({
           );
           const value = typeof tab === "string" ? tab : tab.value;
           return (
-            // @ts-ignore
             <Tabs.Trigger key={i} value={value}>
               {typeof tab === "object" && !!tab.href ? (
                 <Link href={tab.href}>{label}</Link>
@@ -67,9 +64,8 @@ export function Content({
   value?: string;
 }>) {
   return (
-    // @ts-ignore
     <Tabs.Content
-      //
+      // @ts-ignore
       value={value}
     >
       {children}
