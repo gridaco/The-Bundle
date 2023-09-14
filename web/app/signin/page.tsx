@@ -37,7 +37,7 @@ export default function SigninPage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center w-screen h-screen gap-4">
+    <main className="flex flex-col items-center justify-center w-screen h-screen gap-4 text-white">
       <h1 className="text-6xl">
         <span className={delta_gothic_one.className}>The Bundle</span>
       </h1>
