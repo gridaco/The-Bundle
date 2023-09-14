@@ -2,9 +2,11 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import getHost from "@/s/utils/get-host";
+import { redirect_uri } from "@/s/q";
 
 export async function POST(request: NextRequest) {
   const host = getHost(request);
+  const _redirect_uri = redirect_uri.parse(request.nextUrl.searchParams);
 
   // get form data
   const body = await request.formData();
@@ -19,7 +21,14 @@ export async function POST(request: NextRequest) {
   const { data } = await supabase.auth.getUser();
 
   if (!data.user) {
-    return NextResponse.redirect(host + "/signin");
+    return NextResponse.redirect(
+      redirect_uri.make(host + "/signin", {
+        redirect_uri: _redirect_uri,
+      })!,
+      {
+        status: 301,
+      }
+    );
   }
 
   const { data: updaed } = await supabase.auth.updateUser({
@@ -31,6 +40,18 @@ export async function POST(request: NextRequest) {
   });
 
   console.log("user metadata updated", updaed.user?.user_metadata);
+
+  if (_redirect_uri) {
+    return NextResponse.redirect(
+      redirect_uri.abs({
+        host,
+        redirect_uri: _redirect_uri,
+      }),
+      {
+        status: 301,
+      }
+    );
+  }
 
   return NextResponse.redirect(host + "/library", {
     // Returning a 301 status redirects from a POST to a GET route

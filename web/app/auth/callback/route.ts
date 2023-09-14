@@ -1,9 +1,9 @@
-import { isProUser, isUserWelcomeFormRequired } from "@/s/q-user";
+import { isUserWelcomeFormRequired } from "@/s/q-user";
 import getHost from "@/s/utils/get-host";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-
+import { redirect_uri } from "@/s/q";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -20,9 +20,26 @@ export async function GET(request: NextRequest) {
 
   const { data } = await supabase.auth.getUser();
 
+  const _redirect_uri = redirect_uri.parse(request.nextUrl.searchParams);
+
   // force onboarding flow
   if (isUserWelcomeFormRequired(data.user!!)) {
-    return NextResponse.redirect(host + "/welcome");
+    return NextResponse.redirect(
+      redirect_uri
+        .make(host + "/welcome", {
+          redirect_uri: _redirect_uri,
+        })!
+        .toString()
+    );
+  }
+
+  if (_redirect_uri) {
+    return NextResponse.redirect(
+      redirect_uri.abs({
+        host,
+        redirect_uri: _redirect_uri,
+      })
+    );
   }
 
   // URL to redirect to after sign in process completes

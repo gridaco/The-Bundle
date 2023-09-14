@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import styled from "@emotion/styled";
 import { Dela_Gothic_One } from "next/font/google";
 import { ContinueWithGoogleButton } from "@/components/continue-with-google-button";
 import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { useSearchParams } from "next/navigation";
+import { redirect_uri } from "@/s/q";
+import useHost from "@/hooks/useHost";
 
 const delta_gothic_one = Dela_Gothic_One({
   subsets: ["latin"],
@@ -11,32 +13,25 @@ const delta_gothic_one = Dela_Gothic_One({
   weight: "400",
 });
 
-const useHost = () => {
-  const [host, setHost] = useState<string>();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setHost(window.location.origin);
-    }
-  }, []);
-
-  return host;
-};
-
 export default function SigninPage() {
   const supabase = createPagesBrowserClient();
   const host = useHost();
+  const searchParams = useSearchParams();
 
-  const redirect = `${host}/bundle/auth/callback`;
+  const _redirect_uri = redirect_uri.parse(searchParams);
+
+  const redirect = redirect_uri.make(`${host}/bundle/auth/callback`, {
+    redirect_uri: _redirect_uri,
+  });
 
   const onsigninclick = () => {
     // Note: thr url must be white-listed on supabase config, like, e.g.
-    // - http://localhost:1960/**/*
-    // - https://lsd-*.vercel.app/**/*
+    // - http://localhost:1969/**/*
+    // - https://the-bundle-*.vercel.app/**/*
     supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: redirect,
+        redirectTo: redirect?.toString(),
       },
     });
   };

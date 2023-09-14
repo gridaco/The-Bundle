@@ -14,6 +14,9 @@ export async function GET(request: NextRequest) {
   const host = getHost(request);
   const { data } = await supabase.auth.getUser();
 
+  // TODO: add redirect to the origin page
+  // const origin = request.headers.get('origin')
+
   if (!item || !data.user) return NextResponse.redirect(host + "/signin");
 
   if (item.toLowerCase().includes("demo")) {

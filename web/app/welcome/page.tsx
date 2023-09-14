@@ -1,9 +1,10 @@
 import React from "react";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { Dela_Gothic_One } from "next/font/google";
 import { Metadata } from "next";
+import { redirect_uri } from "@/s/q";
 
 export const dynamic = "force-dynamic";
 
@@ -17,16 +18,26 @@ export const metadata: Metadata = {
   title: "Welcome",
 };
 
-export default async function WelcomePage() {
+export default async function WelcomePage({
+  searchParams,
+}: {
+  searchParams: ReturnType<typeof useSearchParams>;
+}) {
   const supabase = createServerComponentClient({ cookies });
-
+  const _redirect_uri = redirect_uri.parse(searchParams);
   const { data } = await supabase.auth.getUser();
-
   if (!data.user) {
-    redirect("/bundle/signin");
+    redirect(
+      redirect_uri.make("/bundle/signin", {
+        redirect_uri: _redirect_uri,
+      })!
+    );
   }
 
   const metadata = data.user.user_metadata;
+  const formurl = redirect_uri.make("/bundle/welcome/form", {
+    redirect_uri: _redirect_uri,
+  });
 
   return (
     <main className="max-w-screen-lg m-auto p-8 pt-24 md:p-24 md:pt-40">
@@ -37,7 +48,7 @@ export default async function WelcomePage() {
       <form
         className="flex flex-col gap-8 max-w-md m-auto p-2 sm:p-16"
         method="POST"
-        action="/bundle/welcome/form"
+        action={formurl}
       >
         <div>
           <label

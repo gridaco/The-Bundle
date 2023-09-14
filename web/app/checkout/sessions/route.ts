@@ -4,6 +4,7 @@ import { stripe } from "@/s/stripe";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import getHost from "@/s/utils/get-host";
+import { redirect_uri } from "@/s/q";
 
 export async function GET(request: NextRequest) {
   // get supabase user
@@ -15,7 +16,11 @@ export async function GET(request: NextRequest) {
 
   if (!user) {
     const host = getHost(request);
-    return NextResponse.redirect(host + "/signin");
+    return NextResponse.redirect(
+      redirect_uri.make(host + "/signin", {
+        redirect_uri: request.url,
+      })!
+    );
   }
 
   const { email, id, user_metadata } = user!;
