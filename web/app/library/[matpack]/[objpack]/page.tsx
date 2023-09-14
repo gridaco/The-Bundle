@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { packdata } from "@/data";
+import { BuyThisPackButton } from "@/library/buy";
 
 type Props = {
   params: { matpack: string; objpack: string };
@@ -31,6 +32,7 @@ export async function generateMetadata(
 }
 
 export default function PackDetailPage(props: Props) {
+  const alpha = !!props.searchParams.alpha;
   const { images, matpack, objpack, download, label } = packdata(props.params);
 
   return (
@@ -67,11 +69,14 @@ export default function PackDetailPage(props: Props) {
             {objpack.name}
           </span>
         </h1>
-        <Link href={download} target="_blank">
-          <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
-            Download {label}
-          </button>
-        </Link>
+        <div className="flex flex-col gap-8">
+          <Link href={download} target="_blank">
+            <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
+              Download {label}
+            </button>
+          </Link>
+          {alpha && <BuyThisPackButton />}
+        </div>
       </header>
       <div className="select-none pointer-events-none">
         {images.previews.map(({ src, alt }, i) => (
