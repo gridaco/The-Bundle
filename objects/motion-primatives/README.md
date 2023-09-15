@@ -67,5 +67,5 @@ As there were no LICENSE file in the original distribution, We are assigning the
 
 ## Disclaimer
 
-We are hosting this resources on Github for the use in the porject, with any intend of redistribution.
+We are hosting this resources on Github for the use in the porject, without any intend of redistribution.
 If you are looking for the official distribution, please visit [Atti's Gumroad Page](https://attimp4.gumroad.com/l/MotionPrimatives).
