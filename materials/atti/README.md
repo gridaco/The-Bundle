@@ -9,11 +9,11 @@ The Origianl Files can be downloaded from [atti's Gumroad page](https://attimp4.
 - [Dispersed Glass 2.0](https://attimp4.gumroad.com/l/glass)
 - [Vertex Animation Project File](https://attimp4.gumroad.com/l/egauq)
 
-|                                                                    | File                          | Original                                                                                                            | Download                                        | Original Author | Remix by    |
-| ------------------------------------------------------------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | --------------- | ----------- |
-| ![](https://public-files.gumroad.com/fcifrmrzxd3kchrhpoei1144rmlo) | [1.blend](./prod/1.blend)     | [./\_Vertex Animation Project File/Tutorial.blend](./_Vertex%20Animation%20Project%20File/Tutorial.blend)           | [Gumroad](https://attimp4.gumroad.com/l/egauq)  | atti            | Grida, Inc. |
-| ![](https://public-files.gumroad.com/8lw1j9idt9aipoh4n7e3j283lcot) | [2.blend](./prod/2.blend)     | [./\_Dispersed Glass 2.0/Dispersed Glass 2.blend](./_Dispersed%20Glass%202.0/Dispersed%20Glass%202.blend)           | [Gumroad](https://attimp4.gumroad.com/l/glass)  | atti            | Grida, Inc. |
-| ![](https://public-files.gumroad.com/b6c323mlc3bp7yesqmqgz7p8ibd7) | [3-6.blend](./prod/3-6.blend) | [./\_Dispersed Glass Shader (cycles)/Assortment.blend](<./_Dispersed%20Glass%20Shader%20(cycles)/Assortment.blend>) | [Gumroad](https://attimp4.gumroad.com/l/ldzlkz) | atti            | Grida, Inc. |
+|                                                                | File                          | Original                                                                                                            | Download                                        | Original Author | Remix by    |
+| -------------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | --------------- | ----------- |
+| ![](./thumbnails/Vertex%20Animation%20Project%20File.png)      | [1.blend](./prod/1.blend)     | [./\_Vertex Animation Project File/Tutorial.blend](./_Vertex%20Animation%20Project%20File/Tutorial.blend)           | [Gumroad](https://attimp4.gumroad.com/l/egauq)  | atti            | Grida, Inc. |
+| ![](./thumbnails/Dispersed%20Glass%202.0.png)                  | [2.blend](./prod/2.blend)     | [./\_Dispersed Glass 2.0/Dispersed Glass 2.blend](./_Dispersed%20Glass%202.0/Dispersed%20Glass%202.blend)           | [Gumroad](https://attimp4.gumroad.com/l/glass)  | atti            | Grida, Inc. |
+| ![](<./thumbnails/Dispersed%20Glass%20Shader%20(cycles).webp>) | [3-6.blend](./prod/3-6.blend) | [./\_Dispersed Glass Shader (cycles)/Assortment.blend](<./_Dispersed%20Glass%20Shader%20(cycles)/Assortment.blend>) | [Gumroad](https://attimp4.gumroad.com/l/ldzlkz) | atti            | Grida, Inc. |
 
 ## Original Author: atti
 
