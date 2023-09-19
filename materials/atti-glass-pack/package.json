@@ -6,9 +6,8 @@
     "Grida, Inc."
   ],
   "files": [
-    "./prod/1.blend",
-    "./prod/2.blend",
-    "./prod/3-6.blend"
+    "./prod/*.blend",
+    "./render/scene.blend"
   ],
   "materials": {
     "agp.1": {
@@ -40,6 +39,12 @@
       "name": "004",
       "class": "*",
       "file": "./prod/3-6.blend"
+    }
+  },
+  "scenes": {
+    "render": {
+      "file": "./render/scene.blend",
+      "name": "render"
     }
   }
 }
