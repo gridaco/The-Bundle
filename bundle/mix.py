@@ -1,3 +1,4 @@
+import glob
 import sys
 import json
 import bpy
@@ -159,8 +160,13 @@ class MaterialPackage:
         ), f"Invalid package: {package}"
 
         package_data = json.load(open(package))
-        self.files = [Path(x) for x in package_data['files']]
         self.base_dir = package.parent
+        # Resolve files relative to base_dir
+        self.files = []
+        for file_path in package_data['files']:
+            resolved_paths = glob.glob(str(self.base_dir / file_path))
+            self.files.extend([Path(p) for p in resolved_paths])
+
         self.name = package_data['name']
         __is_single_file = len(self.files) == 1
 
@@ -338,9 +344,11 @@ class RenderJobFile:
         # Assuming you want to do the work in the current blend file.
         # Check if the "render" scene exists, if not, link it from the material_file
         if scene_name not in bpy.data.scenes:
-            material_file = material_pack.materials.get(material_key)['file']
-            with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
-                data_to.scenes = [scene_name]
+            raise NotImplementedError(
+                f"Scene not found: '{scene_name}'. Please link the scene from the material file.")
+            # material_file = material_pack.materials.get(material_key)['file']
+            # with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
+            #     data_to.scenes = data_from.scenes
 
         scene = bpy.data.scenes[scene_name]
         bpy.context.window.scene = scene  # Set current scene
