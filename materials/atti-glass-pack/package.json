@@ -1,0 +1,45 @@
+{
+  "name": "agp",
+  "version": "0.0.0",
+  "authors": [
+    "atti",
+    "Grida, Inc."
+  ],
+  "files": [
+    "./prod/1.blend",
+    "./prod/2.blend",
+    "./prod/3-6.blend"
+  ],
+  "materials": {
+    "agp.1": {
+      "name": "001",
+      "class": "*",
+      "file": "./prod/1.blend"
+    },
+    "agp.2": {
+      "name": "Dispersed Glass 2",
+      "class": "*",
+      "file": "./prod/2.blend"
+    },
+    "agp.3": {
+      "name": "001",
+      "class": "*",
+      "file": "./prod/3-6.blend"
+    },
+    "agp.4": {
+      "name": "002",
+      "class": "*",
+      "file": "./prod/3-6.blend"
+    },
+    "agp.5": {
+      "name": "003",
+      "class": "*",
+      "file": "./prod/3-6.blend"
+    },
+    "agp.6": {
+      "name": "004",
+      "class": "*",
+      "file": "./prod/3-6.blend"
+    }
+  }
+}
