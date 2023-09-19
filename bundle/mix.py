@@ -159,40 +159,27 @@ class MaterialPackage:
         ), f"Invalid package: {package}"
 
         package_data = json.load(open(package))
-
         self.files = [Path(x) for x in package_data['files']]
         self.base_dir = package.parent
-
         self.name = package_data['name']
+        __is_single_file = len(self.files) == 1
 
-        __materials = package_data['materials']
-        __files = package_data['files']
+        materials_data = package_data['materials']
 
-        is_multiple_files = len(__files) > 1
-
-        if is_multiple_files:
-            # resolve files
-            raise NotImplementedError(
-                'multiple material files package not supported atm.')
-        else:
-            # map materials by reading the material file
-            material_file = self.base_dir / __files[0]
+        for k, v in materials_data.items():
+            file = v.get('file', self.files[0] if __is_single_file else None)
+            assert file, f"Invalid material file: {file}"
+            material_file = self.base_dir / file
             assert material_file.exists(
             ), f"Invalid material file: {material_file}"
 
             # inspect material files without loading them into the current blend file
             with bpy.data.libraries.load(str(material_file), link=False) as (data_from, _):
-                for m in data_from.materials:
-                    # find the material entry with 'name' == m
-                    for k, v in __materials.items():
-                        if v['name'] == m:
-                            self.materials[k] = {
-                                'file': material_file,
-                                'name': m
-                            }
-                            break
-
-            ...
+                if v['name'] in data_from.materials:
+                    self.materials[k] = {
+                        'file': material_file,
+                        'name': v['name']
+                    }
 
     def load(self, material_key: str) -> bpy.types.Material | None:
         """
@@ -325,8 +312,6 @@ class RenderJobFile:
 
     def __init__(
         self,
-        # base_scene_file: Path | str,
-        # scene_name: str = RENDER_SCENE_NAME,
         material_pack: MaterialPackage,
         material_key: str,
         object_pack: ObjectPackage,
@@ -334,6 +319,8 @@ class RenderJobFile:
         rotations: list[(int, int, int)] = [(0, 0, 0)],
         use_animation: bool = False,
         use_transparent_background: bool = True,
+        scene_file: Path | str = None,
+        scene_name: str = RENDER_SCENE_NAME,
         render_out: Path | str = None,
     ):
         self.object_key = object_key
@@ -342,18 +329,20 @@ class RenderJobFile:
         self.use_animation = use_animation
         self.use_transparent_background = use_transparent_background
         self.render_out = Path(render_out)
+        self.scene_file = scene_file
+        self.scene_name = scene_name
 
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
         # (TODO:) load the render scene
         # Assuming you want to do the work in the current blend file.
         # Check if the "render" scene exists, if not, link it from the material_file
-        if RENDER_SCENE_NAME not in bpy.data.scenes:
+        if scene_name not in bpy.data.scenes:
             material_file = material_pack.materials.get(material_key)['file']
             with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
-                data_to.scenes = [RENDER_SCENE_NAME]
+                data_to.scenes = [scene_name]
 
-        scene = bpy.data.scenes[RENDER_SCENE_NAME]
+        scene = bpy.data.scenes[scene_name]
         bpy.context.window.scene = scene  # Set current scene
         self.scene = scene
 
@@ -392,6 +381,10 @@ class RenderJobFile:
             bpy.context.scene.render.image_settings.file_format = 'PNG'
             bpy.context.scene.render.image_settings.color_mode = 'RGBA'
 
+        # config the render engine
+        bpy.context.scene.render.engine = 'CYCLES'
+        bpy.context.scene.cycles.device = 'GPU'
+
         # clear the output path
         bpy.context.scene.render.filepath = ''
 
@@ -409,14 +402,12 @@ class RenderJobFile:
         # ===
 
         # clean
-        remove_unused_scenes()
+        remove_unused_scenes(exclude=[self.scene_name])
         remove_unused_objects()
         remove_unused_materials()
         remove_unused_textures()
 
-        # config the render settings
-        bpy.context.scene.render.engine = 'CYCLES'
-        bpy.context.scene.cycles.device = 'GPU'
+        # samples
         bpy.context.scene.cycles.samples = samples
         bpy.context.scene.cycles.preview_samples = samples
         # res
@@ -595,15 +586,14 @@ def boundingbox_dimension(obj):
             "Object is neither an acceptable Empty nor a cube Mesh.")
 
 
-def remove_unused_scenes():
+def remove_unused_scenes(exclude=[RENDER_SCENE_NAME]):
     for scene in bpy.data.scenes:
-        if scene.name != RENDER_SCENE_NAME:
+        if scene.name not in exclude:
             bpy.data.scenes.remove(scene)
 
 
 def remove_unused_objects():
     for obj in bpy.data.objects:
-
         # - if the object has no users in any scenes
         # - if the object does not impact the render (Disable in Renders)
         if not obj.users_scene or obj.hide_render:
@@ -726,7 +716,8 @@ def safepath(path: str):
 @click.command()
 @click.option('--task', '-t', default='./task.json', help='Task file', type=click.Path(exists=True),)
 @click.option('--dist', default='./dist', help='Dist directory', type=click.Path(exists=True),)
-def main(task, dist):
+@click.option('--dry-run', '-d', is_flag=True, help='Dry run')
+def main(task, dist, dry_run):
 
     profiles: dict = json.load(open(__DIR / 'profiles.json'))
     task = Path(task).resolve()
@@ -736,6 +727,7 @@ def main(task, dist):
     print(f"- TARGET {task.target_quality_key}...")
     print(f"- PROFILE: {json.dumps(task.quality_profile, indent=2)}")
     print(f"- #ROTATIONS: {len(task.rotations)}")
+    print(f"- Dry run: {dry_run}")
 
     RENDEROUTDIR = task.dist / task.target_quality_key
 
@@ -827,6 +819,10 @@ def main(task, dist):
 
                 # for result in jobfile.render_all():
                 #     pbar.update(1)
+
+                if dry_run:
+                    pbar.update()
+                    continue
 
                 jobfile.save(
                     str(filepath),
