@@ -153,6 +153,9 @@ class MaterialPackage:
     files = []
     base_dir = None
     materials = {}
+    scenes = {}
+    render_scene_file: None | Path = None
+    render_scene_name: str = RENDER_SCENE_NAME
 
     def __init__(self, package: Path | str) -> None:
         package = Path(package)
@@ -160,6 +163,7 @@ class MaterialPackage:
         ), f"Invalid package: {package}"
 
         package_data = json.load(open(package))
+        self.name = package_data['name']
         self.base_dir = package.parent
         # Resolve files relative to base_dir
         self.files = []
@@ -167,10 +171,20 @@ class MaterialPackage:
             resolved_paths = glob.glob(str(self.base_dir / file_path))
             self.files.extend([Path(p) for p in resolved_paths])
 
-        self.name = package_data['name']
         __is_single_file = len(self.files) == 1
 
         materials_data = package_data['materials']
+
+        # resolve scenes
+        self.scenes = package_data['scenes']
+        # resolve render scene
+        if self.scenes.get('render'):
+            self.render_scene_name = self.scenes.get('render').get('name')
+            self.render_scene_file = self.base_dir / \
+                self.scenes.get('render').get('file')
+            self.render_scene_file = self.render_scene_file.resolve()
+            assert self.render_scene_file.exists(
+            ), f"Invalid render scene file: {self.render_scene_file}"
 
         for k, v in materials_data.items():
             file = v.get('file', self.files[0] if __is_single_file else None)
@@ -316,6 +330,9 @@ class RenderJobFile:
     use_animation: bool = False
     use_transparent_background: bool = True
 
+    scene_file: Path | str
+    scene_name: str
+
     def __init__(
         self,
         material_pack: MaterialPackage,
@@ -335,20 +352,32 @@ class RenderJobFile:
         self.use_animation = use_animation
         self.use_transparent_background = use_transparent_background
         self.render_out = Path(render_out)
+
+        # render scene
         self.scene_file = scene_file
+        assert self.scene_file, f"Invalid scene file: {self.scene_file}"
         self.scene_name = scene_name
+        assert self.scene_name, f"Invalid scene name: {self.scene_name}"
 
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
-        # (TODO:) load the render scene
-        # Assuming you want to do the work in the current blend file.
-        # Check if the "render" scene exists, if not, link it from the material_file
+
         if scene_name not in bpy.data.scenes:
-            raise NotImplementedError(
-                f"Scene not found: '{scene_name}'. Please link the scene from the material file.")
-            # material_file = material_pack.materials.get(material_key)['file']
-            # with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
-            #     data_to.scenes = data_from.scenes
+            try:
+                # load the render scene
+                with bpy.data.libraries.load(str(scene_file)) as (data_from, data_to):
+                    data_to.scenes = [scene_name]
+            except KeyError as e:
+                logging.error(
+                    f"Error: Could not load scene '{scene_name}' from '{scene_file}': {e}")
+
+                # Assuming you want to do the work in the current blend file.
+                # Check if the "render" scene exists, if not, link it from the material_file
+                # fallback
+                material_file = material_pack.materials.get(material_key)[
+                    'file']
+                with bpy.data.libraries.load(str(material_file)) as (data_from, data_to):
+                    data_to.scenes = data_from.scenes
 
         scene = bpy.data.scenes[scene_name]
         bpy.context.window.scene = scene  # Set current scene
@@ -725,7 +754,8 @@ def safepath(path: str):
 @click.option('--task', '-t', default='./task.json', help='Task file', type=click.Path(exists=True),)
 @click.option('--dist', default='./dist', help='Dist directory', type=click.Path(exists=True),)
 @click.option('--dry-run', '-d', is_flag=True, help='Dry run')
-def main(task, dist, dry_run):
+@click.option('--max', default=None, help='Max number of jobs to handle (useful when testing)', type=int)
+def main(task, dist, dry_run, max):
 
     profiles: dict = json.load(open(__DIR / 'profiles.json'))
     task = Path(task).resolve()
@@ -786,10 +816,13 @@ def main(task, dist, dry_run):
         click.echo(f"- '{f.resolve()}'")
     click.echo("\n\n")
 
+    ___i_max = 0
+
     print(f"=== RENDERING {len(matpack.materials)} MATERIALS ===")
     for k, v in matpack.materials.items():
         file = v['file']
-        logging.info(f"Rendering {file}...")
+        logging.info(
+            f"Rendering {file}... (scene: {matpack.render_scene_file})")
 
         # reset the vm to work with a clean slate
         bpy.ops.wm.read_homefile(use_empty=True)
@@ -807,13 +840,14 @@ def main(task, dist, dry_run):
         pbar = tqdm(total=(tasksize), desc=k, leave=True)
 
         for object_key in objpack.object_keys:
+            object_key = object_key.replace('/', ':')
+            object_key = safepath(object_key)
+            filepath = jobs / f"{object_key}.blend"
+            if filepath.exists():
+                pbar.update(len(task.rotations))
+                continue
+
             try:
-                object_key = object_key.replace('/', ':')
-                object_key = safepath(object_key)
-                filepath = jobs / f"{object_key}.blend"
-                if filepath.exists():
-                    pbar.update(len(task.rotations))
-                    continue
                 jobfile = RenderJobFile(
                     material_pack=matpack,
                     material_key=k,
@@ -823,10 +857,9 @@ def main(task, dist, dry_run):
                     use_animation=use_animation,
                     use_transparent_background=True,
                     render_out=render_out,
+                    scene_file=matpack.render_scene_file,
+                    scene_name=matpack.render_scene_name
                 )
-
-                # for result in jobfile.render_all():
-                #     pbar.update(1)
 
                 if dry_run:
                     pbar.update()
@@ -841,8 +874,12 @@ def main(task, dist, dry_run):
                 )
                 pbar.update()
             except Exception as e:
-                logging.error(f"Error: {e}")
-                continue
+                logging.error(
+                    f"Error: Could not render {object_key} with {k}: {e}")
+
+            ___i_max += 1
+            if max and ___i_max >= max:
+                return
 
         # clean up (TODO: NOT WORKING)
         for b1 in Path(jobs).glob('*.blend1'):
@@ -852,5 +889,4 @@ def main(task, dist, dry_run):
 
 
 if __name__ == "__main__":
-
     main()
