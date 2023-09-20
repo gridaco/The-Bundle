@@ -143,6 +143,15 @@ class TaskConfig:
         assert self.dist.exists(), f"Invalid dist: {self.dist}"
 
 
+def resolve_files(base_dir: Path, patterns: list[str]):
+    files = []
+    for file_path in patterns:
+        resolved_paths = glob.glob(str(base_dir / file_path))
+        files.extend([Path(p) for p in resolved_paths])
+    return files
+    ...
+
+
 class MaterialPackage:
     """
     Material Package directory and files.
@@ -166,10 +175,7 @@ class MaterialPackage:
         self.name = package_data['name']
         self.base_dir = package.parent
         # Resolve files relative to base_dir
-        self.files = []
-        for file_path in package_data['files']:
-            resolved_paths = glob.glob(str(self.base_dir / file_path))
-            self.files.extend([Path(p) for p in resolved_paths])
+        self.files = resolve_files(self.base_dir, package_data['files'])
 
         __is_single_file = len(self.files) == 1
 
@@ -226,6 +232,8 @@ class ObjectPackage:
     objects: dict[str, dict] = {}
     exclude_patterns: list[str] = []
     base_dir = None
+    files = []
+    # file = None
 
     _whole_synced = False
 
@@ -239,25 +247,56 @@ class ObjectPackage:
 
         self.name = package_data.get('name')
 
-        __files = package_data.get('files')
-        assert len(__files) == 1, f"Invalid files: {__files}"
-        self.file = self.base_dir / __files[0]
+        self.files = resolve_files(self.base_dir, package_data['files'])
+        # assert len(self.files) == 1, f"Invalid files: {self.files}"
+        # self.file = self.base_dir / self.files[0]
 
         self.exclude_patterns = exclude_patterns
 
+        __objects_data = package_data.get('objects')
+        if __objects_data is None:
+            # if no objects are specified, this is only valid if the package is single-file pack and each objects are in their own scene
+            ...
+            assert len(self.files) == 1, f"Invalid files: {self.files}"
+            self.__index_main_file()
+        elif type(__objects_data) == list:
+            if len(__objects_data) == 0:
+                return
+            elif len(__objects_data) == 1:
+                self.__index_main_file()
+            else:
+                raise NotImplementedError(
+                    "Multiple file object packages not supported with array configuration yet.")
+        elif type(__objects_data) == dict:
+            for k, v in __objects_data.items():
+                self.objects[k] = {
+                    # 'name': v['name'],
+                    'file': self.base_dir / v['file'],
+                }
+                print(k, v)
+            # raise NotImplementedError(
+            #     "Object packages with dict configuration not supported yet."
+            # )
+            ...
+        else:
+            raise Exception(
+                f"Invalid objects data type: {type(__objects_data)}")
+
+    def __index_main_file(self):
+        assert len(self.files) == 1, f"Invalid files: {self.files}"
         # Index objects
         # first, sync the objects to the current blend file, after indexing is done, delete the scenes and objects
         # so that the current blend file is clean
-        self.object_keys = []
-        __objects = self.sync()
+        __file = self.files[0]
+        __objects = self.__index_with_sync(__file)
+        self.object_keys = __objects.keys()
         # create empty scene for to be the last scene
         bpy.ops.scene.new(type='EMPTY')
         # clean
         for key, obj in __objects.items():
-            self.object_keys.append(key)
             self.objects[key] = {
                 **obj,
-                'object': None
+                'object': None,
             }
             # remove
             bpy.data.objects.remove(obj['object'])
@@ -268,21 +307,23 @@ class ObjectPackage:
         assert key in self.objects.keys(), f"Invalid key: {key}"
         objdata = self.objects.get(key)
         objname = objdata.get('name')
+        objfile = objdata.get('file')
 
-        with bpy.data.libraries.load(str(self.file)) as (data_from, data_to):
+        with bpy.data.libraries.load(str(objfile)) as (data_from, data_to):
             data_to.objects = [objname]
 
         return bpy.data.objects.get(objname)
 
-    def sync(self):
+    def __index_with_sync(self, file):
         """
-        sync all scenes and objects from the package to the current blend file.
+        Indexing - sync all scenes and objects from the package to the current blend file.
+        This is used when no object is specified, but instead when to use all objects as a input for a certain file.
         """
         if self._whole_synced:
             return self.objects
 
         # sync scenes
-        with bpy.data.libraries.load(str(self.file)) as (data_from, data_to):
+        with bpy.data.libraries.load(str(file)) as (data_from, data_to):
             scenes_to_link = []
 
             for scene in data_from.scenes:
@@ -304,7 +345,7 @@ class ObjectPackage:
 
         for key, obj in objects_to_render.items():
             self.objects[key] = {
-                'file': self.file,
+                'file': file,
                 'scene': key,
                 'name': obj.name,
                 'object': obj
@@ -342,6 +383,7 @@ class RenderJobFile:
         rotations: list[(int, int, int)] = [(0, 0, 0)],
         use_animation: bool = False,
         use_transparent_background: bool = True,
+        use_denoising=False,
         scene_file: Path | str = None,
         scene_name: str = RENDER_SCENE_NAME,
         render_out: Path | str = None,
@@ -417,6 +459,9 @@ class RenderJobFile:
             # output format as PNG, color as RGBA
             bpy.context.scene.render.image_settings.file_format = 'PNG'
             bpy.context.scene.render.image_settings.color_mode = 'RGBA'
+
+        # denoise setting
+        scene.cycles.use_denoising = use_denoising
 
         # config the render engine
         bpy.context.scene.render.engine = 'CYCLES'
@@ -755,7 +800,8 @@ def safepath(path: str):
 @click.option('--dist', default='./dist', help='Dist directory', type=click.Path(exists=True),)
 @click.option('--dry-run', '-d', is_flag=True, help='Dry run')
 @click.option('--max', default=None, help='Max number of jobs to handle (useful when testing)', type=int)
-def main(task, dist, dry_run, max):
+@click.option('--force', is_flag=True, help='Force')
+def main(task, dist, dry_run, max, force):
 
     profiles: dict = json.load(open(__DIR / 'profiles.json'))
     task = Path(task).resolve()
@@ -810,7 +856,7 @@ def main(task, dist, dry_run, max):
     for matpack in matpacks:
         all_locked_files.update(matpack.files)
     for objpack in objpacks:
-        all_locked_files.add(objpack.file)
+        all_locked_files.update(objpack.files)
 
     for f in all_locked_files:
         click.echo(f"- '{f.resolve()}'")
@@ -843,7 +889,7 @@ def main(task, dist, dry_run, max):
             object_key = object_key.replace('/', ':')
             object_key = safepath(object_key)
             filepath = jobs / f"{object_key}.blend"
-            if filepath.exists():
+            if not force and filepath.exists():
                 pbar.update(len(task.rotations))
                 continue
 
@@ -874,6 +920,7 @@ def main(task, dist, dry_run, max):
                 )
                 pbar.update()
             except Exception as e:
+                # raise e
                 logging.error(
                     f"Error: Could not render {object_key} with {k}: {e}")
 
