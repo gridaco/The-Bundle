@@ -7,22 +7,22 @@
     },
     "4K": {
       "res": 4096,
-      "samples": 256,
+      "samples": 512,
       "resolution_percentage": 100
     },
     "2K": {
       "res": 2048,
-      "samples": 64,
+      "samples": 256,
       "resolution_percentage": 100
     },
     "1K": {
       "res": 1024,
-      "samples": 32,
+      "samples": 128,
       "resolution_percentage": 100
     },
     "512": {
       "res": 512,
-      "samples": 16,
+      "samples": 64,
       "resolution_percentage": 100
     },
     "PREVIEW": {
