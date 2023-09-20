@@ -1,0 +1,148 @@
+{
+  "name": "amp",
+  "version": "1.0.0",
+  "author": "Atti",
+  "files": [
+    "*.blend"
+  ],
+  "objects": {
+    "1": {
+      "file": "./1.blend"
+    },
+    "2": {
+      "file": "./2.blend"
+    },
+    "3": {
+      "file": "./3.blend"
+    },
+    "4": {
+      "file": "./4.blend"
+    },
+    "5": {
+      "file": "./5.blend"
+    },
+    "6": {
+      "file": "./6.blend"
+    },
+    "7": {
+      "file": "./7.blend"
+    },
+    "8": {
+      "file": "./8.blend"
+    },
+    "9": {
+      "file": "./9.blend"
+    },
+    "10": {
+      "file": "./10.blend"
+    },
+    "11": {
+      "file": "./11.blend"
+    },
+    "12": {
+      "file": "./12.blend"
+    },
+    "13": {
+      "file": "./13.blend"
+    },
+    "14": {
+      "file": "./14.blend"
+    },
+    "15": {
+      "file": "./15.blend"
+    },
+    "16": {
+      "file": "./16.blend"
+    },
+    "17": {
+      "file": "./17.blend"
+    },
+    "18": {
+      "file": "./18.blend"
+    },
+    "19": {
+      "file": "./19.blend"
+    },
+    "20": {
+      "file": "./20.blend"
+    },
+    "21": {
+      "file": "./21.blend"
+    },
+    "22": {
+      "file": "./22.blend"
+    },
+    "23": {
+      "file": "./23.blend"
+    },
+    "24": {
+      "file": "./24.blend"
+    },
+    "25": {
+      "file": "./25.blend"
+    },
+    "26": {
+      "file": "./26.blend"
+    },
+    "27": {
+      "file": "./27.blend"
+    },
+    "28": {
+      "file": "./28.blend"
+    },
+    "29": {
+      "file": "./29.blend"
+    },
+    "30": {
+      "file": "./30.blend"
+    },
+    "31": {
+      "file": "./31.blend"
+    },
+    "32": {
+      "file": "./32.blend"
+    },
+    "33": {
+      "file": "./33.blend"
+    },
+    "34": {
+      "file": "./34.blend"
+    },
+    "35": {
+      "file": "./35.blend"
+    },
+    "36": {
+      "file": "./36.blend"
+    },
+    "37": {
+      "file": "./37.blend"
+    },
+    "38": {
+      "file": "./38.blend"
+    },
+    "39": {
+      "file": "./39.blend"
+    },
+    "40": {
+      "file": "./40.blend"
+    },
+    "41": {
+      "file": "./41.blend"
+    },
+    "42": {
+      "file": "./42.blend"
+    },
+    "43": {
+      "file": "./43.blend"
+    },
+    "44": {
+      "file": "./44.blend"
+    },
+    "45": {
+      "file": "./45.blend"
+    },
+    "46": {
+      "file": "./46.blend"
+    }
+  }
+}
