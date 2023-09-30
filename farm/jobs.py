@@ -1,4 +1,5 @@
 import fnmatch
+import json
 import sys
 import click
 import os
@@ -8,7 +9,7 @@ from pathlib import Path
 from flamenco.manager import ApiClient, Configuration
 from flamenco.manager.apis import MetaApi
 from flamenco.manager.apis import JobsApi
-from flamenco.manager.models import FlamencoVersion, JobStatusChange, JobStatus
+from flamenco.manager.models import FlamencoVersion, JobStatusChange, JobStatus, TaskStatusChange, TaskStatus
 
 DEFAULT_MANAGER_HOST = "http://192.168.0.6:8080"
 DEFAULT_SHARED_DRIVE = "/Volumes/the-bundle"
@@ -327,7 +328,7 @@ def regular(
 
 
 @click.command()
-@click.argument('command', type=click.Choice(['list', 'delete', 'cancel']))
+@click.argument('command', type=click.Choice(['list', 'delete', 'cancel', 'requeue']))
 @click.option('--project', default=None)
 @click.option('--status', default=None, type=click.Choice(['active', 'canceled', 'completed', 'construction-failed', 'failed', 'paused', 'queued', 'archived', 'archiving', 'cancel-requested', 'requeueing', 'under-construction']))
 @click.option('--material-package', default=None, type=str)
@@ -338,6 +339,7 @@ def regular(
 @click.option('--host', default=DEFAULT_MANAGER_HOST, help='Flamenco Manager host', type=str)
 @click.option('--dry-run', is_flag=True, help="Don't actually delete/cancel jobs")
 @click.option('-y', '--yes', is_flag=True, help="Yes to all")
+@click.option('--verbose', is_flag=True, help="Verbose")
 def manage(
     command,
     project,
@@ -349,7 +351,8 @@ def manage(
     limit,
     host,
     dry_run,
-    yes
+    yes,
+    verbose
 ):
     manager = FlamencoManager(host=host, shared_drive=DEFAULT_SHARED_DRIVE)
     # ping the manager - check if it's up and running (timeout 5s)
@@ -378,6 +381,9 @@ def manage(
     jobs = res['jobs']
 
     print(len(jobs))
+    if verbose:
+        for job in jobs:
+            print(job)
 
     if command == 'cancel':
         for job in jobs:
@@ -395,6 +401,48 @@ def manage(
                 continue
             if yes or click.confirm(f"Delete {job['name']} ({job['id']})?", abort=True):
                 manager.jobs_api.delete_job(job["id"])
+
+    if command == 'requeue':
+        for job in jobs:
+            click.echo(f"Requeue {job['name']} ({job['id']})")
+            if dry_run:
+                continue
+            if yes or click.confirm(f"Requeue {job['name']} ({job['id']})?", abort=True):
+                requeue(manager=manager, job_id=job["id"])
+
+
+def requeue(manager: FlamencoManager, job_id: str):
+    """
+    Manage alias
+    """
+    ...
+    # fetch the task ids under the job
+
+    tasks_res = manager.jobs_api.fetch_job_tasks(job_id)
+    tasks = tasks_res['tasks']
+    for t in tasks:
+        _id = t['id']
+        _status = t['status']
+        # if task is failed / soft failed, set it to queued
+        _should_requeue = str(_status) in ['failed', 'soft-failed']
+
+        if _should_requeue:
+            print(f"Requeue task {t['id']}")
+            manager.jobs_api.set_task_status(
+                task_id=_id,
+                task_status_change=TaskStatusChange(
+                    reason="requested by manager",
+                    status=TaskStatus('queued')
+                )
+            )
+
+    manager.jobs_api.set_job_status(
+        job_id,
+        job_status_change=JobStatusChange(
+            reason="requested by manager",
+            status=JobStatus('queued')
+        )
+    )
 
 
 @click.group()
