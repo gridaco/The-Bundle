@@ -183,6 +183,8 @@ def fast_list_files(start_path, pattern, includes: dict = None, excludes: dict =
 @click.option('--object-packages-exclude', '-ope', default=None, help='Explicit package names to exclude. if not specified, excludes none.', multiple=True, type=str)
 @click.option('--object-include', '-oi', default=None, help='Explicit object names to include. if not specified, includes all.', multiple=True, type=str)
 @click.option('--object-exclude', '-oe', default=None, help='Explicit object names to exclude. if not specified, excludes none.', multiple=True, type=str)
+@click.option('--rotation-profile-include', '-rpi', default=None, help='Explicit rotation set to include. if not specified, includes all.', multiple=True, type=str)
+@click.option('--rotation-profile-exclude', '-rpe', default=None, help='Explicit rotation set to exclude. if not specified, excludes none.', multiple=True, type=str)
 @click.option('--priority', default=50, help='Job priority', type=int)
 @click.option('--chunk-size', default=None, help='Chunk size', type=int)
 @click.option('--batch', default=1, help='Batch number', type=int)
@@ -203,6 +205,8 @@ def regular(
     object_packages_exclude,
     object_include,
     object_exclude,
+    rotation_profile_include,
+    rotation_profile_exclude,
     priority,
     chunk_size,
     name,
@@ -244,20 +248,7 @@ def regular(
         "material_key": (material_include, material_exclude),
         "object_package": (object_packages_include, object_packages_exclude),
         "object_key": (object_include, object_exclude),
-        # Assuming you don't have include/exclude for rotation
-        "target_rotation": (None, None)
-    }
-
-    includes = {k: v[0] for k, v in segments_map.items()}
-    excludes = {k: v[1] for k, v in segments_map.items()}
-
-    segments_map = {
-        "material_package": (material_packages_include, material_packages_exclude),
-        "material_key": (material_include, material_exclude),
-        "object_package": (object_packages_include, object_packages_exclude),
-        "object_key": (object_include, object_exclude),
-        # Assuming you don't have include/exclude for rotation
-        "target_rotation": (None, None)
+        "target_rotation": (rotation_profile_include, rotation_profile_exclude)
     }
 
     includes = {k: v[0] for k, v in segments_map.items()}
@@ -273,7 +264,9 @@ def regular(
             ("material_package", material_packages_include, material_packages_exclude),
             ("material_key", material_include, material_exclude),
             ("object_package", object_packages_include, object_packages_exclude),
-                ("object_key", object_include, object_exclude)]):
+            ("object_key", object_include, object_exclude),
+            ("target_rotation", rotation_profile_include, rotation_profile_exclude)
+        ]):
             continue
 
         # check if invalid file - if starts with .
