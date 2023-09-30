@@ -1,7 +1,7 @@
 {
   "type": "build-job-files",
   "target_quality": "2K",
-  "target_rotation": "8__X45_3__Z45_3",
+  "target_rotation": "R168__X360_24__Z180_6__Y0A",
   "materials": {
     "packages": [
       "materials/atti-glass-pack",

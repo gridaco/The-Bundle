@@ -87,7 +87,7 @@ class TaskConfig:
     dist: Path
     job_file_path: str
 
-    def __init__(self, task: Path, profiles: dict, dist: str) -> None:
+    def __init__(self, task: Path, profiles: dict, profiles_dir: Path, dist: str) -> None:
         assert task.exists(), f"Invalid task: {task}"
 
         __data = json.load(open(task))
@@ -104,9 +104,6 @@ class TaskConfig:
 
         self.IS_DEBUG = self.target_quality_key == 'DEBUG'
 
-        self.target_rotation_key = 'DEBUG' if self.IS_DEBUG else (__data.get(
-            'target_rotation') if task else None) or 'DEFAULT'
-
         self.quality_profile: dict = profiles.get(
             "quality").get(self.target_quality_key)
 
@@ -117,7 +114,20 @@ class TaskConfig:
 
         self.samples = self.quality_profile['samples']
 
-        self.rotations = profiles.get("rotation").get(self.target_rotation_key)
+        # region rotation
+        self.target_rotation_key = '1__X0__Y0__Z0' if self.IS_DEBUG else (__data.get(
+            'target_rotation') if task else None) or 'DEFAULT'
+
+        # remove first R if present (if starts with R)
+        self.target_rotation_key = self.target_rotation_key[1:] if self.target_rotation_key.startswith(
+            'R') else self.target_rotation_key
+
+        # resolve rotation profile file
+        rotation_profile_file = profiles_dir / \
+            f"R{self.target_rotation_key}.json"
+
+        self.rotations = json.load(open(rotation_profile_file))
+        # endregion rotation
 
         self.objects = {
             **self.objects,
@@ -805,7 +815,12 @@ def main(task, dist, dry_run, max, force):
     profiles_dir = __DIR / 'profiles'
     profiles: dict = json.load(open(profiles_dir / 'profiles.json'))
     task = Path(task).resolve()
-    task = TaskConfig(task, profiles=profiles, dist=dist)
+    task = TaskConfig(
+        task,
+        profiles=profiles,
+        profiles_dir=profiles_dir,
+        dist=dist
+    )
 
     print(f"- DIST: {task.dist}")
     print(f"- TARGET {task.target_quality_key}...")
