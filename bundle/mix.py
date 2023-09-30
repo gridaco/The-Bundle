@@ -802,8 +802,8 @@ def safepath(path: str):
 @click.option('--max', default=None, help='Max number of jobs to handle (useful when testing)', type=int)
 @click.option('--force', is_flag=True, help='Force')
 def main(task, dist, dry_run, max, force):
-
-    profiles: dict = json.load(open(__DIR / 'profiles.json'))
+    profiles_dir = __DIR / 'profiles'
+    profiles: dict = json.load(open(profiles_dir / 'profiles.json'))
     task = Path(task).resolve()
     task = TaskConfig(task, profiles=profiles, dist=dist)
 
