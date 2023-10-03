@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "The Bundle",
   description: "The Bundle by Grida",
   colorScheme: "dark",
+  metadataBase: new URL("https://grida.co/bundle"),
   openGraph: {
     images: "https://grida.co/bundle/og-image.jpg",
   },
