@@ -1,6 +1,6 @@
 import { Logo } from "@/components/logo";
 import Link from "next/link";
-import { SearchBar } from "./search";
+import { Search } from "./search";
 import { Actions } from "./actions";
 import { SlashIcon } from "@radix-ui/react-icons"
 
@@ -14,7 +14,7 @@ export default function Header() {
       </Link>
     </div>
     <div className="flex gap-4">
-      <Link href="/library">
+      <Link href="/">
         Library
       </Link>
       <Link href="/gallery">
@@ -22,7 +22,7 @@ export default function Header() {
       </Link>
     </div>
     <div className="flex-1 max-w-screen-sm">
-      <SearchBar />
+      <Search />
     </div>
     {/* spacer */}
     <div className="flex-1" />
