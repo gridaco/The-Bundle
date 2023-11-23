@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import "../globals.css";
 import { Theme } from "@radix-ui/themes";
+import Header from "@/components/header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
           radius="small"
           hasBackground={false}
         >
+          <Header />
           {children}
         </Theme>
       </body>
