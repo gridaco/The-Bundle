@@ -28,7 +28,7 @@ export default async function LibraryPage() {
       <div className="flex flex-col items-center mt-10">
         <LibraryTab
           tabs={[
-            { value: "materials", href: "/library" },
+            { value: "materials", href: "/" },
             {
               value: "gallery",
               href: "/gallery",

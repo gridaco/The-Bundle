@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
   const host = getHost(request);
 
   // - TODO: the pro-activated is not being handled on the receiving page
-  const redirect = `${host}/library?return-reason=pro-activated`;
+  const redirect = `${host}/?return-reason=pro-activated`;
 
   return NextResponse.redirect(redirect);
 }

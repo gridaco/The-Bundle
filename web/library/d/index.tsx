@@ -14,7 +14,7 @@ export function Content() {
         <Tabs.Content value="download">
           <div>
             {[1, 2, 3].map((item, i) => (
-              <Link key={i} href={"/library/"}>
+              <Link key={i} href={"/"}>
                 <ListItem />
               </Link>
             ))}
@@ -23,7 +23,7 @@ export function Content() {
         <Tabs.Content value="purchase">
           <div className="flex flex-col gap-4">
             {[1, 2, 3].map((item, i) => (
-              <Link key={i} href={"/library/"}>
+              <Link key={i} href={"/"}>
                 <ListItem />
               </Link>
             ))}

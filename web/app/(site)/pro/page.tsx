@@ -30,7 +30,7 @@ export default function Home() {
             <span className={delta_gothic_one.className}>The Bundle</span>
           </h1>
           <div className="h-4" />
-          <Link href={"/library"} target="_blank">
+          <Link href={"/"} target="_blank">
             <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
               Visit Library
             </button>

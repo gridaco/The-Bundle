@@ -19,7 +19,7 @@ export default async function MyLibraryPage() {
   if (!user) {
     redirect(
       redirect_uri.make("/bundle/signin", {
-        redirect_uri: "/library/downloads",
+        redirect_uri: "/downloads",
       })!
     );
   }

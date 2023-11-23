@@ -17,7 +17,7 @@ export function DemoDownloadCard() {
           <span className="opacity-80 text-xs">*non-commercial use only</span>
           <Link
             className="underline"
-            href={"/library/download?item=v1/bin/The+Bundle+V1+Demo.zip"}
+            href={"/download?item=v1/bin/The+Bundle+V1+Demo.zip"}
             target="_blank"
           >
             Download Free Demo File

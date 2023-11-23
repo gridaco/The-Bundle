@@ -25,7 +25,7 @@ export async function GET(
     product_name: _product_name,
     product_images: _product_images,
     product_price: _product_price,
-    success_url: `${host}/library/${matpack.id}/${objpack.id}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${host}/${matpack.id}/${objpack.id}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${host}${page}`,
   });
 

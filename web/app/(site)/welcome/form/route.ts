@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return NextResponse.redirect(host + "/library", {
+  return NextResponse.redirect(host + "/", {
     // Returning a 301 status redirects from a POST to a GET route
     status: 301,
   });

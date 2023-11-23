@@ -49,7 +49,7 @@ export function packdata({
         alt: string;
       }>,
     },
-    download: `/library/download?item=${`v1/bin/${matPack}/${objPack}.zip`}`,
-    page: `/library/${matPack}/${objPack}`,
+    download: `/download?item=${`v1/bin/${matPack}/${objPack}.zip`}`,
+    page: `/${matPack}/${objPack}`,
   };
 }

@@ -18,7 +18,7 @@ export function Packs() {
             className="grid grid-cols-2 place-items-center gap-8 mt-24"
           >
             {packs.map((item: string, i: number) => (
-              <Link key={i} href={`/library/${k}/${item}`}>
+              <Link key={i} href={`/${k}/${item}`}>
                 <button>
                   <PackItem
                     src={`/bundle/thumbnails/${k}/${item}.png`}

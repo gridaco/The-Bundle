@@ -34,7 +34,7 @@ export default async function LibraryPage() {
       >
         <LibraryTab
           tabs={[
-            { value: "materials", href: "/library" },
+            { value: "materials", href: "/" },
             {
               value: "gallery",
               href: "/gallery",
