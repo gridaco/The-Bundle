@@ -41,7 +41,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { n: _n, style: _style, prompt } = await request.json();
+  const data = await request.json();
+  const { n: _n, style: _style, prompt } = data;
 
   if (!prompt) {
     return NextResponse.json(
@@ -57,9 +58,19 @@ export async function POST(request: NextRequest) {
   const n = Math.min(Math.max(__n, 1), 5);
   const style = _style === "vivid" ? "vivid" : "natural";
 
-  const prompt_v2 = `"${prompt}" render, 4k, realistic, blender, c4d, industrial`;
+  const prompt_v2 = `"${prompt}" styles: [render, 4k, realistic, octane, c4d, white-bg, minimalistic, for-ui]`;
 
-  const { data } = await openai.images.generate({
+  // TODO: enhence the prompt
+  // openai.chat.completions.create({
+  //   'model': 'gpt-4-1106-preview',
+  //   'messages': [
+  //     {
+  //       'role': 'system',
+  //     }
+  //   ]
+  // })
+
+  const { data: generated } = await openai.images.generate({
     prompt: prompt_v2,
     model: "dall-e-3",
     n: n,
@@ -67,7 +78,9 @@ export async function POST(request: NextRequest) {
     response_format: "url",
     size: "1024x1792",
     style,
+    user: user.id,
   });
+  console.log(generated);
 
-  return NextResponse.json(data);
+  return NextResponse.json(generated);
 }
