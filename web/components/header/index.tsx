@@ -2,12 +2,17 @@ import { Logo } from "@/components/logo";
 import Link from "next/link";
 import { SearchBar } from "./search";
 import { Actions } from "./actions";
+import { SlashIcon } from "@radix-ui/react-icons"
 
 export default function Header() {
   return <header className="sticky top-0 flex flex-row items-center px-10 py-5 gap-10 border-b border-white/10 bg-black z-40">
-    <Link href="/">
-      <Logo className="fill-white" />
-    </Link>
+    <div>
+      {/* <span>Grida</span> */}
+      {/* <SlashIcon /> */}
+      <Link href="/">
+        <Logo className="fill-white" />
+      </Link>
+    </div>
     <div className="flex gap-4">
       <Link href="/library">
         Library

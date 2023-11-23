@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Dela_Gothic_One } from "next/font/google";
+import { Dela_Gothic_One, Inter } from "next/font/google";
 import ImageColumn from "@/home/image-column";
 import Link from "next/link";
 import { HeroVideo } from "@/home/hero-video";
@@ -8,6 +8,12 @@ const delta_gothic_one = Dela_Gothic_One({
   subsets: ["latin"],
   display: "swap",
   weight: "400",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  weight: 'variable',
 });
 
 const images = [
@@ -26,13 +32,18 @@ export default function Home() {
     <main className="relative flex min-h-screen flex-col justify-between gap-40">
       <section className="max-w-screen-xl m-auto w-full pl-8 xl:pl-0 flex flex-row items-center justify-between pb-24 min-h-screen">
         <div className="flex flex-col items-start">
-          <h1 className="text-5xl lg:text-7xl">
+          <h1 className="text-5xl lg:text-7xl flex items-center">
             <span className={delta_gothic_one.className}>The Bundle</span>
+            <span className={inter.className}>
+              <span className="ml-4 font-black text-4xl p-2 border-2 rounded border-white">
+                PRO
+              </span>
+            </span>
           </h1>
-          <div className="h-4" />
+          <div className="h-8" />
           <Link href={"/"} target="_blank">
             <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
-              Visit Library
+              Get <span className={delta_gothic_one.className}>The Bundle</span> Pro
             </button>
           </Link>
         </div>
