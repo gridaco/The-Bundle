@@ -5,7 +5,7 @@ import { Packs, MaterialsNav } from "@/library";
 import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
 import { ScrollToTop } from "@/components/scroll-to-top";
-import Header from "@/library/header";
+import Title from "@/library/title";
 import Footer from "@/library/footer";
 import { LibraryTab } from "@/library/tab";
 
@@ -24,7 +24,7 @@ export default async function LibraryPage() {
 
   return (
     <main className="max-w-screen-xl content-center m-auto p-24 pt-40">
-      <Header />
+      <Title />
       <div
         className="flex flex-col items-center mt-10"
         style={{

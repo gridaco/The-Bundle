@@ -7,7 +7,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import { Metadata } from "next";
 import { LibraryTab } from "@/library/tab";
 import Footer from "@/library/footer";
-import Header from "@/library/header";
+import Title from "@/library/title";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +24,7 @@ export default async function LibraryPage() {
 
   return (
     <main className="max-w-screen-xl content-center m-auto p-24 pt-40">
-      <Header />
+      <Title />
       <div className="flex flex-col items-center mt-10">
         <LibraryTab
           tabs={[

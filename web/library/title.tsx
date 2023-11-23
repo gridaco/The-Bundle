@@ -7,7 +7,7 @@ const delta_gothic_one = Dela_Gothic_One({
   weight: "400",
 });
 
-export default function Header() {
+export default function Title() {
   return (
     <header className="flex flex-col items-center justify-center h-full mb-20">
       <h1 className="text-5xl lg:text-7xl">
