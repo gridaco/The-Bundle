@@ -1,7 +1,7 @@
 import { Logo } from "@/components/logo";
 import Link from "next/link";
 import { SearchBar } from "./search";
-import { Button } from "@radix-ui/themes";
+import { Actions } from "./actions";
 
 export default function Header() {
   return <header className="sticky top-0 flex flex-row items-center px-10 py-5 gap-10 border-b border-white/10 bg-black z-40">
@@ -21,17 +21,6 @@ export default function Header() {
     </div>
     {/* spacer */}
     <div className="flex-1" />
-    <div className="flex gap-4">
-      <Button className="bg-white text-black rounded-md p-4 font-medium">
-        <Link href="/library">
-          Subscribe
-        </Link>
-      </Button>
-      <Button className="bg-black text-white rounded-md p-4 font-medium">
-        <Link href="/library">
-          Sign In
-        </Link>
-      </Button>
-    </div>
+    <Actions />
   </header>
 }
