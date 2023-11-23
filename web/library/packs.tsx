@@ -15,7 +15,7 @@ export function Packs() {
           <div
             key={k}
             id={k}
-            className="grid grid-cols-2 place-items-center gap-8 mt-24"
+            className="flex flex-wrap gap-20 mt-40"
           >
             {packs.map((item: string, i: number) => (
               <Link key={i} href={`/${k}/${item}`}>

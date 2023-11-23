@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { Theme } from "@radix-ui/themes";
 import Header from "@/components/header";
+import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 

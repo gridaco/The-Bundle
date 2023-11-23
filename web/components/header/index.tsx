@@ -4,7 +4,7 @@ import { SearchBar } from "./search";
 import { Button } from "@radix-ui/themes";
 
 export default function Header() {
-  return <header className="fixed top-0 left-0 right-0 flex flex-row items-center p-10 gap-10">
+  return <header className="sticky top-0 flex flex-row items-center px-10 py-5 gap-10 border-b border-white/10 bg-black z-40">
     <Link href="/">
       <Logo className="fill-white" />
     </Link>

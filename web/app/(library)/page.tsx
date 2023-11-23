@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import Title from "@/library/title";
 import Footer from "@/library/footer";
 import { LibraryTab } from "@/library/tab";
+import { ScrollArea } from "@radix-ui/themes";
 
 export const dynamic = "force-dynamic";
 
@@ -23,52 +24,45 @@ export default async function LibraryPage() {
   const pro = data.user && isProUser(data.user);
 
   return (
-    <main className="max-w-screen-xl content-center m-auto p-24 pt-40">
-      <Title />
-      <div
-        className="flex flex-col items-center mt-10"
-        style={{
-          // disabled for now
-          display: "none",
-        }}
-      >
-        <LibraryTab
-          tabs={[
-            { value: "materials", href: "/" },
-            {
-              value: "gallery",
-              href: "/gallery",
-            },
-          ]}
-          defaultValue="materials"
-        />
-      </div>
-      <div className="sticky top-0 bg-transparent bg-opacity-5 backdrop-blur-xl z-10">
-        <div className="flex flex-col items-center mt-10">
-          <div className="max-w-screen-md">
-            <MaterialsNav />
+    <Layout>
+      <main className="p-10 overflow-scroll">
+        {!pro && (
+          <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
+            <DemoDownloadCard />
+          </div>
+        )}
+        <div className="mt-24">
+          <Packs />
+        </div>
+        {!pro && (
+          <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
+            <DemoDownloadCard />
+          </div>
+        )}
+        {/* scroll to top */}
+        <div className="m-auto w-fit mt-40">
+          <ScrollToTop />
+        </div>
+        <Footer />
+      </main>
+    </Layout>
+  );
+}
+
+
+function Layout({ children }: React.PropsWithChildren<{}>) {
+  return <div className="flex flex-row">
+    <div className="min-w-[240px] sticky max-w-xs border-r border-white/10 overflow-x-hidden">
+      <ScrollArea>
+        <div className="sticky top-40">
+          <div className="flex flex-col items-center mt-10">
+            <div className="max-w-screen-md">
+              <MaterialsNav />
+            </div>
           </div>
         </div>
-      </div>
-      {!pro && (
-        <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
-          <DemoDownloadCard />
-        </div>
-      )}
-      <div className="max-w-screen-md m-auto mt-24">
-        {/* <Gallery /> */}
-        <Packs />
-      </div>
-      {!pro && (
-        <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
-          <DemoDownloadCard />
-        </div>
-      )}
-      {/* scroll to top */}
-      <div className="m-auto w-fit mt-40">
-        <ScrollToTop />
-      </div>
-      <Footer />
-    </main>
-  );
+      </ScrollArea>
+    </div>
+    {children}
+  </div>
 }
