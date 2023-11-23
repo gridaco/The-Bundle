@@ -1,5 +1,5 @@
 import React from "react";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from '@supabase/ssr'
 import { redirect } from "next/navigation";
 import { redirect_uri } from "@/s/q";
 import { Metadata } from "next";
@@ -11,7 +11,18 @@ export const metadata: Metadata = {
 };
 
 export default async function MyLibraryPage() {
-  const supabase = createServerComponentClient({ cookies });
+  const cookieStore = cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
 
   const { data: _user } = await supabase.auth.getUser();
   const { user } = _user;

@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { user_metadata_stripe_customer_id } from "@/k/userkey.json";
 import { stripe } from "@/s/stripe";
 import { cookies } from "next/headers";
@@ -9,7 +9,26 @@ import { redirect_uri } from "@/s/q";
 export async function GET(request: NextRequest) {
   // get supabase user
 
-  const supabase = createRouteHandlerClient({ cookies });
+  const cookieStore = cookies();
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: "", ...options });
+        },
+      },
+    }
+  );
+
   const { data } = await supabase.auth.getUser();
   const host = getHost(request);
 

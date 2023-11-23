@@ -1,19 +1,28 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Packs, MaterialsNav } from "@/library";
 import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
 import { ScrollToTop } from "@/components/scroll-to-top";
-import Title from "@/library/title";
 import Footer from "@/library/footer";
-import { LibraryTab } from "@/library/tab";
 import { ScrollArea } from "@radix-ui/themes";
 
 export const dynamic = "force-dynamic";
 
 export default async function LibraryPage() {
-  const supabase = createServerComponentClient({ cookies });
+  const cookieStore = cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
 
   const { data } = await supabase.auth.getUser();
 

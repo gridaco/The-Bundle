@@ -1,6 +1,6 @@
 import { isUserWelcomeFormRequired } from "@/s/q-user";
 import getHost from "@/s/utils/get-host";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { redirect_uri } from "@/s/q";
@@ -8,7 +8,25 @@ import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const host = getHost(request);
-  const supabase = createRouteHandlerClient({ cookies });
+  const cookieStore = cookies();
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: "", ...options });
+        },
+      },
+    }
+  );
 
   const code = request.nextUrl.searchParams.get("code");
 

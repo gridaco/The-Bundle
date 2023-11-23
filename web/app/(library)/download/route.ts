@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { generateSignedDownloadLink } from "@/s/stripe/s3";
 import { cookies } from "next/headers";
@@ -6,7 +6,25 @@ import { isProUser } from "@/s/q-user";
 import getHost from "@/s/utils/get-host";
 
 export async function GET(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const cookieStore = cookies();
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          cookieStore.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          cookieStore.set({ name, value: "", ...options });
+        },
+      },
+    }
+  );
 
   // sign s3 url if user is signed in as a pro user
   const bucket = "the-bundle-dist";

@@ -1,5 +1,5 @@
 import React from "react";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from "next/headers";
 import { redirect, useSearchParams } from "next/navigation";
 import { Dela_Gothic_One } from "next/font/google";
@@ -23,7 +23,20 @@ export default async function WelcomePage({
 }: {
   searchParams: ReturnType<typeof useSearchParams>;
 }) {
-  const supabase = createServerComponentClient({ cookies });
+  const cookieStore = cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
+
+
   const _redirect_uri = redirect_uri.parse(searchParams);
   const { data } = await supabase.auth.getUser();
   if (!data.user) {

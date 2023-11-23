@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { createBrowserClient } from '@supabase/ssr'
 import { Dela_Gothic_One } from "next/font/google";
 import { ContinueWithGoogleButton } from "@/components/continue-with-google-button";
-import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
 import { redirect_uri } from "@/s/q";
 import useHost from "@/hooks/useHost";
@@ -14,7 +14,11 @@ const delta_gothic_one = Dela_Gothic_One({
 });
 
 export default function SigninPage() {
-  const supabase = createPagesBrowserClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
   const host = useHost();
   const searchParams = useSearchParams();
 
