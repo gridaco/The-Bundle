@@ -1,9 +1,8 @@
-import "./globals.css";
-import "@radix-ui/themes/styles.css";
-import type { Metadata } from "next";
+import GoogleAnalytics from "@/components/ga";
 import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import "../globals.css";
 import { Theme } from "@radix-ui/themes";
-import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,20 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/* <!-- Google tag (gtag.js) --> */}
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-WESLP8N7KE"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-WESLP8N7KE');
-        `}
-      </Script>
+      <GoogleAnalytics gaid={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ?? ''} />
       <body className={inter.className}>
         <Theme
           appearance="dark"
