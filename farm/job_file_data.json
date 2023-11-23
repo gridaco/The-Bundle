@@ -1,0 +1,18 @@
+{
+  "frame_start": 0,
+  "frame_end": 7,
+  "keyframes": {
+    "0": { "rotation": [0, 0, 0] },
+    "1": { "rotation": [0, 30, 0] },
+    "2": { "rotation": [0, 30, 15] },
+    "3": { "rotation": [0, 30, 30] },
+    "4": { "rotation": [0, 30, 45] },
+    "5": { "rotation": [15, 30, 0] },
+    "6": { "rotation": [30, 30, 0] },
+    "7": { "rotation": [45, 30, 0] }
+  },
+  "resolution_x": 2048,
+  "resolution_y": 2048,
+  "samples": 64,
+  "resolution_percentage": 100
+}

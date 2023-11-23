@@ -42,9 +42,9 @@ def main(images, pattern, n):
 
     # scale rate for parallax effect
     initial_scale_rate = 0.6
-    scale_rate = 0.8
+    scale_rate = 0.95
     scroll_step = 800
-    scroll_rate = 0.8
+    scroll_rate = 0.95
 
     images = Path(images).resolve()
     # list png images in directory
