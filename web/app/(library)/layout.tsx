@@ -24,7 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en"
+      // https://github.com/vercel/next.js/discussions/22388
+      className="dark" style={{ colorScheme: "dark" }}
+    >
       <GoogleAnalytics gaid={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ?? ''} />
       <body className={inter.className}>
         <Theme
