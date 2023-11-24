@@ -14,7 +14,7 @@ export function Search() {
   }
 
   return <TextField.Root
-    className="flex items-center gap-4 rounded bg-neutral-800 p-4 border border-neutral-700">
+    className="flex items-center gap-4 rounded bg-neutral-800 p-4 border border-neutral-700 w-auto min-w-[400px]">
     <TextField.Slot >
       <MagnifyingGlassIcon />
     </TextField.Slot>
