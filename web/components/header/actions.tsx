@@ -8,9 +8,11 @@ import { useUser } from '@/hooks/useUser';
 export function Actions() {
   const user = useUser();
 
+  const base = " rounded-md text-sm lg:text-base p-3 lg:p-4 font-medium "
+
 
   const _subscribe = (
-    <Button className="bg-white text-black rounded-md p-4 font-medium">
+    <Button className={base + "bg-white text-black"}>
       <Link href="/library">
         Subscribe
       </Link>
@@ -19,29 +21,29 @@ export function Actions() {
 
   if (user) {
     return (
-      <div className="flex gap-4">
+      <>
         {
           !user.isPro && <>{_subscribe}</>
         }
-        <Button className="bg-black text-white rounded-md p-4 font-medium">
+        <Button className={base + "bg-black text-white"}>
           <Link href="/downloads">
             Downloads
           </Link>
         </Button>
-      </div>
+      </>
     )
   }
 
-  return <div className="flex gap-4">
-    <Button className="bg-white text-black rounded-md p-4 font-medium">
+  return <>
+    <Button className={base + "bg-white text-black"}>
       <Link href="/pro">
         Subscribe
       </Link>
     </Button>
-    <Button className="bg-black text-white rounded-md p-4 font-medium">
+    <Button className={base + "bg-black text-white"}>
       <Link href="/signin">
         Sign In
       </Link>
     </Button>
-  </div>
+  </>
 }
