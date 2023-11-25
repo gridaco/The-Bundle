@@ -20,10 +20,6 @@ export default function LibraryPage() {
         <div className="flex-1 h-auto">
           <Packs />
           <DemoDownloadCardIfNotPro />
-          {/* scroll to top */}
-          <div className="m-auto w-fit mt-40">
-            <ScrollToTop />
-          </div>
           <Footer />
         </div>
       </main>
