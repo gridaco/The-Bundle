@@ -8,7 +8,8 @@ import Footer from "@/library/footer";
 import { DemoDownloadCardIfNotPro } from "@/library/demo";
 import bundle from "@/k/bundle.json";
 
-const material_keys = Object.keys(bundle.materials);
+// @ts-ignore
+const material_keys: (keyof typeof bundle.materials)[] = Object.keys(bundle.materials);
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ function Layout({ children }: React.PropsWithChildren<{}>) {
                 height={100}
                 alt={m}
               />
-              <span className="text-sm opacity-80">{m}</span>
+              <span className="text-sm opacity-80">{(bundle.materials)[m].name}</span>
             </div>
           </Link>
         ))}
