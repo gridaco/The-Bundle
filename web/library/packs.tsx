@@ -15,7 +15,7 @@ export function Packs() {
           <div
             key={k}
             id={k}
-            className="flex flex-wrap gap-20 mt-40"
+            className="flex flex-wrap gap-10 sm:gap-16 md:gap-20 mt-40"
           >
             {packs.map((item: string, i: number) => (
               <Link key={i} href={`/${k}/${item}`}>
@@ -51,7 +51,7 @@ function PackItem({
   id2: string;
 }) {
   return (
-    <div className="w-40 h-40 sm:w-56 sm:h-56 xl:w-64 xl:h-64 2xl:w-80 2xl:h-80">
+    <div className="w-32 h-32 sm:w-56 sm:h-56 xl:w-64 xl:h-64 2xl:w-80 2xl:h-80">
       <Image src={src} width={512} height={512} alt="" />
       <div className="flex opacity-90 flex-col items-start gap-1 md:gap-0">
         <div className="flex flex-row justify-stretch w-full">
@@ -63,7 +63,7 @@ function PackItem({
           >
             {n1}
           </h4>
-          <span className="text-sm font-bold md:font-black border p-[2px] md:p-1 rounded-sm min-w-[24px] md:min-w-[32px]">
+          <span className="text-sm font-bold md:font-black border p-[2px] md:p-1 rounded-sm min-w-[24px] md:min-w-[32px] h-min">
             {n2}
           </span>
         </div>

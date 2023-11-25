@@ -5,7 +5,6 @@ import { isProUser } from "@/s/q-user";
 import { DemoDownloadCard } from "@/components/demo-download-card";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Metadata } from "next";
-import { LibraryTab } from "@/library/tab";
 import Footer from "@/library/footer";
 import Title from "@/library/title";
 
@@ -37,20 +36,6 @@ export default async function LibraryPage() {
   return (
     <main className="max-w-screen-xl content-center m-auto p-24 pt-40">
       <Title />
-      <div className="flex flex-col items-center mt-10">
-        <LibraryTab
-          tabs={[
-            { value: "materials", href: "/" },
-            {
-              value: "gallery",
-              href: "/gallery",
-            },
-          ]}
-          defaultValue="gallery"
-        />
-      </div>
-      {/* <div className="sticky top-0 bg-transparent bg-opacity-5 backdrop-blur-xl z-10">
-      </div> */}
       {!pro && (
         <div className="max-w-screen-md m-auto mt-24 mb-24 border border-opacity-10 border-white p-8 rounded-sm hover:border-opacity-20">
           <DemoDownloadCard />

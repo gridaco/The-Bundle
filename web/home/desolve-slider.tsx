@@ -73,6 +73,7 @@ const DissolveSlider: React.FC<DissolveSliderProps> = ({
 
   return (
     <div
+      className="select-none pointer-events-none"
       style={{
         ...style,
         position: "relative",
@@ -85,11 +86,6 @@ const DissolveSlider: React.FC<DissolveSliderProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: duration }}
-          // style={{
-          //   position: "absolute",
-          //   top: 0,
-          //   left: 0,
-          // }}
         >
           <NextImage src={images[activeIndex]} fill alt="hero slide" />
         </motion.div>
@@ -100,11 +96,7 @@ const DissolveSlider: React.FC<DissolveSliderProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: duration }}
-            // style={{
-            //   position: "absolute",
-            //   top: 0,
-            //   left: 0,
-            // }}
+
           >
             <NextImage src={images[nextIndex]} fill alt="hero slide" />
           </motion.div>

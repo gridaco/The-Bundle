@@ -63,9 +63,9 @@ export default function PackDetailPage(props: Props) {
           />
           {/* <Image src={} alt="." width={800} height={800} /> */}
         </div>
-        <h1 className="flex gap-4 text-6xl font-bold p-24">
+        <h1 className="flex gap-4 text-3xl md:text-6xl font-bold p-4 md:p-24">
           {matpack.name}{" "}
-          <span className="border p-1 text-2xl rounded-sm h-full min-w-[40px]">
+          <span className="border p-1 text-xl md:text-2xl rounded-sm h-full min-w-[40px]">
             {objpack.name}
           </span>
         </h1>
