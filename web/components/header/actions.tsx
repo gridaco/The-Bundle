@@ -2,21 +2,20 @@
 
 import React from 'react';
 import Link from "next/link";
-import { Button } from "@radix-ui/themes";
 import { useUser } from '@/hooks/useUser';
 
 export function Actions() {
   const user = useUser();
 
-  const base = " rounded-md text-sm lg:text-base p-3 lg:p-4 font-medium "
+  const base = " rounded text-sm lg:text-base px-3 py-2 lg:px-3 font-medium "
 
 
   const _subscribe = (
-    <Button className={base + "bg-white text-black"}>
+    <button className={base + "bg-white text-black"}>
       <Link href="/library">
         Subscribe
       </Link>
-    </Button>
+    </button>
   )
 
   if (user) {
@@ -25,25 +24,25 @@ export function Actions() {
         {
           !user.isPro && <>{_subscribe}</>
         }
-        <Button className={base + "bg-black text-white"}>
+        <button className={base + "bg-black text-white"}>
           <Link href="/downloads">
             Downloads
           </Link>
-        </Button>
+        </button>
       </>
     )
   }
 
   return <>
-    <Button className={base + "bg-white text-black"}>
+    <button className={base + "bg-white text-black"}>
       <Link href="/pro">
         Subscribe
       </Link>
-    </Button>
-    <Button className={base + "bg-black text-white"}>
+    </button>
+    <button className={base + "bg-black text-white"}>
       <Link href="/signin">
         Sign In
       </Link>
-    </Button>
+    </button>
   </>
 }

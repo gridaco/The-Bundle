@@ -51,23 +51,23 @@ function PackItem({
   id2: string;
 }) {
   return (
-    <div className="w-90 h-90">
-      <Image src={src} width={340} height={340} alt="" />
-      <div className="flex opacity-90 flex-col items-start">
+    <div className="w-40 h-40 sm:w-56 sm:h-56 xl:w-64 xl:h-64 2xl:w-80 2xl:h-80">
+      <Image src={src} width={512} height={512} alt="" />
+      <div className="flex opacity-90 flex-col items-start gap-1 md:gap-0">
         <div className="flex flex-row justify-stretch w-full">
           <h4
-            className="text-xl font-bold flex-1"
+            className="text-md font-semibold md:text-lg lg:text-xl md:font-bold flex-1"
             style={{
               textAlign: "left",
             }}
           >
             {n1}
           </h4>
-          <span className="text-sm font-black border p-1 rounded-sm min-w-[32px]">
+          <span className="text-sm font-bold md:font-black border p-[2px] md:p-1 rounded-sm min-w-[24px] md:min-w-[32px]">
             {n2}
           </span>
         </div>
-        <p className="text-sm font-light">
+        <p className="text-sm font-light text-left">
           {/* TODO: update this with informative properties */}
           4K · {id1} · {id2}
         </p>
