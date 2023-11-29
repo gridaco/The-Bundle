@@ -52,7 +52,7 @@ export default function Pricing() {
               currency: plans.personal.price.symbol,
               unit: "/Mo",
             }}
-            desc={"Billed annually or $25 month-to-moth"}
+            desc={"Billed annually or $8 month-to-moth"}
             features={
               <>
                 <li>Single Seat</li>
