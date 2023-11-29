@@ -41,7 +41,7 @@ export default function Home() {
             </span>
           </h1>
           <div className="h-8" />
-          <Link href={"/"} target="_blank">
+          <Link href={cta_link}>
             <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
               Get <span className={delta_gothic_one.className}>The Bundle</span> Pro
             </button>
@@ -100,7 +100,7 @@ export default function Home() {
             <span className="opacity-50 text-sm">*Starting from $19 / Mo</span>
             <div className="h-10" />
             <div className="flex gap-4">
-              <Link href={cta_link} target="_blank">
+              <Link href={cta_link}>
                 <button className="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-4 rounded">
                   {cta_txt}
                 </button>
@@ -110,7 +110,7 @@ export default function Home() {
                   Book a Demo
                 </button>
               </Link> */}
-              <Link href={cta_link + "#demo"} target="_blank">
+              <Link href={cta_link + "#demo"}>
                 <button className="border-white hover:bg-neutral-900 text-white font-bold py-2 px-4 rounded">
                   Download Free Demo File
                 </button>
