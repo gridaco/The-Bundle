@@ -12,7 +12,7 @@ export function Actions() {
 
   const _subscribe = (
     <button className={base + "bg-white text-black"}>
-      <Link href="/library">
+      <Link href="/pro">
         Subscribe
       </Link>
     </button>
@@ -25,10 +25,15 @@ export function Actions() {
           !user.isPro && <>{_subscribe}</>
         }
         <button className={base + "bg-black text-white"}>
+          <Link href="/gallery">
+            Gallery
+          </Link>
+        </button>
+        {/* <button className={base + "bg-black text-white"}>
           <Link href="/downloads">
             Downloads
           </Link>
-        </button>
+        </button> */}
       </>
     )
   }

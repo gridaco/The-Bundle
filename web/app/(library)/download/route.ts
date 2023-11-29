@@ -42,7 +42,8 @@ export async function GET(request: NextRequest) {
   } else {
     // if not demo, double check if pro user
     if (!isProUser(data.user)) {
-      return NextResponse.redirect(host + "/pricing");
+      // redirect to pro page
+      return NextResponse.redirect(host + "/pro");
     }
   }
 

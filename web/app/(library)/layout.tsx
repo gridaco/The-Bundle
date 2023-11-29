@@ -1,6 +1,6 @@
 import GoogleAnalytics from "@/components/ga";
 import { Inter } from "next/font/google";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "../globals.css";
 import { Theme } from "@radix-ui/themes";
 import Header from "@/components/header";
@@ -11,12 +11,15 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "The Bundle",
   description: "The Bundle by Grida",
-  colorScheme: "dark",
   metadataBase: new URL("https://grida.co/bundle"),
   openGraph: {
     images: "https://grida.co/bundle/og-image.jpg",
   },
 };
+
+export const viewport: Viewport = {
+  colorScheme: "dark",
+}
 
 export default function RootLayout({
   children,
