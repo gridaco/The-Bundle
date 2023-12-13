@@ -12,18 +12,21 @@ export default function Header() {
       </Link>
     </div>
     <div className="hidden lg:flex gap-4">
-      {/* <Link href="/">
+      <Link href="/">
         Library
-      </Link> */}
-      {/* <Link href="/gallery">
+      </Link>
+      <Link href="/gallery">
         Gallery
-      </Link> */}
+      </Link>
+      <Link href="/generate">
+        Generate
+      </Link>
     </div>
-    {/* <div className="flex-1 max-w-screen-sm min-w-[240px]">
+    <div className="flex-1 max-w-screen-sm min-w-[240px]">
       <Search />
-    </div> */}
+    </div>
     {/* spacer */}
-    {/* <div className="hidden md:flex " /> */}
+    <div className="hidden md:flex " />
     <div className="hidden md:flex flex-1 gap-4 items-center justify-end">
       <Actions />
     </div>
